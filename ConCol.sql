@@ -1,0 +1,20 @@
+CREATE PROCEDURE ConCol
+(
+	paramFiltro CHAR(50)
+)
+
+RETURNING 
+ CHAR(100);
+
+DEFINE col	CHAR(100);
+
+FOREACH cColonias FOR
+	SELECT  DISTINCT	TRIM(col_tqe)
+	INTO	col
+	FROM	tanque
+	WHERE	col_tqe	LIKE paramFiltro
+	ORDER BY 1
+	RETURN 	col
+	WITH RESUME;
+	END FOREACH;     
+END PROCEDURE; 
