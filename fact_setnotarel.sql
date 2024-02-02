@@ -1,6 +1,7 @@
 DROP PROCEDURE fact_setnotarel;
-EXECUTE PROCEDURE  fact_setnotarel(22712,'EAPC','I');
-EXECUTE PROCEDURE  fact_setnotarel(5609,'PAI','C');
+EXECUTE PROCEDURE  fact_setnotarel(75031,'EAOA','I');
+EXECUTE PROCEDURE  fact_setnotarel(404320,'EAF','I');
+EXECUTE PROCEDURE  fact_setnotarel(216021,'EAE','C');
 			
 CREATE PROCEDURE fact_setnotarel
 (
@@ -41,6 +42,19 @@ SELECT	cia_fac, pla_fac, numcte_fac, NVL(frf_fac,0), NVL(srf_fac,''), NVL(folcan
 INTO	vcia,vpla,vnocte,vfolrf,vserrf,vfolc,vserc,vtpa,vfolant,vserant,vfaccer,vtfac
 FROM	factura
 WHERE	fol_fac = paramFolio and ser_fac = paramSerie;
+
+IF paramAction = 'I' AND vfolrf = 0 AND vserrf = '' AND vfolc = 0 AND vserc = '' THEN
+	IF EXISTS(	SELECT	1
+				FROM	factura f, det_fac d
+				WHERE	f.fol_fac <> paramFolio AND f.fol_fac = d.fol_dfac AND f.ser_fac = d.ser_dfac AND f.faccer_fac = 'N'
+						AND f.fec_fac > TODAY - 7 AND d.fnvta_dfac IN(SELECT fnvta_dfac FROM det_fac 
+										WHERE fol_dfac = paramFolio AND ser_dfac = paramSerie
+												AND cia_dfac = d.cia_dfac AND pla_dfac = d.pla_dfac AND fnvta_dfac = d.fnvta_dfac 
+												AND vuelta_dfac = d.vuelta_dfac)) THEN
+		LET vreturn = 'D';
+		RETURN vreturn;
+	END IF;
+END IF;
 
 IF paramAction = 'C' THEN
 	LET vfolfac = NULL;
@@ -182,7 +196,7 @@ where	doc_mcxc in(72173,72157,72174,72172,72170,72171)
 		
 select	*
 from	doctos
-where	ffac_doc = 157706 and sfac_doc = 'EAM'
+where	ffac_doc = 157732 and sfac_doc = 'EAM'
 
 update	doctos
 set		ffac_doc = null, sfac_doc = null
@@ -197,3 +211,17 @@ update	mov_cxc
 set		ffac_mcxc = NULL, sfac_mcxc = null
 where	ffac_mcxc = 157706 and sfac_mcxc = 'EAM'
 
+select	*
+from	factura f, det_fac d
+where	f.fol_fac <> 404109 and f.fol_fac = d.fol_dfac and f.ser_fac = d.ser_dfac AND f.faccer_fac = 'N'
+		and f.fec_fac > TODAY - 6 and d.fnvta_dfac in(select fnvta_dfac from det_fac where fol_dfac = 404109 and ser_dfac = 'EAF'
+							and cia_dfac = d.cia_dfac and pla_dfac = d.pla_dfac and fnvta_dfac = d.fnvta_dfac 
+							and vuelta_dfac = d.vuelta_dfac)
+							
+select	*
+from	factura
+where	tdoc_fac = 'I' and fec_fac >= '2023-09-01' and faccer_fac = 'S'
+
+select	*
+from	factura
+where	frf_fac = 404109

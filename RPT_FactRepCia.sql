@@ -1,5 +1,10 @@
-EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,null,'2023-06-01','2023-06-30','G');
-EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,null,'2023-05-01','2023-05-31','D');
+EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,null,'2022-06-01','2023-06-30','G');
+EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,null,'2022-09-01','2022-09-30','D');
+EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,null,'2022-09-01','2022-09-30','F');
+EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,null,'2022-09-01','2022-09-30','C');
+EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,null,'2022-09-01','2022-09-30','R');
+EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,'054166','2023-12-18','2023-12-31','D');
+
 DROP PROCEDURE RPT_FactRepCia;
 CREATE PROCEDURE RPT_FactRepCia
 (
@@ -18,6 +23,7 @@ RETURNING
  CHAR(4), 
  DATE,
  DECIMAL,
+ CHAR(40),
  CHAR(6), 
  CHAR(80),
  DECIMAL,
@@ -36,6 +42,7 @@ DEFINE vfolfac INT;
 DEFINE vserfac CHAR(4);
 DEFINE vfecfac DATE;
 DEFINE vimporte DECIMAL;
+DEFINE vuuid	CHAR(40);
 DEFINE vnumcte CHAR(6);
 DEFINE vnomcte CHAR(80);
 DEFINE vltsest DECIMAL;
@@ -50,7 +57,7 @@ DEFINE vasicil DECIMAL;
 
 IF paramTipo = 'G' THEN
 	FOREACH cFacturas FOR
-		SELECT 	cia_fac, pla_fac, '', '', '', '', '', '' nom_pla,
+		SELECT 	cia_fac, pla_fac, '', '', '', '', '', '', '' nom_pla,
 		    sum(case when tid_dfac = 'E' THEN tlts_dfac ELSE 0 END) lts_est,
 			sum(case when tid_dfac = 'E' THEN tlts_dfac*pru_dfac ELSE 0 END) imp_est,
 			sum(case when tid_dfac = 'E' THEN impasi_dfac ELSE 0 END) asi_est,
@@ -73,6 +80,7 @@ IF paramTipo = 'G' THEN
 			vserfac,
 			vfecfac,
 			vimporte,
+			vuuid,
 			vnumcte,
 			vnomcte,
 			vltsest,
@@ -91,7 +99,7 @@ IF paramTipo = 'G' THEN
 				and frf_fac is null
 				and fol_fac = fol_dfac
 				and ser_fac = ser_dfac
-		GROUP BY 1,2,8
+		GROUP BY 1,2,9
 		ORDER BY 1,2 
 		
 		SELECT  nom_pla 
@@ -105,6 +113,7 @@ IF paramTipo = 'G' THEN
 			vserfac,
 			vfecfac,
 			vimporte,
+			vuuid,
 			vnumcte,
 			vnomcte,
 			vltsest,
@@ -118,9 +127,10 @@ IF paramTipo = 'G' THEN
 			vasicil
 		WITH RESUME;
 	END FOREACH;
-ELSE
+END IF;
+IF paramTipo = 'D' THEN
 	FOREACH cFacturas FOR
-		SELECT 	cia_fac, pla_fac,fol_fac,ser_fac,fec_fac, NVL(impt_fac,0), numcte_fac,
+		SELECT 	cia_fac, pla_fac,fol_fac,ser_fac,fec_fac, NVL(impt_fac,0), uuid_fac, numcte_fac,
 				(case when trim(razsoc_cte) > '' THEN razsoc_cte 
 				ELSE trim(nom_cte)||" "||trim(ape_cte) END),
 				sum(case when tid_dfac = 'E' THEN tlts_dfac ELSE 0 END) lts_est,
@@ -144,6 +154,7 @@ ELSE
 				vserfac,
 				vfecfac,
 				vimporte,
+				vuuid,
 				vnumcte,
 				vnomcte,
 				vltsest,
@@ -168,34 +179,217 @@ ELSE
 				--and cia_fac = cia_dfac
 				--and pla_fac = pla_dfac
 				and numcte_fac = num_cte
-		GROUP BY 1,2,3,4,5,6,7,8		
+		GROUP BY 1,2,3,4,5,6,7,8,9		
 		UNION ALL
-		SELECT 	cia_fac, pla_fac,fol_fac,ser_fac,fec_fac, NVL(impt_fac,0), numcte_fac,'C A N C E L A D O',
+		SELECT 	cia_fac, pla_fac,fol_fac,ser_fac,fec_fac, NVL(impt_fac,0), uuid_fac, numcte_fac,'CANCELADO ' || 
+				(case when trim(razsoc_cte) > '' THEN razsoc_cte 
+				ELSE trim(nom_cte)||" "||trim(ape_cte) END),
 				0,0,0,0,0,0,0,0,0
-		FROM 	factura
+		FROM 	factura, cliente
 		WHERE 	fec_fac between paramFecIni and paramFecFin
 				and (cia_fac = paramCia OR paramCia IS NULL)
 				and (pla_fac = paramPla OR paramPla IS NULL)
 				and (numcte_fac = paramCte OR paramCte IS NULL)
 		  		and tdoc_fac = 'I'
 			  	and edo_fac = 'C'
+			  	and numcte_fac = num_cte
 		UNION ALL
-		SELECT 	cia_fac, pla_fac,fol_fac,ser_fac,fec_fac, NVL(impt_fac,0), numcte_fac,('SUBTITUYE '||frf_fac||srf_fac),
+		SELECT 	cia_fac, pla_fac,fol_fac,ser_fac,fec_fac, NVL(impt_fac,0), uuid_fac, numcte_fac,('SUSTITUYE '||frf_fac||srf_fac || ' '||
+				(case when trim(razsoc_cte) > '' THEN razsoc_cte 
+				ELSE trim(nom_cte)||" "||trim(ape_cte) END)),
 				0,0,0,0,0,0,0,0,0
-		FROM 	factura
+		FROM 	factura, cliente
 		WHERE 	fec_fac between paramFecIni and paramFecFin
 				and (cia_fac = paramCia OR paramCia IS NULL)
 				and (pla_fac = paramPla OR paramPla IS NULL)
 				and (numcte_fac = paramCte OR paramCte IS NULL)
 		  		and tdoc_fac = 'I'
 		  		and frf_fac is not null
-		order by 1,2,3,4,5,6,7
+		  		and numcte_fac = num_cte
+		order by 1,2,3,4,5,6,7,8
 		RETURN 	vcia,
 				vpla,
 				vfolfac,
 				vserfac,
 				vfecfac,
 				vimporte,
+				vuuid,
+				vnumcte,
+				vnomcte,
+				vltsest,
+				vimpest,
+				vasiest,
+				vltscar,
+				vimpcar,
+				vasicar,
+				vkgscil,
+				vimpcil,
+				vasicil
+		WITH RESUME;
+	END FOREACH;
+END IF;
+
+IF paramTipo = 'F' THEN
+	FOREACH cFacturas FOR
+		SELECT 	cia_fac, pla_fac,fol_fac,ser_fac,fec_fac, NVL(impt_fac,0), uuid_fac, numcte_fac,'CANCELADO ' || 
+				(case when trim(razsoc_cte) > '' THEN razsoc_cte 
+				ELSE trim(nom_cte)||" "||trim(ape_cte) END),
+				0,0,0,0,0,0,0,0,0
+		INTO	vcia,
+				vpla,
+				vfolfac,
+				vserfac,
+				vfecfac,
+				vimporte,
+				vuuid,
+				vnumcte,
+				vnomcte,
+				vltsest,
+				vimpest,
+				vasiest,
+				vltscar,
+				vimpcar,
+				vasicar,
+				vkgscil,
+				vimpcil,
+				vasicil
+		FROM 	factura, cliente
+		WHERE 	fec_fac between paramFecIni and paramFecFin
+				and (cia_fac = paramCia OR paramCia IS NULL)
+				and (pla_fac = paramPla OR paramPla IS NULL)
+				and (numcte_fac = paramCte OR paramCte IS NULL)
+		  		and tdoc_fac = 'I'
+			  	and edo_fac = 'C'
+			  	and numcte_fac = num_cte
+		UNION ALL		
+		SELECT 	cia_fac, pla_fac,fol_fac,ser_fac,fec_fac, NVL(impt_fac,0), uuid_fac, numcte_fac,('SUSTITUYE '||frf_fac||srf_fac || ' '||
+				(case when trim(razsoc_cte) > '' THEN razsoc_cte 
+				ELSE trim(nom_cte)||" "||trim(ape_cte) END)),
+				0,0,0,0,0,0,0,0,0		
+		FROM 	factura, cliente
+		WHERE 	fec_fac between paramFecIni and paramFecFin
+				and (cia_fac = paramCia OR paramCia IS NULL)
+				and (pla_fac = paramPla OR paramPla IS NULL)
+				and (numcte_fac = paramCte OR paramCte IS NULL)
+		  		and tdoc_fac = 'I'
+		  		and frf_fac is not null
+		  		and numcte_fac = num_cte
+		RETURN 	vcia,
+				vpla,
+				vfolfac,
+				vserfac,
+				vfecfac,
+				vimporte,
+				vuuid,
+				vnumcte,
+				vnomcte,
+				vltsest,
+				vimpest,
+				vasiest,
+				vltscar,
+				vimpcar,
+				vasicar,
+				vkgscil,
+				vimpcil,
+				vasicil
+		WITH RESUME;
+	END FOREACH;
+END IF;
+IF paramTipo = 'C' THEN
+	FOREACH cFacturas FOR
+		SELECT 	cia_fac, pla_fac,fol_fac,ser_fac,fec_fac, NVL(impt_fac,0), uuid_fac, numcte_fac,'CANCELADO ' || 
+				(case when trim(razsoc_cte) > '' THEN razsoc_cte 
+				ELSE trim(nom_cte)||" "||trim(ape_cte) END),
+				0,0,0,0,0,0,0,0,0
+		INTO	vcia,
+				vpla,
+				vfolfac,
+				vserfac,
+				vfecfac,
+				vimporte,
+				vuuid,
+				vnumcte,
+				vnomcte,
+				vltsest,
+				vimpest,
+				vasiest,
+				vltscar,
+				vimpcar,
+				vasicar,
+				vkgscil,
+				vimpcil,
+				vasicil
+		FROM 	factura, cliente
+		WHERE 	fec_fac between paramFecIni and paramFecFin
+				and (cia_fac = paramCia OR paramCia IS NULL)
+				and (pla_fac = paramPla OR paramPla IS NULL)
+				and (numcte_fac = paramCte OR paramCte IS NULL)
+		  		and tdoc_fac = 'I'
+			  	and edo_fac = 'C'
+			  	and numcte_fac = num_cte
+		order by 8
+		RETURN 	vcia,
+				vpla,
+				vfolfac,
+				vserfac,
+				vfecfac,
+				vimporte,
+				vuuid,
+				vnumcte,
+				vnomcte,
+				vltsest,
+				vimpest,
+				vasiest,
+				vltscar,
+				vimpcar,
+				vasicar,
+				vkgscil,
+				vimpcil,
+				vasicil
+		WITH RESUME;
+	END FOREACH;
+END IF;
+
+IF paramTipo = 'R' THEN
+	FOREACH cFacturas FOR
+		SELECT 	cia_fac, pla_fac,fol_fac,ser_fac,fec_fac, NVL(impt_fac,0), uuid_fac, numcte_fac,('SUSTITUYE '||frf_fac||srf_fac || ' '||
+				(case when trim(razsoc_cte) > '' THEN razsoc_cte 
+				ELSE trim(nom_cte)||" "||trim(ape_cte) END)),
+				0,0,0,0,0,0,0,0,0
+		INTO	vcia,
+				vpla,
+				vfolfac,
+				vserfac,
+				vfecfac,
+				vimporte,
+				vuuid,
+				vnumcte,
+				vnomcte,
+				vltsest,
+				vimpest,
+				vasiest,
+				vltscar,
+				vimpcar,
+				vasicar,
+				vkgscil,
+				vimpcil,
+				vasicil
+		FROM 	factura, cliente
+		WHERE 	fec_fac between paramFecIni and paramFecFin
+				and (cia_fac = paramCia OR paramCia IS NULL)
+				and (pla_fac = paramPla OR paramPla IS NULL)
+				and (numcte_fac = paramCte OR paramCte IS NULL)
+		  		and tdoc_fac = 'I'
+		  		and frf_fac is not null
+		  		and numcte_fac = num_cte
+		order by 8
+		RETURN 	vcia,
+				vpla,
+				vfolfac,
+				vserfac,
+				vfecfac,
+				vimporte,
+				vuuid,
 				vnumcte,
 				vnomcte,
 				vltsest,
@@ -212,6 +406,7 @@ ELSE
 END IF;
 
 END PROCEDURE; 
+
 
 SELECT 	cia_fac, pla_fac, sum(case when tid_dfac = 'E' THEN tlts_dfac ELSE 0 END) lts_est,
 		sum(case when tid_dfac = 'E' THEN tlts_dfac*pru_dfac ELSE 0 END) imp_est,
@@ -244,6 +439,16 @@ WHERE 	fec_fac between '2023-05-01' and '2023-05-31'
 		and pla_fac = pla_dfac
 GROUP BY 1,2
 
+SELECT 	cia_fac, pla_fac,fol_fac,ser_fac,fec_fac, NVL(impt_fac,0), numcte_fac,'CANCELADO ' || 
+		(case when trim(razsoc_cte) > '' THEN razsoc_cte 
+		ELSE trim(nom_cte)||" "||trim(ape_cte) END),
+		0,0,0,0,0,0,0,0,0
+FROM 	factura, cliente
+WHERE 	fec_fac between '2023-09-01' and '2023-09-30'		
+  		and tdoc_fac = 'I'
+	  	and edo_fac = 'C'
+	  	and numcte_fac = num_cte
+	  	
 SELECT 	cia_fac, pla_fac, (select nom_pla from planta where cia_pla = cia_fac and cve_pla = pla_fac) nom_pla, 
 		sum(case when tid_dfac = 'E' THEN tlts_dfac ELSE 0 END) lts_est,
 		sum(case when tid_dfac = 'E' THEN tlts_dfac*pru_dfac ELSE 0 END) imp_est,

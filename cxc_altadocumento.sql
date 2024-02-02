@@ -1,5 +1,5 @@
 DROP PROCEDURE cxc_altadocumento;
-EXECUTE PROCEDURE  cxc_altadocumento(492387,'15','09',3,'01','','fuente');
+EXECUTE PROCEDURE  cxc_altadocumento(239693,'15','85',1,'01','','fuente');
 
 CREATE PROCEDURE cxc_altadocumento
 (
@@ -25,7 +25,7 @@ DEFINE vimpasi 	DECIMAL;
 DEFINE vuso		CHAR(1);
 DEFINE vtpa		CHAR(1);
 DEFINE vfecha 	DATE;
-DEFINE vffis 	INT;
+DEFINE vffis 	DECIMAL;
 DEFINE vfolfac 	INT;
 DEFINE vserfac 	CHAR(4);
 DEFINE vdcre 	SMALLINT;
@@ -71,7 +71,7 @@ IF EXISTS(SELECT 	1
 			VALUES(vcte,paramTipo,paramTipo,paramFol,vffis,paramSer,paramCia,paramPla,vfolfac,vserfac,1,'A',vtpa,vuso,vimpt,vfecha,TODAY,vfechav,'APLXSYS',paramUsr,null,paramVuelta);
 		  	
 			--ACTUALIZA SALDOS DEL CLIENTE-----------------------------------------------------------------
-			SELECT	saldo_cte, abono_cte, cargo_cte, fecuab_cte
+			SELECT	saldo_cte, abono_cte, cargo_cte, fecuca_cte
 			INTO	vctesal, vcteabo, vctecar, vctefecu
 			FROM	cliente
 			WHERE	num_cte = vcte;		
@@ -89,7 +89,7 @@ IF EXISTS(SELECT 	1
 			UPDATE	cliente
 			SET		saldo_cte = vctesal,
 					cargo_cte = vctecar,
-					fecuab_cte= vctefecu
+					fecuca_cte = vctefecu
 			WHERE	num_cte = vcte;
 			
 			--ACTUALIZA NOTA DE VENTA-----------------------------------------------------------------
@@ -115,14 +115,22 @@ END PROCEDURE;
 
 select	*
 from	doctos 
-where	fol_doc in(491646) and cte_doc = '087996'
+where	fol_doc in(239693) and vuelta_doc = 1
+
+delete
+from	doctos
+where	fol_doc in(491646) and  vuelta_doc = 1
 
 select	*
 from	mov_cxc
-where	doc_mcxc in(491646) and pla_mcxc ='09' and cte_mcxc = '087996' and tpm_mcxc = '50'
+where	doc_mcxc in(491646) and vuelta_mcxc = 1 and cte_mcxc = '087996' and tpm_mcxc = '50'
+
+delete
+from	mov_cxc
+where	doc_mcxc in(491646) and vuelta_mcxc = 1
 
 select	*
-from	nota_vta
+from	rdnota_vta
 where	fol_nvta = 491646
 
 update	mov_cxc
@@ -223,3 +231,15 @@ where	vuelta_mcxc is null
 update	mov_cxc
 set		vuelta_mcxc = -1
 where	tip_mcxc = '03' and vuelta_mcxc is null
+
+delete
+from	e_posaj
+where 	epo_fec = '2020-10-02'
+
+SELECT	numcte_nvta, tpa_nvta, fes_nvta, uso_nvta, ffis_nvta, impt_nvta, fac_nvta, ser_nvta, NVL(impasi_nvta,0)
+FROM	nota_vta
+WHERE	fol_nvta = 239693 AND cia_nvta = '15' AND pla_nvta = '85' AND vuelta_nvta = 1;
+
+SELECT	saldo_cte, abono_cte, cargo_cte, fecuca_cte
+FROM	cliente
+WHERE	num_cte = '000486';

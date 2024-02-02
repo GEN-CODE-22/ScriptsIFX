@@ -1,5 +1,5 @@
 DROP PROCEDURE QRY_DetLiqCob;
-EXECUTE PROCEDURE  QRY_DetLiqCob(23625);
+EXECUTE PROCEDURE  QRY_DetLiqCob(65871);
 
 CREATE PROCEDURE QRY_DetLiqCob
 (
@@ -40,7 +40,7 @@ DEFINE vnum     SMALLINT;
 DEFINE vfom     CHAR(1);
 DEFINE vtip     CHAR(2);
 DEFINE vfolio   INT;
-DEFINE vffis    INT;
+DEFINE vffis    DECIMAL;
 DEFINE vserie   CHAR(4);
 DEFINE vcia     CHAR(2);
 DEFINE vpla     CHAR(2);

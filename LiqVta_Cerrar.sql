@@ -1,12 +1,29 @@
 DROP PROCEDURE LiqVta_Cerrar;
 EXECUTE PROCEDURE  LiqVta_Cerrar(2835, 'AP01','A','laura'); 	-- ANDEN
-EXECUTE PROCEDURE  LiqVta_Cerrar(1562, 'B008','B','ivonn'); 	-- MEDIDOR
-EXECUTE PROCEDURE  LiqVta_Cerrar(5273, 'M007','E','ivonn'); 	-- PIPA
-EXECUTE PROCEDURE  LiqVta_Cerrar(7184, 'C001','C','ivonn'); 	-- CILINDRO
+EXECUTE PROCEDURE  LiqVta_Cerrar(9098, 'B008','B','jocelin'); 	-- MEDIDOR
+EXECUTE PROCEDURE  LiqVta_Cerrar(3409, 'M027','E','edith'); 	-- PIPA
+EXECUTE PROCEDURE  LiqVta_Cerrar(7880, 'C007','C','esther'); 	-- CILINDRO
 
--- SJI 1562  B008
--- SJI 9640  B002
--- MOR 10712 A001
+select	rowid,*
+from	vtaxemp 
+where	ruta_vemp in('M001') and fec_vemp >= '2024-01-12'
+
+delete
+from	vtaxemp
+where	ruta_vemp in('M001') and fec_vemp = '2024-01-12' and coa_vemp = '29'
+
+
+select	rowid,*
+from	vtaxemp 
+where	ruta_vemp[1] = 'B' and fec_vemp >= '2024-01-05'
+
+select	rowid,*
+from	vtaxemp 
+where	coa_vemp = '29' and fec_vemp >= '2023-12-12'
+
+update	empxrutc
+set		edo_eruc = 'P'
+where	fliq_eruc = 7646 and rut_eruc = 'C002'
 
 CREATE PROCEDURE LiqVta_Cerrar
 (
@@ -134,7 +151,14 @@ IF paramTipo = 'B' THEN
 		
 		LET vproceso,vmsg = LiqVta_ProcNvta(paramFolio, paramRuta,'B',paramUsr);
 		IF vproceso = 1 THEN
-			LET vmensaje = 'OK';
+			IF vtlts > 0 THEN
+				LET vproceso,vmsg = LiqVta_emperum(paramFolio, paramRuta);
+			END IF;
+			IF vproceso = 1 THEN
+				LET vmensaje = 'OK';
+			ELSE
+				LET vmensaje = 'ERROR AL REGISTAR LA VENTA DEL EMPLEADO';
+			END IF;
 		ELSE
 			LET vmensaje = 'ERROR AL PROCESAR NOTAS DE VENTA';
 		END IF;
@@ -236,43 +260,67 @@ END PROCEDURE;
 
 select	*
 from	empxrutp
-where	fec_erup >= '2023-05-16' and rut_erup = 'M007'
+where	fec_erup >= '2024-01-12' and rut_erup = 'M001'
+
+
+update	empxrutp
+set		edo_erup = 'P'
+where	fec_erup = '2023-09-25' and rut_erup = 'M021'
+
 
 select * 
 from	venxmed
-where	fec_vmed >= '2023-05-20'
+where	fec_vmed >= '2024-01-13' and rut_vmed = 'B002'
+
+
+update	venxmed
+set		edo_vmed = 'P'
+where	fec_vmed = '2023-09-25' and rut_vmed = 'BP02' and fliq_vmed = 3925
 
 select * 
 from	des_dir
-where	fec_desd >= '2023-04-24'
+where	fec_desd >= '2023-10-02'
 
 select	*
-from	empxrutc
-where	fec_eruc = '2023-06-26' and rut_eruc = 'C008'
+from	empxrutc where fec_eruc = '2024-01-05' and rut_eruc = 'C010' fliq_eruc = 6546
+where	fec_eruc = '2023-12-14' order by rut_eruc and rut_eruc = 'C010'
 
 update	empxrutc
-set		impasi_eruc = 5.80, impase_eruc = 5.80
-where	fec_eruc = '2023-05-17' and rut_eruc = 'C048'
+set		edo_eruc = 'P' --, impase_eruc = 0.00
+where	fec_eruc = '2023-12-13' and rut_eruc = 'C025' and fliq_eruc = 8201
 
 select * 
 from	venxand
-where	fec_vand = '2023-06-17'
+where	fec_vand = '2023-12-15'
 
 update	venxand
-set		edo_vand = 'P'
-where	fliq_vand = 2827
+set		edo_vand = 'C'
+where	fliq_vand = 4291 and rut_vand = 'A010'
 
 select * 
 from	gto_gas
-where	fec_ggas >= '2023-04-24'
+where	fec_ggas = '2023-11-28'
 
 select * 
 from	gto_die
-where	fec_gdie >= '2023-04-24'
+where	fec_gdie = '2023-10-05'
+
+update	gto_die
+set		tlts_gdie = 179.00, impt_gdie = 3753.63
+where	fliq_gdie = 2337 and rut_gdie = 'H002'
+
+
+select	*
+from	det_odom
+where	fol_dodom in( 14412,14413)
+
+update	det_odom
+set		neco_dodom = 'OD-0127'
+where	fol_dodom = 14413
 
 select	*
 from	nota_vta
-where	fliq_nvta = 506 and ruta_nvta = 'C002' and tpa_nvta = 'C'
+where	fliq_nvta = 2466 and ruta_nvta = 'M032' and tpa_nvta = 'C'
 
 select	tpa_nvta, sum(impt_nvta), sum(impasi_nvta)
 from	nota_vta 
@@ -335,11 +383,11 @@ where 	num_ped in(3037046,3040507,3042730,3042238,3042257,3042261,3042874,304291
 
 select	*
 from	doctos
-where	fol_doc in(144364,144451,144700) and vuelta_doc = 3
+where	fol_doc in(173913,173914) and vuelta_doc = 3
 
 select	*
 from	mov_cxc
-where	doc_mcxc in(144364,144451,144700) and vuelta_mcxc = 3
+where	doc_mcxc in(173913,173914) and vuelta_mcxc = 3
 
 SELECT	fec_vand, NVL(tkgs_vand, 0), NVL(kefe_vand,0) + NVL(kcrd_vand,0) + NVL(kpar_vand,0), NVL(impt_vand,0), 
 			NVL(icrd_vand,0) + NVL(iefe_vand,0), NVL(impasc_vand,0) + NVL(impase_vand,0), NVL(tkgs_vand, 0)
@@ -377,11 +425,11 @@ where	fol_nvta in(327559,329126)
 
 select	*
 from	empxrutp
-where	fec_erup = '2020-05-11' and rut_erup in('MG04','MG05') and pcs_erup = 'A'
+where	fec_erup = '2023-11-07' and rut_erup in('M021','M023') and pcs_erup = 'A'
 
 select	rowid,*
 from	vtaxemp
-where	ruta_vemp in('M007') and fec_vemp = '2023-05-16'
+where	ruta_vemp in('M021') and fec_vemp >= '2023-11-06'
 
 insert into vtaxemp values('2726','2020-04-29','46','CP13',16,450.00,'K',0)
 
@@ -410,3 +458,15 @@ where	pla_nvta = '40' and fol_nvta = 12550 and vuelta_nvta = 2
 select	*
 from	ruta
 order by cve_rut
+
+
+select	*
+from	nota_vta
+where	fes_nvta = '2023-09-25' and edo_nvta = 'A'
+
+select	fliq_nvta, ruta_nvta
+from	nota_vta
+where	fes_nvta = '2023-09-25' and edo_nvta = 'A'
+		and tip_nvta in('C','D','2','3','4')
+group by 1,2
+order by 2

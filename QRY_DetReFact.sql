@@ -1,11 +1,12 @@
 DROP PROCEDURE QRY_DetReFact;
-EXECUTE PROCEDURE  QRY_DetReFact('188519','E');
+EXECUTE PROCEDURE  QRY_DetReFact('097672','E','1','2023-07-31');
 
 CREATE PROCEDURE QRY_DetReFact
 (
 	paramCte  CHAR(6),
 	paramTpa  CHAR(1),
-	paramTipo CHAR(1)  -- 2 refacturacion motivo 02, 1 refacturacion motivo 01
+	paramTipo CHAR(1),  -- 2 refacturacion motivo 02, 1 refacturacion motivo 01
+	paramFecha DATE
 )
 
 RETURNING  

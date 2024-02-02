@@ -6,7 +6,7 @@ EXECUTE PROCEDURE  LiqVta_Verif(11441, 'B003','B','2023-07-22',1257.00,1257.00,1
 EXECUTE PROCEDURE  LiqVta_Verif(7083, 'C014','C','2023-04-19',85.00,85.00,1556.35,1556.35,29.00,85.00);
 EXECUTE PROCEDURE  LiqVta_Verif(17786, 'A001','A','2023-06-13',5.00,5.00,87.70,87.70,0.00,5.00);
 EXECUTE PROCEDURE  LiqVta_Verif(2820, 'AP01','A','2023-04-19',70.00,70.00,1281.70,1281.70,0.00,70.00);
-EXECUTE PROCEDURE  LiqVta_Verif(612, 'O001','G','2023-04-19',104.70,104.70,2564.10,2564.10,0.00,104.70);
+EXECUTE PROCEDURE  LiqVta_Verif(670, 'O001','G','2023-04-19',104.70,104.70,2564.10,2564.10,0.00,104.70);
 EXECUTE PROCEDURE  LiqVta_Verif(14441, 'B003','S','2023-04-19',89.00,89.00,1013.71,1013.71,0.00,89.00);
 
 SELECT	fec_erup, NVL(tot_erup,0), NVL(lcre_erup,0) + NVL(lefe_erup,0) + NVL(lpar_erup,0) + NVL(lotr_erup,0), NVL(imp_erup,0), 
@@ -125,13 +125,13 @@ END IF;
 --REVISA SI HAY ALGUNA NOTA CON PRECIO INCORRCTO-------------------------------------------------------------------------------------
 IF	EXISTS(SELECT 1 FROM nota_vta 
 	WHERE fliq_nvta = paramFolio AND ruta_nvta = paramRuta AND edo_nvta in('A','S') 
-	AND (pru_nvta * tlts_nvta) <> impt_nvta) THEN
+	AND ((impt_nvta - (tlts_nvta * pru_nvta) < -0.1) OR  (impt_nvta - (tlts_nvta * pru_nvta) > 0.1))) THEN
 	
 	SELECT  MIN(fol_nvta)
 	INTO   	vfolio
 	FROM 	nota_vta 
 	WHERE 	fliq_nvta = paramFolio AND ruta_nvta = paramRuta AND edo_nvta in('A','S') 
-			AND (pru_nvta * tlts_nvta) <> impt_nvta;
+			AND ((impt_nvta - (tlts_nvta * pru_nvta) < -0.1) OR  (impt_nvta - (tlts_nvta * pru_nvta) > 0.1));
 	LET vresult = 0;
 	LET vmensaje = 'LIQUIDACION: ' || paramFolio || ' RUTA: ' || paramRuta || ' TIENE NOTAS CON PRECIO INCORRECTO. NOTA: ' || vfolio ;
 	RETURN 	vresult,vmensaje;
@@ -302,3 +302,9 @@ SELECT  MIN(fol_nvta)
 FROM 	nota_vta 
 WHERE 	fliq_nvta = 11441 AND ruta_nvta = 'B003' AND edo_nvta in('A','S') 
 		AND (pru_nvta * tlts_nvta) <> impt_nvta;
+		
+SELECT *
+FROM nota_vta 
+	WHERE fliq_nvta = 670 AND ruta_nvta = 'O001' AND edo_nvta in('A','S') 	
+	AND ((impt_nvta - (tlts_nvta * pru_nvta) < -0.01) OR  (impt_nvta - (tlts_nvta * pru_nvta) > 0.01))
+			AND ((pru_nvta * tlts_nvta) <> impt_nvta)

@@ -25,7 +25,7 @@ IF LENGTH(v_pcre) = 0 THEN
 	SELECT	NVL(TRIM(pcre_pla), '')
 	INTO	v_pcre
 	FROM	planta
-	WHERE   cve_pla = paramPla;
+	WHERE   cia_pla = paramCia AND cve_pla = paramPla;
 END IF;
 
 LET v_pcre = TRIM(v_pcre) || '-' || TO_CHAR(paramFecha, '%y%m%d') || paramCia || paramPla || LPAD(paramFolio,6,'0');

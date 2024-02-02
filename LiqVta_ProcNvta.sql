@@ -1,5 +1,5 @@
 DROP PROCEDURE LiqVta_ProcNvta;
-EXECUTE PROCEDURE  LiqVta_ProcNvta(7564, 'M003','E','fuente');
+EXECUTE PROCEDURE  LiqVta_ProcNvta(4347, 'B021','B','edith');
 
 CREATE PROCEDURE LiqVta_ProcNvta
 (
@@ -80,7 +80,7 @@ FOREACH cNotas FOR
 		SELECT	NVL(gps_mnvta,'')
 		INTO	vgps
 		FROM	movxnvta
-		WHERE	cia_mnvta = vcia AND pla_mnvta = vpla AND fol_mnvta = vfolio AND vuelta_mnvta = vvuelta;
+		WHERE	cia_mnvta = vcia AND pla_mnvta = vpla AND fol_mnvta = vfolio AND vuelta_mnvta = vvuelta and mov_mnvta = 1;
 		
 		IF vgps = '' OR vgps IS NULL THEN
 			SELECT	NVL(gps_tqe,'')
@@ -100,7 +100,7 @@ FOREACH cNotas FOR
 		SELECT	EXTEND(fhs_mnvta, HOUR TO MINUTE)
 		INTO	vhoras
 		FROM	movxnvta
-		WHERE	cia_mnvta = vcia AND pla_mnvta = vpla AND fol_mnvta = vfolio AND vuelta_mnvta = vvuelta;
+		WHERE	cia_mnvta = vcia AND pla_mnvta = vpla AND fol_mnvta = vfolio AND vuelta_mnvta = vvuelta and mov_mnvta = 1;
 		
 		UPDATE	pedidos
 		SET		edo_ped = 'S',
@@ -136,3 +136,22 @@ from	gto_gas
 select * 
 from	gto_die
 
+SELECT	cia_nvta, pla_nvta, fol_nvta, vuelta_nvta, NVL(impasi_nvta, 0), napl_nvta, tpa_nvta, impt_nvta, 
+		NVL(numtqe_nvta,0), numcte_nvta, usr_nvta, NVL(ped_nvta,0), fes_nvta
+FROM	nota_vta 
+WHERE	fliq_nvta = 4347 AND ruta_nvta = 'B021'
+
+execute procedure ucpc_tqe('2023-11-05',091723,4);
+
+SELECT	*
+FROM	movxnvta
+WHERE	cia_mnvta = '15' AND pla_mnvta ='44' AND fol_mnvta = 311174 AND vuelta_mnvta = 1 and mov_mnvta = 1;
+
+SELECT	NVL(gps_mnvta,'')
+FROM	movxnvta
+WHERE	cia_mnvta = '15' AND pla_mnvta = '44' AND fol_mnvta = 311174 AND vuelta_mnvta = 1 and mov_mnvta = 1;
+select	*
+from	pedidos
+where   num_ped = 3281223
+311174
+311176
