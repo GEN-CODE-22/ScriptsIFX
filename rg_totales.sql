@@ -104,7 +104,7 @@ DEFINE vencstotefe 	DECIMAL(16,2); -- SUBTOTAL NOTAS DE CREDITO EFECTIVO
 DEFINE vencivaefe  	DECIMAL(16,2); -- IVA NOTAS DE CREDITO EFECTIVO
 DEFINE vcnctotcre  	DECIMAL(16,2); -- TOTAL NOTAS DE CREDITO A CREDITO(BONIFICACION CREDITO)
 DEFINE vcncstotcre 	DECIMAL(16,2); -- SUBTOTALNOTAS DE CREDITO A CREDITO
-DEFINE vcncivacre  	DECIMAL(16,2); -- IVA OTAS DE CREDITO A CREDITO
+DEFINE vcncivacre  	DECIMAL(16,2); -- IVA NOTAS DE CREDITO A CREDITO
 DEFINE vctotfac   	DECIMAL(16,2); -- TOTAL FACTURAS CANCELADAS
 DEFINE vcstotfac  	DECIMAL(16,2); -- SUBTOTAL FACTURAS CANCELADAS
 DEFINE vcivafac   	DECIMAL(16,2); -- IVA FACTURAS CANCELADAS
@@ -161,6 +161,30 @@ DEFINE xanio1     SMALLINT;
 DEFINE viva  	  DECIMAL(16,2); -- IVA 
 DEFINE vsiva  	  DECIMAL(16,2); -- SUBTOTAL IVA 
 
+LET vasiscil = 0;
+LET vasismed = 0;
+LET vtotasis = 0;
+LET vatotfac = 0;
+LET vastotfac = 0;
+LET vaivafac = 0;
+LET vptotfac = 0;
+LET vpstotfac = 0;
+LET vpivafac = 0;
+LET vpatotfac = 0;
+LET vpastotfac = 0;
+LET vpaivafac = 0;
+
+LET vctotfac = 0;
+LET vcstotfac = 0;
+LET vcivafac = 0;
+LET vcatotfac = 0;
+LET vcastotfac = 0;
+LET vcaivafac = 0;
+
+LET vatotefe = 0;
+LET vastotefe = 0;
+LET vaivaefe = 0;
+
 LET viva = 0.16;
 LET vsiva = 1.16;
 
@@ -187,9 +211,9 @@ LET xfecd  = xfecd - xdia2 - xdia + 1;
 -- VENTA ESTACIONARIO
 IF paramFecIni < xfecd THEN
   	SELECT	NVL(SUM(CASE WHEN tip_nvta = 'E' THEN impt_nvta ELSE 0 END),0.00),
-         	NVL(SUM(CASE WHEN tip_nvta = 'B' THEN impt_nvta ELSE 0 END),0.00),
-         	NVL(SUM(CASE WHEN asiste_nvta = 'S' THEN impasi_nvta ELSE 0 END),0.00)
-    INTO 	vvtaest,vvtacar,vtotasis
+         	NVL(SUM(CASE WHEN tip_nvta = 'B' THEN impt_nvta ELSE 0 END),0.00)--,
+         	--NVL(SUM(CASE WHEN asiste_nvta = 'S' THEN impasi_nvta ELSE 0 END),0.00)
+    INTO 	vvtaest,vvtacar--,vtotasis
     FROM 	urdnota_vta
     WHERE 	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin
        		AND ruta_nvta[1] = 'M'
@@ -197,9 +221,9 @@ IF paramFecIni < xfecd THEN
 	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S');
 ELSE
   	SELECT  NVL(SUM(CASE WHEN tip_nvta = 'E' THEN impt_nvta ELSE 0 END),0.00),
-         	NVL(SUM(CASE WHEN tip_nvta = 'B' THEN impt_nvta ELSE 0 END),0.00),
-     		NVL(SUM(CASE WHEN asiste_nvta = 'S' THEN impasi_nvta ELSE 0 END),0.00)
-    INTO 	vvtaest,vvtacar,vtotasis
+         	NVL(SUM(CASE WHEN tip_nvta = 'B' THEN impt_nvta ELSE 0 END),0.00)--,
+     		--NVL(SUM(CASE WHEN asiste_nvta = 'S' THEN impasi_nvta ELSE 0 END),0.00)
+    INTO 	vvtaest,vvtacar--,vtotasis
     FROM 	nota_vta
     WHERE 	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin
        		AND ruta_nvta[1] = 'M'
@@ -208,17 +232,17 @@ ELSE
 END IF;
 
 -- VENTA PORTATIL
-SELECT	NVL(SUM(impt_eruc),0.00),NVL(SUM(impasi_eruc),0.00)
-INTO 	vvtacil, vasiscil
+SELECT	NVL(SUM(impt_eruc),0.00)--,NVL(SUM(impasi_eruc),0.00)
+INTO 	vvtacil--, vasiscil
 FROM 	empxrutc
 WHERE 	fec_eruc >= paramFecIni AND fec_eruc <= paramFecFin
 		AND edo_eruc = 'C';
 		
-SELECT 	NVL(SUM(impasi_eruc),0.00)
+/*SELECT 	NVL(SUM(impasi_eruc),0.00)
 INTO 	vasiscil
 FROM 	empxrutcbaj
 WHERE 	fec_eruc >= paramFecIni AND fec_eruc <= paramFecFin
-		AND edo_eruc = 'C';
+		AND edo_eruc = 'C';*/
 
 SELECT 	NVL(SUM(impt_vand),0.00)
 INTO 	vvtaand
@@ -235,8 +259,8 @@ WHERE 	fec_desd >= paramFecIni AND fec_desd <= paramFecFin
 LET vvtacil = vvtacil + vvtaand + vvtadesd;		
         
 -- VENTA CARBURACION
-SELECT 	NVL(SUM(impt_vmed),0.00),NVL(SUM(impasi_vmed),0.00)
-INTO 	vvtamed,vasismed
+SELECT 	NVL(SUM(impt_vmed),0.00)--,NVL(SUM(impasi_vmed),0.00)
+INTO 	vvtamed--,vasismed
 FROM 	venxmed
 WHERE 	fec_vmed >= paramFecIni AND fec_vmed <= paramFecFin
 		AND edo_vmed = 'C';
@@ -244,7 +268,7 @@ WHERE 	fec_vmed >= paramFecIni AND fec_vmed <= paramFecFin
 LET vvtacar = vvtacar + vvtamed;
 
 -- TOTAL ASISTENCIA	
-LET vtotasis = vtotasis + vasiscil + vasismed;
+--LET vtotasis = vtotasis + vasiscil + vasismed;
 
 -- TOTAL FACTURACION
 SELECT	NVL(SUM(impt_fac),0), NVL(SUM(simp_fac),0), NVL(SUM(iva_fac),0)
@@ -277,12 +301,12 @@ WHERE 	fec_fac >= paramFecIni AND fec_fac <= paramFecFin
      	AND pla_fac = pla_dfac;*/
 
 -- SE QUITA LA ASISTENCIA DE LA FACTURACION
-LET vtotfac = vtotfac -  vatotfac;
-LET vstotfac = vstotfac - vastotfac;
-LET vivafac = vivafac - vaivafac;
+--LET vtotfac = vtotfac -  vatotfac;
+--LET vstotfac = vstotfac - vastotfac;
+--LET vivafac = vivafac - vaivafac;
 
 -- TOTAL FACTURACION PUBLICO EN GENERAL
-SELECT	NVL(SUM(impt_fac),0.00), NVL(SUM(simp_fac),0.00), NVL(SUM(iva_fac),0.00)
+/*SELECT	NVL(SUM(impt_fac),0.00), NVL(SUM(simp_fac),0.00), NVL(SUM(iva_fac),0.00)
 INTO    vptotfac,vpstotfac,vpivafac
 FROM	factura
 WHERE	fec_fac >= paramFecIni and fec_fac <= paramFecFin
@@ -294,7 +318,7 @@ WHERE	fec_fac >= paramFecIni and fec_fac <= paramFecFin
 
 LET vpatotfac = 0;
 LET vpastotfac = 0;
-LET vpaivafac = 0;
+LET vpaivafac = 0;*/
 -- TOTAL ASISTENCIA FACTURADA PUBLICO EN GENERAl
 /*SELECT 	NVL(SUM(NVL(impasi_dfac,0.00)),0.00), NVL(SUM(NVL(impasi_dfac,0.00) / vsiva),0.00),
 		NVL(SUM(NVL(impasi_dfac,0.00) / vsiva) * viva,0.00)
@@ -312,9 +336,9 @@ WHERE 	fec_fac >= paramFecIni AND fec_fac <= paramFecFin
      	AND pla_fac = pla_dfac; */  
  
 -- SE QUITA LA ASISTENCIA DE LA FACTURACION PUBLICO EN GENERAL
-LET vptotfac = vptotfac -  vpatotfac;
-LET vpstotfac = vpstotfac - vpastotfac;
-LET vpivafac = vpivafac - vpaivafac;
+--LET vptotfac = vptotfac -  vpatotfac;
+--LET vpstotfac = vpstotfac - vpastotfac;
+--LET vpivafac = vpivafac - vpaivafac;
 
 -- NOTAS CREDITO EFECTIVO
 SELECT	NVL(SUM(impt_ncrd),0.00), NVL(SUM(simp_ncrd),0.00), NVL(SUM(iva_ncrd),0.00)
@@ -371,7 +395,7 @@ WHERE 	feccan_fac >= paramFecIni AND feccan_fac <= paramFecFin
      	AND cia_fac = cia_dfac
         AND pla_fac = pla_dfac;*/
 
---  COBRANZA(PAGO BANCOS, CHEQUE , EFECTIVO)
+--  COBRANZA(TOTAL)
 SELECT 	NVL(SUM(imp_mcxc),0.00)
 INTO	vcobtot
 FROM 	mov_cxc
@@ -379,13 +403,14 @@ WHERE 	fec_mcxc >= paramFecIni AND fec_mcxc <= paramFecFin
 		AND sta_mcxc = 'A'
 		AND tpm_mcxc >= '50';
 
---  COBRANZA(PAGO BANCOS, CHEQUE , EFECTIVO)
+--  COBRANZA(PAGO BANCOS, CHEQUE , EFECTIVO, ANTICIPOS, CHEQUE POSFECHADO, COMPENSACIONES)
 SELECT 	NVL(SUM(imp_mcxc),0.00),NVL(SUM(NVL(imp_mcxc,0.00) / vsiva),0.00),NVL(SUM(NVL(imp_mcxc,0.00) / vsiva) * viva,0.00)
 INTO	vcobrtot,vcobrstot,vcobriva
 FROM 	mov_cxc
 WHERE 	fec_mcxc >= paramFecIni AND fec_mcxc <= paramFecFin
 		AND sta_mcxc = 'A'
-		AND tpm_mcxc IN('50','51','58');
+		AND tip_mcxc = '01'
+		AND tpm_mcxc IN('50','51','55','56','58','60','61','62','63');
 
 -- COBRANZA CHEQUES DEVUELTOS
 SELECT  NVL(SUM(imp_mcxc),0.00),NVL(SUM(NVL(imp_mcxc,0.00) / vsiva),0.00),NVL(SUM(NVL(imp_mcxc,0.00) / vsiva) * viva,0.00)
@@ -415,13 +440,29 @@ WHERE 	fec_mcxc >= paramFecIni  AND fec_mcxc <= paramFecFin
 		AND sta_mcxc <> 'C';
 		
 -- VENTAS EN EFECTIVO Y ASISTENCIA
-LET vvtotefe = (vvtaest + vvtacar + vvtacil) - (vcreding + vcdingtot); 
+IF paramFecIni < xfecd THEN
+  	SELECT	NVL(SUM(impt_nvta),0.00),NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
+	INTO	vvtotefe,vvstotefe,vvivaefe
+	FROM    urdnota_vta
+	WHERE	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin AND edo_nvta = 'A' 
+			AND (aju_nvta IS NULL OR aju_nvta <> 'S')
+			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta NOT IN('C','G');
+ELSE
+  	SELECT	NVL(SUM(impt_nvta),0.00),NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
+	INTO	vvtotefe,vvstotefe,vvivaefe
+	FROM    nota_vta
+	WHERE	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin AND edo_nvta = 'A' 
+			AND (aju_nvta IS NULL OR aju_nvta <> 'S')
+			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta NOT IN('C','G');
+END IF;
+		
+/*LET vvtotefe = (vvtaest + vvtacar + vvtacil) - (vcreding + vcdingtot); 
 LET vvstotefe =  vvtotefe / vsiva;
-LET vvivaefe =  vvtotefe / vsiva * viva;
+LET vvivaefe =  vvtotefe / vsiva * viva;*/
 
-LET vatotefe = vtotasis;
-LET vastotefe = NVL((NVL(vtotasis,0.00) / vsiva),0.00);
-LET vaivaefe = NVL((NVL(vtotasis,0.00) / vsiva) * viva,0.00);
+--LET vatotefe = vtotasis;
+--LET vastotefe = NVL((NVL(vtotasis,0.00) / vsiva),0.00);
+--LET vaivaefe = NVL((NVL(vtotasis,0.00) / vsiva) * viva,0.00);
 
 -- DEUDORES ABONO Y CREDITO
 SELECT  SUM(epo_cded), SUM(NVL(epo_cded,0.00) / vsiva), SUM(NVL(epo_cded,0.00) / vsiva) * viva,
@@ -610,6 +651,18 @@ WHERE 	fec_mcxc >= '2024-01-01' AND fec_mcxc <= '2024-01-22'
 		AND sta_mcxc = 'A'
 		AND tpm_mcxc = '63';	 
 		
+SELECT  *
+FROM 	mov_cxc
+WHERE 	fec_mcxc >= '2023-01-01' AND fec_mcxc <= '2024-02-14'
+		AND sta_mcxc = 'A'
+		AND tpm_mcxc = '56';	
+	
+SELECT  *
+FROM 	mov_cxc
+WHERE 	fec_mcxc >= '2023-01-01' AND fec_mcxc <= '2024-02-14'
+		AND sta_mcxc = 'A'
+		and tpm_mcxc  = '03'
+		AND tpm_mcxc = '56';	
 		
 select	15892367.47, 15892367.47 / 1.16, 15892367.47 / 1.16 * 0.16
 from    datos
