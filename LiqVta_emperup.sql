@@ -1,5 +1,5 @@
 DROP PROCEDURE LiqVta_emperup;
-EXECUTE PROCEDURE  LiqVta_emperup(7782, 'M001');
+EXECUTE PROCEDURE  LiqVta_emperup(5572, 'M008');
 
 CREATE PROCEDURE LiqVta_emperup
 (
@@ -46,16 +46,17 @@ INTO	vcia,vpla,vruta,vpcs,vchf,vay1,vay2,varuta,vfecha,vtot,vnnv
 FROM	empxrutp
 WHERE	fliq_erup = paramFolio AND rut_erup = paramRuta;
 
-IF vpla = '04' OR vpla = '05' OR vpla = '08' OR vpla = '10' OR vpla = '15' OR vpla = '20' OR vpla = '25' OR vpla = '21' OR
-   vpla = '28' OR vpla = '34' OR vpla = '46' OR vpla = '50' OR vpla = '51' OR vpla = '52' OR vpla = '53' OR vpla = '54' OR
-   vpla = '98' OR vpla = '65' AND (vruta <> 'M001' OR vruta <> 'M004' OR vruta <> 'M008') 
+IF vpla = '04' OR vpla = '05' OR vpla = '10' OR vpla = '15' OR vpla = '20' OR vpla = '25' OR vpla = '21' OR
+   vpla = '28' OR vpla = '46' OR vpla = '50' OR vpla = '51' OR vpla = '52' OR vpla = '53' OR vpla = '54' OR
+   vpla = '98' OR vpla = '65' OR vpla = '06' OR vpla = '88' OR vpla = '09' OR vpla = '40' OR vpla = '41'
+   OR vpla = '42' OR vpla = '43' OR vpla = '44' OR vpla = '85' OR vpla = '86' OR vpla = '19'AND (vruta <> 'M001' OR vruta <> 'M004' OR vruta <> 'M008') 
    OR vpla = '67' THEN
 	IF vpla = '25' OR vpla = '46' THEN
-	     SELECT SUM(tlts_nvta),count(*)
+	     SELECT NVL(SUM(tlts_nvta),0), NVL(count(*),0)
 	     INTO	vtot,vnnv
 	     FROM 	nota_vta
 	     WHERE  fliq_nvta = paramFolio AND ruta_nvta = vruta
-	            AND tip_nvta  <> 'I' AND tip_nvta  <> 'P' AND tip_nvta  <> 'F';
+	            AND tip_nvta  <> 'I' AND tip_nvta  <> 'P' AND tip_nvta  <> 'F' AND tip_nvta <> 'T';
   	ELSE
      	 SELECT NVL(SUM(tlts_nvta),0), NVL(count(*),0)
 		 INTO	vtot,vnnv
@@ -78,7 +79,7 @@ IF vpla = '01' OR vpla = '93' THEN
 		 OR   tpa_nvta = 'E' and impt_nvta <= 300)
 		 AND fliq_nvta = paramFolio
 		 AND ruta_nvta = paramRuta;
-  LET vnnv = vnnv - vnnve + vnnveo;
+  LET vnnv = vnnv - NVL(vnnve,0) + NVL(vnnveo,0);
 ELSE
   IF vpla = '12' OR vpla = '17' OR vpla = '84' OR vpla = '87' OR vpla = '92' THEN
     SELECT 	COUNT(*),((SUM(CASE WHEN tpa_nvta='E' AND 
@@ -90,7 +91,7 @@ ELSE
 		    AND tpa_nvta = 'E' and tlts_nvta <= 50
 		    AND fliq_nvta = paramFolio
 		    AND ruta_nvta = paramRuta;
-    LET vnnv = vnnv - vnnve + vnnveo;
+    LET vnnv = vnnv - NVL(vnnve,0) + NVL(vnnveo,0);
   END IF;
 END IF;
 
@@ -175,3 +176,6 @@ where	fliq_nvta = 425 and ruta_nvta = 'M032'
 SELECT 	NVL(SUM(tlts_nvta),0), NVL(count(*),0)
 FROM	nota_vta
 where 	fes_nvta = '2023-03-29'
+
+select *
+from   planta

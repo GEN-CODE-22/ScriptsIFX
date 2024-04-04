@@ -1,11 +1,11 @@
 DROP PROCEDURE LiqVta_Verif;
 
-EXECUTE PROCEDURE  LiqVta_Verif(7564, 'M003','E','2023-05-15',5727.00,5727.00,53996.29,53996.29,13.92,6503.00);
+EXECUTE PROCEDURE  LiqVta_Verif(6728, 'M021','E','2023-09-25',711.00,711.00,6948.36,6948.36,0.00,711.00);
 EXECUTE PROCEDURE  LiqVta_Verif(7711, 'M004','E','2023-04-19',3733.00,3733.00,36824.37,36824.37,0.00,3733.00);
 EXECUTE PROCEDURE  LiqVta_Verif(11441, 'B003','B','2023-07-22',1257.00,1257.00,10810.20,10810.20,00.00,1257.00);
-EXECUTE PROCEDURE  LiqVta_Verif(7083, 'C014','C','2023-04-19',85.00,85.00,1556.35,1556.35,29.00,85.00);
-EXECUTE PROCEDURE  LiqVta_Verif(17786, 'A001','A','2023-06-13',5.00,5.00,87.70,87.70,0.00,5.00);
-EXECUTE PROCEDURE  LiqVta_Verif(2820, 'AP01','A','2023-04-19',70.00,70.00,1281.70,1281.70,0.00,70.00);
+EXECUTE PROCEDURE  LiqVta_Verif(6654, 'CI02','C','2024-03-13',350.00,350.00,6825.00,6825.00,0.00,350.00);
+EXECUTE PROCEDURE  LiqVta_Verif(6651, 'A001','A','2024-03-19',5.00,5.00,87.70,87.70,0.00,5.00);
+EXECUTE PROCEDURE  LiqVta_Verif(6662, 'A001','A','2024-03-13',70.00,70.00,1540.50,1540.50,0.00,79.00);
 EXECUTE PROCEDURE  LiqVta_Verif(670, 'O001','G','2023-04-19',104.70,104.70,2564.10,2564.10,0.00,104.70);
 EXECUTE PROCEDURE  LiqVta_Verif(14441, 'B003','S','2023-04-19',89.00,89.00,1013.71,1013.71,0.00,89.00);
 
@@ -82,6 +82,13 @@ IF EXISTS(SELECT 1 FROM ruta_enuso WHERE fliq_renuso = paramFolio AND ruta_renus
 	RETURN 	vresult,vmensaje;
 END IF;
 
+--REVISA SI HAY NOTAS CON DIFERENTE FECHA A LA FECHA DE LIQUIDACION-----------------------------------------------------------------------
+IF EXISTS(SELECT 1 FROM nota_vta WHERE fliq_nvta = paramFolio AND ruta_nvta = paramRuta AND fes_nvta <> paramFecha ) THEN
+	LET vresult = 0;
+	LET vmensaje = 'LIQUIDACION: ' || paramFolio || ' RUTA: ' || paramRuta || ' TIENE NOTAS CON FECHA DIFRENTE A LA FECHA DE LA LIQUIDACION';
+	RETURN 	vresult,vmensaje;
+END IF;
+
 --REVISA SI LA FECHA DE LA LIQUIDACION TIENE MAS DE 5 DIAS-----------------------------------------------------------------------
 IF	paramTipo = 'E' THEN
 	LET vdiaant = DAY(paramFecha);
@@ -122,7 +129,7 @@ IF	EXISTS(SELECT 1 FROM nota_vta
 	RETURN 	vresult,vmensaje;
 END IF;
 
---REVISA SI HAY ALGUNA NOTA CON PRECIO INCORRCTO-------------------------------------------------------------------------------------
+--REVISA SI HAY ALGUNA NOTA CON PRECIO INCORRECTO-------------------------------------------------------------------------------------
 IF	EXISTS(SELECT 1 FROM nota_vta 
 	WHERE fliq_nvta = paramFolio AND ruta_nvta = paramRuta AND edo_nvta in('A','S') 
 	AND ((impt_nvta - (tlts_nvta * pru_nvta) < -0.1) OR  (impt_nvta - (tlts_nvta * pru_nvta) > 0.1))) THEN
@@ -188,6 +195,34 @@ IF	paramImpt <> vimptot THEN
 	LET vresult = 0;
 	LET vmensaje = 'LIQUIDACION: ' || paramFolio || ' RUTA: ' || paramRuta || ' NO CONCUERDAN LOS IMPORTES DE LAS NOTAS CON LO CONTABILIZADO';
 	RETURN 	vresult,vmensaje;
+END IF;
+
+--REVISA SI COINCIDE EL TOTAL DE RUBROS DE KILOS CON EL TOTAL-----------------------------------------------------------------------------------------------------
+IF	paramTipo = 'C' THEN
+	SELECT	(NVL(c20b_eruc,0) * 20) + (NVL(c30b_eruc,0) * 30) + (NVL(c45b_eruc,0) * 45) + NVL(kgsu_eruc,0)
+	INTO	vtlts
+	FROM	empxrutc
+	WHERE	fliq_eruc = paramFolio AND rut_eruc = paramRuta;
+	
+	IF	paramTlts <> vtlts THEN
+		LET vresult = 0;
+		LET vmensaje = 'LIQUIDACION: ' || paramFolio || ' RUTA: ' || paramRuta || ' NO CONCUERDAN LOS KILOS TOTALES CON EL TOTAL DE KILOS EN RUBROS';
+		RETURN 	vresult,vmensaje;
+	END IF;
+END IF;
+
+IF	paramTipo = 'A' THEN
+	SELECT	(NVL(c01t_vand,0) * 1) + (NVL(c02t_vand,0) * 2) + (NVL(c03t_vand,0) * 3) + (NVL(c04t_vand,0) * 4) + (NVL(c05t_vand,0) * 5) + (NVL(c06t_vand,0) * 6) +
+			(NVL(c10t_vand,0) * 10) + (NVL(c20t_vand,0) * 20) + (NVL(c30t_vand,0) * 30) + (NVL(c45t_vand,0) * 45)
+	INTO	vtlts
+	FROM	venxand
+	WHERE	fliq_vand = paramFolio AND rut_vand = paramRuta;
+	
+	IF	paramTlts <> vtlts THEN
+		LET vresult = 0;
+		LET vmensaje = 'LIQUIDACION: ' || paramFolio || ' RUTA: ' || paramRuta || ' NO CONCUERDAN LOS KILOS TOTALES CON EL TOTAL DE KILOS EN RUBROS';
+		RETURN 	vresult,vmensaje;
+	END IF;
 END IF;
 
 --REVISA SI HAY NOTAS CON ASISTENCIA-----------------------------------------------------------------------------------------------------
@@ -308,3 +343,19 @@ FROM nota_vta
 	WHERE fliq_nvta = 670 AND ruta_nvta = 'O001' AND edo_nvta in('A','S') 	
 	AND ((impt_nvta - (tlts_nvta * pru_nvta) < -0.01) OR  (impt_nvta - (tlts_nvta * pru_nvta) > 0.01))
 			AND ((pru_nvta * tlts_nvta) <> impt_nvta)
+			
+SELECT	fec_erup, NVL(tot_erup,0), NVL(lcre_erup,0) + NVL(lefe_erup,0) + NVL(lpar_erup,0) + NVL(lotr_erup,0), NVL(imp_erup,0), 
+	NVL(vcre_erup,0) + NVL(vefe_erup,0) + NVL(votr_erup,0), NVL(impasc_erup,0) + NVL(impase_erup,0) + NVL(impaso_erup,0),
+	ldi_erup
+FROM	empxrutp
+WHERE	fliq_erup = 6728 AND rut_erup = 'M021';
+
+
+SELECT	(NVL(c20b_eruc,0) * 20) + (NVL(c30b_eruc,0) * 30) + (NVL(c45b_eruc,0) * 45) + NVL(kgsu_eruc,0)
+	FROM	empxrutc
+	WHERE	fliq_eruc = 6654 AND rut_eruc = 'CI02';
+	
+SELECT	(NVL(c01t_vand,0) * 1) + (NVL(c02t_vand,0) * 2) + (NVL(c03t_vand,0) * 3) + (NVL(c04t_vand,0) * 4) + (NVL(c05t_vand,0) * 5) + (NVL(c06t_vand,0) * 6) +
+			(NVL(c10t_vand,0) * 10) + (NVL(c20t_vand,0) * 20) + (NVL(c30t_vand,0) * 30) + (NVL(c45t_vand,0) * 45)
+	FROM	venxand
+	WHERE	fliq_vand = 6662 AND rut_vand = 'A001';

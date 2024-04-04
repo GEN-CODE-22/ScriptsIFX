@@ -1,8 +1,10 @@
 DROP PROCEDURE QRY_DetReFact;
-EXECUTE PROCEDURE  QRY_DetReFact('097672','E','1','2023-07-31');
+EXECUTE PROCEDURE  QRY_DetReFact('216090','C','2','2024-03-13');
 
 CREATE PROCEDURE QRY_DetReFact
 (
+	paramCia  CHAR(2),
+	paramPla  CHAR(2),
 	paramCte  CHAR(6),
 	paramTpa  CHAR(1),
 	paramTipo CHAR(1),  -- 2 refacturacion motivo 02, 1 refacturacion motivo 01
@@ -58,6 +60,7 @@ IF	paramTipo = '1' THEN
 		FROM	factura f, det_fac df
 		WHERE	f.fol_fac = df.fol_dfac AND f.ser_fac = df.ser_dfac 
 				AND edo_fac <> 'C' AND feccan_fac IS NULL
+				AND cia_fac = paramCia AND pla_fac = paramPla
 				AND numcte_fac = paramCte
 				AND fec_fac > (TODAY - 60)
 		IF vfnvta IS NOT NULL THEN
@@ -103,11 +106,13 @@ IF	paramTipo = '2' THEN
 		FROM	factura f, det_fac df
 		WHERE	f.fol_fac = df.fol_dfac AND f.ser_fac = df.ser_dfac 
 				AND edo_fac <> 'C' AND feccan_fac > fec_fac AND feccan_fac > (TODAY - 365)
+				AND cia_fac = paramCia AND pla_fac = paramPla
 				AND numcte_fac = paramCte
 				AND df.fnvta_dfac NOT IN(	SELECT 	NVL(fnvta_dfac,0) 
 												FROM 	factura, det_fac
 												WHERE 	fol_fac = fol_dfac AND ser_fac = ser_dfac
-														AND edo_fac <> 'C' AND feccan_fac IS NULL and frf_fac IS NOT NULL
+														AND edo_fac <> 'C' AND feccan_fac IS NULL and frf_fac IS NOT NULL 
+														AND cia_fac = paramCia AND pla_fac = paramPla
 														AND fec_fac > (TODAY - 365) and vuelta_dfac = df.vuelta_dfac)
 		IF vfnvta IS NOT NULL THEN
 			IF EXISTS(SELECT 	1 
@@ -150,11 +155,13 @@ select	df.fol_dfac, df.ser_dfac, df.cia_dfac, df.pla_dfac, df.mov_dfac, df.tid_d
 from	factura f, det_fac df
 where	f.fol_fac = df.fol_dfac and f.ser_fac = df.ser_dfac 
 		and edo_fac <> 'C' and feccan_fac > fec_fac
-		and numcte_fac = '188519' and feccan_fac > (TODAY - 365)
+		AND cia_fac = '15' AND pla_fac = '02'
+		and numcte_fac = '216090' and feccan_fac > (TODAY - 365)
 		and df.fnvta_dfac not in(select NVL(fnvta_dfac,0) 
 								from factura, det_fac
 								where fol_fac = fol_dfac and ser_fac = ser_dfac
 										and edo_fac <> 'C' and feccan_fac is null and frf_fac is not null 
+										AND cia_fac = '15' AND pla_fac = '02'
 										and fec_fac > (TODAY - 365) and vuelta_dfac = df.vuelta_dfac)
 										
 SELECT	df.cia_dfac, df.pla_dfac, df.fol_dfac, df.ser_dfac, df.mov_dfac, df.tid_dfac, df.fnvta_dfac, df.ffis_dfac, df.tlts_dfac, 

@@ -1,5 +1,5 @@
 DROP PROCEDURE LiqVta_emperuc;
-EXECUTE PROCEDURE  LiqVta_emperuc(6177, 'C017');
+EXECUTE PROCEDURE  LiqVta_emperuc(8873, 'C021');
 
 CREATE PROCEDURE LiqVta_emperuc
 (
@@ -53,7 +53,7 @@ IF vpla = '28' AND vruta[1,2] <> 'CZ' THEN
 	LET vc45b = vc45b * 2;
 END IF;
 
-IF vpla = '24' OR vpla = '26' OR vpla = '27' OR vpla = '48' OR vpla = '49' THEN
+IF vpla = '26' OR vpla = '27' OR vpla = '48' OR vpla = '49' THEN
 	LET vc20b = vc20b + vnanf;
 END IF;
 
@@ -149,6 +149,7 @@ END PROCEDURE;
 
 select	*
 from	empleado
+where	cve_emp = 'SA107'
 
 select	*
 from	empxrutc

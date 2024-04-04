@@ -1,5 +1,5 @@
 DROP PROCEDURE LiqVta_emperum;
-EXECUTE PROCEDURE  LiqVta_emperum(52, 'BUC2');
+EXECUTE PROCEDURE  LiqVta_emperum(5308, 'B002');
 
 CREATE PROCEDURE LiqVta_emperum
 (
@@ -23,6 +23,7 @@ DEFINE vpla		CHAR(2);
 DEFINE vruta	CHAR(4);
 DEFINE varuta	CHAR(4);
 DEFINE vfecha	DATE;
+DEFINE vfechav	DATE;
 DEFINE vtot		DECIMAL;
 DEFINE vnnv     INT;
 DEFINE vnnve    INT;
@@ -52,6 +53,12 @@ IF vdesp <> '' THEN
 	       LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfecha,vdesp,0.00,0.00,'05');
 	    ELSE
 	       LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfecha,vdesp,0.00,0.00,'06');
+	       IF	vpla = '01' or vpla = '93' THEN
+		       LET vfechav =  vfecha + 1;
+		       LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfechav,vdesp,0.00,0.00,'06');
+		       LET vfechav =  vfecha + 2;
+		       LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfechav,vdesp,0.00,0.00,'06');
+	       END IF;
 	    END IF;
 	 END IF;
 	END IF;
@@ -68,6 +75,12 @@ IF vay1 <> '' THEN
 	       LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfecha,vay1,0.00,0.00,'05');
 	    ELSE
 	       LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfecha,vay1,0.00,0.00,'06');
+	       IF	vpla = '01' or vpla = '93' THEN
+		       LET vfechav =  vfecha + 1;
+		       LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfechav,vay1,0.00,0.00,'06');
+		       LET vfechav =  vfecha + 2;
+		       LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfechav,vay1,0.00,0.00,'06');
+		   END IF;
 	    END IF;
 	 END IF;
 	END IF;
