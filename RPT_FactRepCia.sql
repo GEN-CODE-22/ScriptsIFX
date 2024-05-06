@@ -1,9 +1,10 @@
-EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,null,'2022-06-01','2023-06-30','G');
-EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,null,'2022-09-01','2022-09-30','D');
+EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,null,'2023-11-01','2024-11-30','G');
+EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,NULL,'2023-01-01','2023-01-31','D');
+EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,NULL,'01-01-2023','31-01-2023','D');
 EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,null,'2022-09-01','2022-09-30','F');
 EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,null,'2022-09-01','2022-09-30','C');
 EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,null,'2022-09-01','2022-09-30','R');
-EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,'054166','2023-12-18','2023-12-31','D');
+EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,'019404','2024-04-28','2024-04-29','D');
 
 DROP PROCEDURE RPT_FactRepCia;
 CREATE PROCEDURE RPT_FactRepCia
@@ -131,8 +132,14 @@ END IF;
 IF paramTipo = 'D' THEN
 	FOREACH cFacturas FOR
 		SELECT 	cia_fac, pla_fac,fol_fac,ser_fac,fec_fac, NVL(impt_fac,0), uuid_fac, numcte_fac,
-				(case when trim(razsoc_cte) > '' THEN razsoc_cte 
-				ELSE trim(nom_cte)||" "||trim(ape_cte) END),
+				--(case when trim(razsoc_cte) > '' THEN razsoc_cte 
+				--ELSE trim(nom_cte)||" "||trim(ape_cte) END),
+				NVL(CASE 
+				WHEN TRIM(cliente.razsoc_cte) <> '' THEN
+				   TRIM(cliente.razsoc_cte) 
+				ELSE 
+				   trim(cliente.ape_cte) || ' ' || TRIM(cliente.nom_cte) 
+				END,''),
 				sum(case when tid_dfac = 'E' THEN tlts_dfac ELSE 0 END) lts_est,
 				sum(case when tid_dfac = 'E' THEN tlts_dfac*pru_dfac ELSE 0 END) imp_est,
 				sum(case when tid_dfac = 'E' THEN impasi_dfac ELSE 0 END) asi_est,
@@ -182,8 +189,14 @@ IF paramTipo = 'D' THEN
 		GROUP BY 1,2,3,4,5,6,7,8,9		
 		UNION ALL
 		SELECT 	cia_fac, pla_fac,fol_fac,ser_fac,fec_fac, NVL(impt_fac,0), uuid_fac, numcte_fac,'CANCELADO ' || 
-				(case when trim(razsoc_cte) > '' THEN razsoc_cte 
-				ELSE trim(nom_cte)||" "||trim(ape_cte) END),
+				--(case when trim(razsoc_cte) > '' THEN razsoc_cte 
+				--ELSE trim(nom_cte)||" "||trim(ape_cte) END),
+				NVL(CASE 
+				WHEN TRIM(cliente.razsoc_cte) <> '' THEN
+				   TRIM(cliente.razsoc_cte) 
+				ELSE 
+				   trim(cliente.ape_cte) || ' ' || TRIM(cliente.nom_cte) 
+				END,''),
 				0,0,0,0,0,0,0,0,0
 		FROM 	factura, cliente
 		WHERE 	fec_fac between paramFecIni and paramFecFin
@@ -195,8 +208,14 @@ IF paramTipo = 'D' THEN
 			  	and numcte_fac = num_cte
 		UNION ALL
 		SELECT 	cia_fac, pla_fac,fol_fac,ser_fac,fec_fac, NVL(impt_fac,0), uuid_fac, numcte_fac,('SUSTITUYE '||frf_fac||srf_fac || ' '||
-				(case when trim(razsoc_cte) > '' THEN razsoc_cte 
-				ELSE trim(nom_cte)||" "||trim(ape_cte) END)),
+				--(case when trim(razsoc_cte) > '' THEN razsoc_cte 
+				--ELSE trim(nom_cte)||" "||trim(ape_cte) END)),
+				NVL(CASE 
+				WHEN TRIM(cliente.razsoc_cte) <> '' THEN
+				   TRIM(cliente.razsoc_cte) 
+				ELSE 
+				   trim(cliente.ape_cte) || ' ' || TRIM(cliente.nom_cte) 
+				END,'')),
 				0,0,0,0,0,0,0,0,0
 		FROM 	factura, cliente
 		WHERE 	fec_fac between paramFecIni and paramFecFin
@@ -232,8 +251,14 @@ END IF;
 IF paramTipo = 'F' THEN
 	FOREACH cFacturas FOR
 		SELECT 	cia_fac, pla_fac,fol_fac,ser_fac,fec_fac, NVL(impt_fac,0), uuid_fac, numcte_fac,'CANCELADO ' || 
-				(case when trim(razsoc_cte) > '' THEN razsoc_cte 
-				ELSE trim(nom_cte)||" "||trim(ape_cte) END),
+				--(case when trim(razsoc_cte) > '' THEN razsoc_cte 
+				--ELSE trim(nom_cte)||" "||trim(ape_cte) END),
+				NVL(CASE 
+				WHEN TRIM(cliente.razsoc_cte) <> '' THEN
+				   TRIM(cliente.razsoc_cte) 
+				ELSE 
+				   trim(cliente.ape_cte) || ' ' || TRIM(cliente.nom_cte) 
+				END,''),
 				0,0,0,0,0,0,0,0,0
 		INTO	vcia,
 				vpla,
@@ -263,8 +288,14 @@ IF paramTipo = 'F' THEN
 			  	and numcte_fac = num_cte
 		UNION ALL		
 		SELECT 	cia_fac, pla_fac,fol_fac,ser_fac,fec_fac, NVL(impt_fac,0), uuid_fac, numcte_fac,('SUSTITUYE '||frf_fac||srf_fac || ' '||
-				(case when trim(razsoc_cte) > '' THEN razsoc_cte 
-				ELSE trim(nom_cte)||" "||trim(ape_cte) END)),
+				--(case when trim(razsoc_cte) > '' THEN razsoc_cte 
+				--ELSE trim(nom_cte)||" "||trim(ape_cte) END)),
+				NVL(CASE 
+				WHEN TRIM(cliente.razsoc_cte) <> '' THEN
+				   TRIM(cliente.razsoc_cte) 
+				ELSE 
+				   trim(cliente.ape_cte) || ' ' || TRIM(cliente.nom_cte) 
+				END,'')),
 				0,0,0,0,0,0,0,0,0		
 		FROM 	factura, cliente
 		WHERE 	fec_fac between paramFecIni and paramFecFin
@@ -298,8 +329,14 @@ END IF;
 IF paramTipo = 'C' THEN
 	FOREACH cFacturas FOR
 		SELECT 	cia_fac, pla_fac,fol_fac,ser_fac,fec_fac, NVL(impt_fac,0), uuid_fac, numcte_fac,'CANCELADO ' || 
-				(case when trim(razsoc_cte) > '' THEN razsoc_cte 
-				ELSE trim(nom_cte)||" "||trim(ape_cte) END),
+				--(case when trim(razsoc_cte) > '' THEN razsoc_cte 
+				--ELSE trim(nom_cte)||" "||trim(ape_cte) END),
+				NVL(CASE 
+				WHEN TRIM(cliente.razsoc_cte) <> '' THEN
+				   TRIM(cliente.razsoc_cte) 
+				ELSE 
+				   trim(cliente.ape_cte) || ' ' || TRIM(cliente.nom_cte) 
+				END,''),
 				0,0,0,0,0,0,0,0,0
 		INTO	vcia,
 				vpla,
@@ -353,8 +390,14 @@ END IF;
 IF paramTipo = 'R' THEN
 	FOREACH cFacturas FOR
 		SELECT 	cia_fac, pla_fac,fol_fac,ser_fac,fec_fac, NVL(impt_fac,0), uuid_fac, numcte_fac,('SUSTITUYE '||frf_fac||srf_fac || ' '||
-				(case when trim(razsoc_cte) > '' THEN razsoc_cte 
-				ELSE trim(nom_cte)||" "||trim(ape_cte) END)),
+				--(case when trim(razsoc_cte) > '' THEN razsoc_cte 
+				--ELSE trim(nom_cte)||" "||trim(ape_cte) END)),
+				NVL(CASE 
+				WHEN TRIM(cliente.razsoc_cte) <> '' THEN
+				   TRIM(cliente.razsoc_cte) 
+				ELSE 
+				   trim(cliente.ape_cte) || ' ' || TRIM(cliente.nom_cte) 
+				END,'')),
 				0,0,0,0,0,0,0,0,0
 		INTO	vcia,
 				vpla,
@@ -440,14 +483,19 @@ WHERE 	fec_fac between '2023-05-01' and '2023-05-31'
 GROUP BY 1,2
 
 SELECT 	cia_fac, pla_fac,fol_fac,ser_fac,fec_fac, NVL(impt_fac,0), numcte_fac,'CANCELADO ' || 
-		(case when trim(razsoc_cte) > '' THEN razsoc_cte 
-		ELSE trim(nom_cte)||" "||trim(ape_cte) END),
+		NVL(CASE 
+				WHEN TRIM(cliente.razsoc_cte) <> '' THEN
+				   TRIM(cliente.razsoc_cte) 
+				ELSE 
+				   trim(cliente.ape_cte) || ' ' || TRIM(cliente.nom_cte) 
+				END,''),
 		0,0,0,0,0,0,0,0,0
 FROM 	factura, cliente
-WHERE 	fec_fac between '2023-09-01' and '2023-09-30'		
+WHERE 	fec_fac between '2024-04-28' and '2024-04-29'		
   		and tdoc_fac = 'I'
 	  	and edo_fac = 'C'
 	  	and numcte_fac = num_cte
+		AND num_cte = '054166'
 	  	
 SELECT 	cia_fac, pla_fac, (select nom_pla from planta where cia_pla = cia_fac and cve_pla = pla_fac) nom_pla, 
 		sum(case when tid_dfac = 'E' THEN tlts_dfac ELSE 0 END) lts_est,
@@ -534,3 +582,34 @@ GROUP BY 1,2,3
 
 select	*
 from	planta
+
+SELECT 	cia_fac, pla_fac,fol_fac,ser_fac,fec_fac, NVL(impt_fac,0), uuid_fac, numcte_fac,
+		(case when trim(razsoc_cte) > '' THEN razsoc_cte 
+		ELSE trim(nom_cte)||" "||trim(ape_cte) END),
+		sum(case when tid_dfac = 'E' THEN tlts_dfac ELSE 0 END) lts_est,
+		sum(case when tid_dfac = 'E' THEN tlts_dfac*pru_dfac ELSE 0 END) imp_est,
+		sum(case when tid_dfac = 'E' THEN impasi_dfac ELSE 0 END) asi_est,
+		sum(case when tid_dfac = 'B' THEN tlts_dfac ELSE 0 END) lts_carb,
+		sum(case when tid_dfac = 'B' THEN tlts_dfac*pru_dfac ELSE 0 END) imp_carb,
+		sum(case when tid_dfac = 'B' THEN impasi_dfac ELSE 0 END) asi_carb,
+		sum(case when tid_dfac matches '[CD234]' THEN 
+		(case when tid_dfac = 'C' THEN tlts_dfac ELSE
+		(case when tid_dfac = 'D' THEN tlts_dfac ELSE
+		(case when tid_dfac = '2' THEN tlts_dfac*20 ELSE
+		(case when tid_dfac = '3' THEN tlts_dfac*30 ELSE
+		(case when tid_dfac = '4' THEN tlts_dfac*45 ELSE 0 END) END) END) END) END)
+		ELSE 0 END) kgs_cil,
+		sum(case when tid_dfac matches '[CD234]' THEN tlts_dfac*pru_dfac ELSE 0 END) imp_cil,
+		sum(case when tid_dfac matches '[CD234]' THEN impasi_dfac ELSE 0 END) asi_cil
+FROM 	factura,det_fac,cliente
+WHERE 	fec_fac between '2023-11-01' and '2023-11-30'		
+		and numcte_fac = '034464'
+  		and tdoc_fac = 'I'
+	  	and edo_fac <> 'C'
+		and frf_fac is null
+		and fol_fac = fol_dfac
+		and ser_fac = ser_dfac
+		--and cia_fac = cia_dfac
+		--and pla_fac = pla_dfac
+		and numcte_fac = num_cte
+GROUP BY 1,2,3,4,5,6,7,8,9		

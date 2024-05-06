@@ -100,10 +100,10 @@ IF vpcs = 'A' OR vpcs = 'C' OR vpcs = 'D' OR vpcs = 'G' THEN
 		
 		IF (vpla = '01' OR vpla = '17') AND (vgpaemp = 'G41' OR vgpaemp = 'G42' OR vgpaemp = 'G43' OR vgpaemp = 'G44') OR
 		   vpla = '02' OR vpla = '32' OR vpla = '04' OR vpla = '05' OR (vpla = '10' OR vpla = '34') 
-		   AND (vgpaemp = 'G87' OR vgpaemp = 'G89') OR vpla = '12' OR  vpla = '13' OR vpla = '14' OR vpla = '45' OR vpla = '50' 
+		   AND (vgpaemp = 'G87' OR vgpaemp = 'G89') OR vpla = '12' OR  vpla = '13' OR vpla = '14' OR vpla = '45' OR vpla = '50'   
 		   OR vpla = '53' OR vpla = '54' OR vpla = '78' OR vpla = '79' OR vpla = '23' OR (vpla = '18' OR 
 		   vpla = '37' OR vpla = '39' OR vpla = '91') AND (vgpaemp = 'G71' OR vgpaemp = 'G73' OR vgpaemp = 'G75' OR vgpaemp = 'G105' 
-		   OR vgpaemp = 'G108') OR vpla = '24' OR vpla = '27' AND vgpaemp = 'G11' OR vpla = '76' OR vpla = '81' OR vpla = '82'
+		   OR vgpaemp = 'G108') OR vpla = '24' OR vpla = '27' AND vgpaemp = 'G11' OR vpla = '26' AND vgpaemp = 'G07'  OR vpla = '76' OR vpla = '81' OR vpla = '82'
 		   OR vpla = '84' OR vpla = '87' OR vpla = '92' OR vpla = '96' THEN
 		   LET vproceso,vmsg = eruc_empreg(paramFolio,vruta,vfecha,vchf,'46','23','N',vkpar,vc20b,vc30b,vc45b,vtkgs,vnanf,vpcs);
 		ELSE

@@ -48,6 +48,13 @@ IF paramTipo = 'T' THEN
 		ORDER BY 13,2,3 	
 		
 		LET vimpr = '1';
+	
+	    IF vedo = 'C' THEN
+			LET vimporte = 0;
+			LET viva = 0;
+			LET vimpr = '0';
+		END IF;
+	
 		RETURN 	vrfc,vserie,vfolnc,vfecnc,vimporte,viva,vimpr,vtdoc
 		WITH RESUME;
 		

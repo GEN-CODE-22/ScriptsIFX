@@ -4,9 +4,9 @@ EXECUTE PROCEDURE  LiqVta_Verif(6728, 'M021','E','2023-09-25',711.00,711.00,6948
 EXECUTE PROCEDURE  LiqVta_Verif(7711, 'M004','E','2023-04-19',3733.00,3733.00,36824.37,36824.37,0.00,3733.00);
 EXECUTE PROCEDURE  LiqVta_Verif(11441, 'B003','B','2023-07-22',1257.00,1257.00,10810.20,10810.20,00.00,1257.00);
 EXECUTE PROCEDURE  LiqVta_Verif(6654, 'CI02','C','2024-03-13',350.00,350.00,6825.00,6825.00,0.00,350.00);
-EXECUTE PROCEDURE  LiqVta_Verif(6651, 'A001','A','2024-03-19',5.00,5.00,87.70,87.70,0.00,5.00);
+EXECUTE PROCEDURE  LiqVta_Verif(5191, 'A001','A','2024-04-23',14.53,14.53,300.04,300.04,0.00,0.00);
 EXECUTE PROCEDURE  LiqVta_Verif(6662, 'A001','A','2024-03-13',70.00,70.00,1540.50,1540.50,0.00,79.00);
-EXECUTE PROCEDURE  LiqVta_Verif(670, 'O001','G','2023-04-19',104.70,104.70,2564.10,2564.10,0.00,104.70);
+EXECUTE PROCEDURE  LiqVta_Verif(759, 'O010','G','2024-04-24',375.15,375.15,8125.81,8125.81,0.00,375.15);
 EXECUTE PROCEDURE  LiqVta_Verif(14441, 'B003','S','2023-04-19',89.00,89.00,1013.71,1013.71,0.00,89.00);
 
 SELECT	fec_erup, NVL(tot_erup,0), NVL(lcre_erup,0) + NVL(lefe_erup,0) + NVL(lpar_erup,0) + NVL(lotr_erup,0), NVL(imp_erup,0), 
@@ -198,7 +198,7 @@ IF	paramImpt <> vimptot THEN
 END IF;
 
 --REVISA SI COINCIDE EL TOTAL DE RUBROS DE KILOS CON EL TOTAL-----------------------------------------------------------------------------------------------------
-IF	paramTipo = 'C' THEN
+/*IF	paramTipo = 'C' THEN
 	SELECT	(NVL(c20b_eruc,0) * 20) + (NVL(c30b_eruc,0) * 30) + (NVL(c45b_eruc,0) * 45) + NVL(kgsu_eruc,0)
 	INTO	vtlts
 	FROM	empxrutc
@@ -209,9 +209,9 @@ IF	paramTipo = 'C' THEN
 		LET vmensaje = 'LIQUIDACION: ' || paramFolio || ' RUTA: ' || paramRuta || ' NO CONCUERDAN LOS KILOS TOTALES CON EL TOTAL DE KILOS EN RUBROS';
 		RETURN 	vresult,vmensaje;
 	END IF;
-END IF;
+END IF;*/
 
-IF	paramTipo = 'A' THEN
+/*IF	paramTipo = 'A' THEN
 	SELECT	(NVL(c01t_vand,0) * 1) + (NVL(c02t_vand,0) * 2) + (NVL(c03t_vand,0) * 3) + (NVL(c04t_vand,0) * 4) + (NVL(c05t_vand,0) * 5) + (NVL(c06t_vand,0) * 6) +
 			(NVL(c10t_vand,0) * 10) + (NVL(c20t_vand,0) * 20) + (NVL(c30t_vand,0) * 30) + (NVL(c45t_vand,0) * 45)
 	INTO	vtlts
@@ -223,7 +223,7 @@ IF	paramTipo = 'A' THEN
 		LET vmensaje = 'LIQUIDACION: ' || paramFolio || ' RUTA: ' || paramRuta || ' NO CONCUERDAN LOS KILOS TOTALES CON EL TOTAL DE KILOS EN RUBROS';
 		RETURN 	vresult,vmensaje;
 	END IF;
-END IF;
+END IF;*/
 
 --REVISA SI HAY NOTAS CON ASISTENCIA-----------------------------------------------------------------------------------------------------
 IF	paramTipo IN('E','B','C','A') THEN
@@ -307,9 +307,18 @@ insert	into ruta_enuso VALUES (7318,'C025',CURRENT,'fuente')
 select	*
 from	datos
 
+select * 
+from	gto_gas
+where	fec_ggas = '2024-04-24'
+
 select	*
 from	nota_vta
-where	fes_nvta = '2023-03-27' and edo_nvta = 'S' and fliq_nvta = 1011 and ruta_nvta = 'M021'
+where	fliq_nvta = 759 and ruta_nvta = 'O010'
+
+SELECT	NVL(SUM(tlts_nvta),0), NVL(SUM(impt_nvta),0)
+FROM	nota_vta
+WHERE	fliq_nvta = 759 AND ruta_nvta = 'O010' AND edo_nvta in('A','S') 
+		AND tip_nvta MATCHES '*';
 
 select	*
 from	nota_vta
@@ -359,3 +368,16 @@ SELECT	(NVL(c01t_vand,0) * 1) + (NVL(c02t_vand,0) * 2) + (NVL(c03t_vand,0) * 3) 
 			(NVL(c10t_vand,0) * 10) + (NVL(c20t_vand,0) * 20) + (NVL(c30t_vand,0) * 30) + (NVL(c45t_vand,0) * 45)
 	FROM	venxand
 	WHERE	fliq_vand = 6662 AND rut_vand = 'A001';
+	
+SELECT * FROM nota_vta 
+	WHERE fliq_nvta = 759 AND ruta_nvta = 'O010' AND edo_nvta in('A','S') 
+	AND ((impt_nvta - (tlts_nvta * pru_nvta) < -0.10) OR  (impt_nvta - (tlts_nvta * pru_nvta) > 0.10))
+	
+	
+	update nota_vta
+	set 	impt_nvta = 1114.19 , simp_nvta = 960.51, iva_nvta = 153.68--153.6854344827586 --153.67
+	where fol_nvta = 6328 and pla_nvta  = '01' and vuelta_nvta = 9
+	
+	select *
+	from nota_vta
+	where fol_nvta = 6328 and pla_nvta  = '01' and vuelta_nvta = 9

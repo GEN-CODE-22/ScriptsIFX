@@ -1,5 +1,5 @@
 DROP PROCEDURE cxc_rptcartera;
-EXECUTE PROCEDURE cxc_rptcartera('','2023-01-04','','','086966');
+EXECUTE PROCEDURE cxc_rptcartera('','2024-03-09','','','000521');
 EXECUTE PROCEDURE cxc_rptcartera('','2022-10-25','','','193109');
 EXECUTE PROCEDURE cxc_rptcartera('','2022-11-07','','','065188');
 EXECUTE PROCEDURE cxc_rptcartera('','2022-10-25','15','85','065188');
@@ -21,6 +21,7 @@ RETURNING
  CHAR(9),	-- Texto Factura o Remision
  INT,		-- Folio factura o remision
  CHAR(4),	-- Serie
+ CHAR(40),  -- Uuid
  CHAR(2),	-- Cia
  CHAR(2),	-- Planta
  DATE,		-- Fecha emision
@@ -36,6 +37,7 @@ DEFINE vnomcte 	CHAR(80);
 DEFINE vtipdoc 	CHAR(2);
 DEFINE vfolio   INT;
 DEFINE vserie 	CHAR(4);
+DEFINE vuuid 	CHAR(40);
 DEFINE vcia 	CHAR(2);
 DEFINE vpla 	CHAR(2);
 DEFINE vtpa 	CHAR(1);
@@ -124,10 +126,11 @@ IF paramTpa <> '' THEN
 				  LET vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180 = cxc_saldorango(paramFecha,vfemi,30,60,90,180,vsaldo);
 				  LET vfrf = 0;
 				  LET vsrf = '';
+				  LET vuuid = '';
 				  IF vtipo = 'F' THEN 
 					LET vtext = 'FACTURA';
-					SELECT 	frf_fac,srf_fac 
-					INTO 	vfrf,vsrf 
+					SELECT 	frf_fac,srf_fac,NVL(TRIM(uuid_fac),'')
+					INTO 	vfrf,vsrf,vuuid					
 					FROM 	factura
 					WHERE fol_fac = vfolio
 						  AND ser_fac = vserie
@@ -135,7 +138,7 @@ IF paramTpa <> '' THEN
 						  AND pla_fac = vpla;
 					 IF vfrf IS NOT NULL AND vfrf > 0 THEN
 						LET vtext = 'REFACTURA';
-					 END IF;      	 	
+					 END IF; 
 				  ELSE
 					LET vtext = 'REMISION';
 				  END IF;
@@ -151,7 +154,7 @@ IF paramTpa <> '' THEN
 						FROM	cliente
 						WHERE	num_cte = vcte;
 					END IF;
-				  RETURN 	vcte,vnomcte,vuso,vtext,vfolio,vserie,vcia,vpla,vfemi,vsaldo,vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180
+				  RETURN 	vcte,vnomcte,vuso,vtext,vfolio,vserie,vuuid,vcia,vpla,vfemi,vsaldo,vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180
 				  WITH RESUME;
 			END FOREACH; 
 		ELSE
@@ -197,10 +200,11 @@ IF paramTpa <> '' THEN
 				  LET vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180 = cxc_saldorango(paramFecha,vfemi,30,60,90,180,vsaldo);
 				  LET vfrf = 0;
 				  LET vsrf = '';
+				  LET vuuid = '';
 				  IF vtipo = 'F' THEN 
 					LET vtext = 'FACTURA';
-					SELECT 	frf_fac,srf_fac 
-					INTO 	vfrf,vsrf 
+					SELECT 	frf_fac,srf_fac,NVL(TRIM(uuid_fac),'')
+					INTO 	vfrf,vsrf,vuuid					
 					FROM 	factura
 					WHERE fol_fac = vfolio
 						  AND ser_fac = vserie
@@ -208,7 +212,7 @@ IF paramTpa <> '' THEN
 						  AND pla_fac = vpla;
 					 IF vfrf IS NOT NULL AND vfrf > 0 THEN
 						LET vtext = 'REFACTURA';
-					 END IF;      	 	
+					 END IF;  
 				  ELSE
 					LET vtext = 'REMISION';
 				  END IF;
@@ -224,7 +228,7 @@ IF paramTpa <> '' THEN
 						FROM	cliente
 						WHERE	num_cte = vcte;
 					END IF;
-				  RETURN 	vcte,vnomcte,vuso,vtext,vfolio,vserie,vcia,vpla,vfemi,vsaldo,vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180
+				  RETURN 	vcte,vnomcte,vuso,vtext,vfolio,vserie,vuuid,vcia,vpla,vfemi,vsaldo,vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180
 				  WITH RESUME;
 			END FOREACH; 
 		END IF;
@@ -270,10 +274,11 @@ IF paramTpa <> '' THEN
 				  LET vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180 = cxc_saldorango(paramFecha,vfemi,30,60,90,180,vsaldo);
 				  LET vfrf = 0;
 				  LET vsrf = '';
+				  LET vuuid = '';
 				  IF vtipo = 'F' THEN 
 					LET vtext = 'FACTURA';
-					SELECT 	frf_fac,srf_fac 
-					INTO 	vfrf,vsrf 
+					SELECT 	frf_fac,srf_fac,NVL(TRIM(uuid_fac),'')
+					INTO 	vfrf,vsrf,vuuid					
 					FROM 	factura
 					WHERE fol_fac = vfolio
 						  AND ser_fac = vserie
@@ -281,7 +286,7 @@ IF paramTpa <> '' THEN
 						  AND pla_fac = vpla;
 					 IF vfrf IS NOT NULL AND vfrf > 0 THEN
 						LET vtext = 'REFACTURA';
-					 END IF;      	 	
+					 END IF;  
 				  ELSE
 					LET vtext = 'REMISION';
 				  END IF;
@@ -297,7 +302,7 @@ IF paramTpa <> '' THEN
 						FROM	cliente
 						WHERE	num_cte = vcte;
 					END IF;
-				  RETURN 	vcte,vnomcte,vuso,vtext,vfolio,vserie,vcia,vpla,vfemi,vsaldo,vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180
+				  RETURN 	vcte,vnomcte,vuso,vtext,vfolio,vserie,vuuid,vcia,vpla,vfemi,vsaldo,vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180
 				  WITH RESUME;
 			END FOREACH; 
 		ELSE
@@ -339,10 +344,11 @@ IF paramTpa <> '' THEN
 				  LET vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180 = cxc_saldorango(paramFecha,vfemi,30,60,90,180,vsaldo);
 				  LET vfrf = 0;
 				  LET vsrf = '';
+				  LET vuuid = '';
 				  IF vtipo = 'F' THEN 
 					LET vtext = 'FACTURA';
-					SELECT 	frf_fac,srf_fac 
-					INTO 	vfrf,vsrf 
+					SELECT 	frf_fac,srf_fac,NVL(TRIM(uuid_fac),'')
+					INTO 	vfrf,vsrf,vuuid					
 					FROM 	factura
 					WHERE fol_fac = vfolio
 						  AND ser_fac = vserie
@@ -350,7 +356,7 @@ IF paramTpa <> '' THEN
 						  AND pla_fac = vpla;
 					 IF vfrf IS NOT NULL AND vfrf > 0 THEN
 						LET vtext = 'REFACTURA';
-					 END IF;      	 	
+					 END IF;  
 				  ELSE
 					LET vtext = 'REMISION';
 				  END IF;
@@ -366,7 +372,7 @@ IF paramTpa <> '' THEN
 						FROM	cliente
 						WHERE	num_cte = vcte;
 					END IF;
-				  RETURN 	vcte,vnomcte,vuso,vtext,vfolio,vserie,vcia,vpla,vfemi,vsaldo,vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180
+				  RETURN 	vcte,vnomcte,vuso,vtext,vfolio,vserie,vuuid,vcia,vpla,vfemi,vsaldo,vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180
 				  WITH RESUME;
 			END FOREACH; 
 		END IF;
@@ -416,10 +422,11 @@ ELSE
 				  LET vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180 = cxc_saldorango(paramFecha,vfemi,30,60,90,180,vsaldo);
 				  LET vfrf = 0;
 				  LET vsrf = '';
+				  LET vuuid = '';
 				  IF vtipo = 'F' THEN 
 					LET vtext = 'FACTURA';
-					SELECT 	frf_fac,srf_fac 
-					INTO 	vfrf,vsrf 
+					SELECT 	frf_fac,srf_fac,NVL(TRIM(uuid_fac),'')
+					INTO 	vfrf,vsrf,vuuid					
 					FROM 	factura
 					WHERE fol_fac = vfolio
 						  AND ser_fac = vserie
@@ -427,7 +434,7 @@ ELSE
 						  AND pla_fac = vpla;
 					 IF vfrf IS NOT NULL AND vfrf > 0 THEN
 						LET vtext = 'REFACTURA';
-					 END IF;      	 	
+					 END IF;     
 				  ELSE
 					LET vtext = 'REMISION';
 				  END IF;
@@ -443,7 +450,7 @@ ELSE
 						FROM	cliente
 						WHERE	num_cte = vcte;
 					END IF;
-				  RETURN 	vcte,vnomcte,vuso,vtext,vfolio,vserie,vcia,vpla,vfemi,vsaldo,vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180
+				  RETURN 	vcte,vnomcte,vuso,vtext,vfolio,vserie,vuuid,vcia,vpla,vfemi,vsaldo,vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180
 				  WITH RESUME;
 			END FOREACH; 
 		ELSE
@@ -487,10 +494,11 @@ ELSE
 				  LET vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180 = cxc_saldorango(paramFecha,vfemi,30,60,90,180,vsaldo);
 				  LET vfrf = 0;
 				  LET vsrf = '';
+				  LET vuuid = '';
 				  IF vtipo = 'F' THEN 
 					LET vtext = 'FACTURA';
-					SELECT 	frf_fac,srf_fac 
-					INTO 	vfrf,vsrf 
+					SELECT 	frf_fac,srf_fac,NVL(TRIM(uuid_fac),'')
+					INTO 	vfrf,vsrf,vuuid					
 					FROM 	factura
 					WHERE fol_fac = vfolio
 						  AND ser_fac = vserie
@@ -498,7 +506,7 @@ ELSE
 						  AND pla_fac = vpla;
 					 IF vfrf IS NOT NULL AND vfrf > 0 THEN
 						LET vtext = 'REFACTURA';
-					 END IF;      	 	
+					 END IF;    
 				  ELSE
 					LET vtext = 'REMISION';
 				  END IF;
@@ -514,7 +522,7 @@ ELSE
 						FROM	cliente
 						WHERE	num_cte = vcte;
 					END IF;
-				  RETURN 	vcte,vnomcte,vuso,vtext,vfolio,vserie,vcia,vpla,vfemi,vsaldo,vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180
+				  RETURN 	vcte,vnomcte,vuso,vtext,vfolio,vserie,vuuid,vcia,vpla,vfemi,vsaldo,vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180
 				  WITH RESUME;
 			END FOREACH; 
 		END IF;
@@ -558,10 +566,11 @@ ELSE
 				  LET vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180 = cxc_saldorango(paramFecha,vfemi,30,60,90,180,vsaldo);
 				  LET vfrf = 0;
 				  LET vsrf = '';
+				  LET vuuid = '';
 				  IF vtipo = 'F' THEN 
 					LET vtext = 'FACTURA';
-					SELECT 	frf_fac,srf_fac 
-					INTO 	vfrf,vsrf 
+					SELECT 	frf_fac,srf_fac,NVL(TRIM(uuid_fac),'')
+					INTO 	vfrf,vsrf,vuuid					
 					FROM 	factura
 					WHERE fol_fac = vfolio
 						  AND ser_fac = vserie
@@ -569,7 +578,7 @@ ELSE
 						  AND pla_fac = vpla;
 					 IF vfrf IS NOT NULL AND vfrf > 0 THEN
 						LET vtext = 'REFACTURA';
-					 END IF;      	 	
+					 END IF;   
 				  ELSE
 					LET vtext = 'REMISION';
 				  END IF;
@@ -585,7 +594,7 @@ ELSE
 						FROM	cliente
 						WHERE	num_cte = vcte;
 					END IF;
-				  RETURN 	vcte,vnomcte,vuso,vtext,vfolio,vserie,vcia,vpla,vfemi,vsaldo,vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180
+				  RETURN 	vcte,vnomcte,vuso,vtext,vfolio,vserie,vuuid,vcia,vpla,vfemi,vsaldo,vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180
 				  WITH RESUME;
 			END FOREACH; 
 		ELSE
@@ -625,10 +634,11 @@ ELSE
 				  LET vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180 = cxc_saldorango(paramFecha,vfemi,30,60,90,180,vsaldo);
 				  LET vfrf = 0;
 				  LET vsrf = '';
+				  LET vuuid = '';
 				  IF vtipo = 'F' THEN 
 					LET vtext = 'FACTURA';
-					SELECT 	frf_fac,srf_fac 
-					INTO 	vfrf,vsrf 
+					SELECT 	frf_fac,srf_fac,NVL(TRIM(uuid_fac),'')
+					INTO 	vfrf,vsrf,vuuid					
 					FROM 	factura
 					WHERE fol_fac = vfolio
 						  AND ser_fac = vserie
@@ -636,7 +646,7 @@ ELSE
 						  AND pla_fac = vpla;
 					 IF vfrf IS NOT NULL AND vfrf > 0 THEN
 						LET vtext = 'REFACTURA';
-					 END IF;      	 	
+					 END IF;    
 				  ELSE
 					LET vtext = 'REMISION';
 				  END IF;
@@ -652,7 +662,7 @@ ELSE
 						FROM	cliente
 						WHERE	num_cte = vcte;
 					END IF;
-				  RETURN 	vcte,vnomcte,vuso,vtext,vfolio,vserie,vcia,vpla,vfemi,vsaldo,vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180
+				  RETURN 	vcte,vnomcte,vuso,vtext,vfolio,vserie,vuuid,vcia,vpla,vfemi,vsaldo,vsaldo0,vsaldo30,vsaldo60,vsaldo90,vsaldo180
 				  WITH RESUME;
 			END FOREACH; 
 		END IF;
@@ -671,4 +681,31 @@ WHERE cte_doc = '086966'
 	OR  fult_doc  >  '2023-01-04' 
 	AND femi_doc <=  '2023-01-04' ))
 	AND ffac_doc IS NOT NULL
+  GROUP BY 1,2,3,4,5,6,7,8,9,16
+  
+  
+SELECT cte_doc,tip_doc,ffac_doc,sfac_doc,cia_doc,pla_doc,
+			tpa_doc,uso_doc,0,SUM(car_doc),SUM(abo_doc),SUM(sal_doc),
+	  MAX(fven_doc),MIN(femi_doc),MAX(fult_doc),'F' 
+FROM doctos
+WHERE cte_doc = '004158'
+	AND sta_doc = 'A' 
+	AND (sal_doc <> 0.0 
+	AND fult_doc <= '2023-03-09'
+	OR  fult_doc  > '2023-03-09' 
+	AND femi_doc <= '2023-03-09' )
+	AND ffac_doc IS NOT NULL
+  GROUP BY 1,2,3,4,5,6,7,8,9,16
+UNION ALL
+SELECT cte_doc,tip_doc,fol_doc,ser_doc,cia_doc,pla_doc,
+	  tpa_doc,uso_doc,vuelta_doc,SUM(car_doc),SUM(abo_doc),SUM(sal_doc),
+	  MAX(fven_doc),MIN(femi_doc),MAX(fult_doc),'N'
+  FROM doctos
+  WHERE cte_doc = '093275'	
+	AND sta_doc = 'A' 
+	AND (sal_doc <> 0.0 
+	AND fult_doc <= '2023-03-09'
+	OR  fult_doc  > '2023-03-09' 
+	AND femi_doc <= '2023-03-09' )
+	AND ffac_doc IS NULL
   GROUP BY 1,2,3,4,5,6,7,8,9,16
