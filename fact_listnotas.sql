@@ -1,5 +1,5 @@
 DROP PROCEDURE fact_listnotas;
-EXECUTE PROCEDURE fact_listnotas('','','2022-02-14');
+EXECUTE PROCEDURE fact_listnotas('','','2023-04-17');
 EXECUTE PROCEDURE fact_listnotas('15','86','2022-12-16');
 
 CREATE PROCEDURE fact_listnotas
@@ -67,9 +67,9 @@ LET vnomcte = '';
 LET vcvetfac = '';
 LET vtipfact = '';
 
-IF NOT EXISTS(SELECT 	1 
+/*IF NOT EXISTS(SELECT 	1 
 		  	FROM 	e_posaj e
-		  	WHERE 	e.epo_fec = paramFecha) THEN
+		  	WHERE 	e.epo_fec = paramFecha) THEN*/
 	IF NOT EXISTS (SELECT 1 FROM empxrutp WHERE fec_erup = paramFecha and edo_erup <> 'C') AND
 		NOT EXISTS (SELECT 1 FROM empxrutc WHERE fec_eruc = paramFecha and edo_eruc <> 'C')	AND
 		NOT EXISTS (SELECT 1 FROM venxmed WHERE fec_vmed = paramFecha and edo_vmed <> 'C') AND
@@ -108,11 +108,11 @@ IF NOT EXISTS(SELECT 	1
 		LET vmsg = 'NO SE PUEDEN GENERAR LAS FACTURAS, NO SE HAN CERRADO TODAS LAS LIQUIDACIONES DE VENTA.';
 		RETURN 	vproceso,vmsg,vcia,vpla,vfolio,vvuelta,vruta,vfolliq,vfecha,vimpt,vasist,vnumcte,vnomcte,vcvetfac,vtipfact;
 	END IF;
-ELSE
+/*ELSE
 	LET vproceso = 0;
 	LET vmsg = 'NO SE PUEDEN GENERAR LAS FACTURAS, EL DIA YA ESTA CERRADO.';	
 	RETURN 	vproceso,vmsg,vcia,vpla,vfolio,vvuelta,vruta,vfolliq,vfecha,vimpt,vasist,vnumcte,vnomcte,vcvetfac,vtipfact;
-END IF;
+END IF;*/
 END PROCEDURE;
 
 select	fec_fac, count(*)
@@ -239,7 +239,7 @@ where  fes_nvta = '2023-01-16'  and edo_nvta = 'A'
 		
 select	epo_impv,*
 from	e_posaj
-where 	epo_fec = '2023-01-25'
+where 	epo_fec = '2023-04-25'
 
 select	*
 from	nota_vta
@@ -255,3 +255,7 @@ where	fes_nvta = '2023-02-14'
 		and tpa_nvta = 'C' and edo_nvta = 'S'
 group by fol_nvta
 having count(*) > 1
+
+select	*
+from	nota_vta
+where	fes_nvta = '2023-05-01' and edo_nvta = 'A'
