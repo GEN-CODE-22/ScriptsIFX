@@ -125,7 +125,7 @@ IF paramTipo = 'C' THEN
 	END IF;
 END IF;
 
-IF EXISTS (SELECT	1
+/*IF EXISTS (SELECT	1
 		FROM 	nota_vta n, cte_fac cf
 		WHERE	n.numcte_nvta = cf.numcte_cfac 					
 				AND fes_nvta BETWEEN paramFecIni AND paramFecFin AND edo_nvta = 'A' AND impt_nvta > 0
@@ -135,7 +135,7 @@ IF EXISTS (SELECT	1
 				LET vproceso = 0;
 				LET vmsg = 'EXISTEN NOTAS SIN FACTURAR. EJECUTAR PROCESO DE FACTURACION AUTOMATICA.';
 				RETURN 	vproceso,vmsg,0,'';
-END IF;
+END IF;*/
 
 
 IF EXISTS (SELECT	1
@@ -300,7 +300,7 @@ IF EXISTS(SELECT 	1
 					
 					LET vfechah = YEAR(paramFecFin) || '-' || LPAD(MONTH(paramFecFin),2,'0') || '-' || LPAD(DAY(paramFecFin),2,'0') || ' 23:59:59';
 					INSERT INTO factura
-					VALUES('S',vfolfac,vserfac,paramCia,paramPla,paramFecFin,paramCte,'E','P','E', vtotsimp, vtotiva, vtotimpt, null, paramUsr,null,null,null,null,null,null,'N','N',vfechah,'S',null,null,null,'N','4','I',null,vrfc,'E',null,null,null,null,null);
+					VALUES('Y',vfolfac,vserfac,paramCia,paramPla,paramFecFin,paramCte,'E','P','E', vtotsimp, vtotiva, vtotimpt, null, paramUsr,null,null,null,null,null,null,'N','N',vfechah,'S',null,null,null,'N','4','I',null,vrfc,'E',null,null,null,null,null);
 					LET vrelnvta = fact_setnotarel(vfolfac,vserfac,'I');
 					IF vrelnvta <> 'A' THEN
 						LET vproceso = 0;
@@ -369,7 +369,7 @@ IF EXISTS(SELECT 	1
 										
 					LET vfechah = YEAR(paramFecFin) || '-' || LPAD(MONTH(paramFecFin),2,'0') || '-' || LPAD(DAY(paramFecFin),2,'0') || ' 23:59:59';
 					INSERT INTO factura
-					VALUES('S',vfolfac,vserfac,paramCia,paramPla,paramFecFin,paramCte,'E','P','E', vtotsimp, vtotiva, vtotimpt, null, paramUsr,null,null,null,null,null,null,'N','N',vfechah,'S',null,null,null,'N','4','I',null,vrfc,'E',null,null,null,null,null);
+					VALUES('Y',vfolfac,vserfac,paramCia,paramPla,paramFecFin,paramCte,'E','P','E', vtotsimp, vtotiva, vtotimpt, null, paramUsr,null,null,null,null,null,null,'N','N',vfechah,'S',null,null,null,'N','4','I',null,vrfc,'E',null,null,null,null,null);
 					LET vrelnvta = fact_setnotarel(vfolfac,vserfac,'I');
 					IF vrelnvta <> 'A' THEN
 						LET vproceso = 0;
@@ -833,7 +833,7 @@ Select *  from factura where fec_fac between  '2023/04/01' and '2023/04/30' and 
 SELECT	*
 FROM 	nota_vta n, cte_fac cf
 WHERE	n.numcte_nvta = cf.numcte_cfac 					
-		AND fes_nvta = '2024-05-02' AND edo_nvta = 'A' AND impt_nvta > 0
+		AND fes_nvta = '2024-04-13' AND edo_nvta = 'A' AND impt_nvta > 0
 		AND tip_nvta IN('B','C','D','E','2','3','4')
 		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
 		AND fac_nvta IS NULL

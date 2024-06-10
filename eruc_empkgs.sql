@@ -1,3 +1,6 @@
+EXECUTE PROCEDURE eruc_empkgs('2024-03-26','2023-04-11',2023,3,1)
+DROP PROCEDURE eruc_empkgs;
+
 CREATE PROCEDURE eruc_empkgs
 (
 	paramFecIni	DATE,
@@ -237,7 +240,7 @@ FOREACH cRutas FOR
 			AND fec_vemp BETWEEN paramFecIni AND paramFecFin;
 
 	IF vtotal > 0 THEN		
-		INSERT INTO vtaxemp VALUES(vemp,paramFecFin,vcoa,vruta,0,vtotal,'K',0);
+		INSERT INTO vtaxemp VALUES(vemp,paramFecFin,vcoa,vruta,vtotal,0,'K',0);
 	END IF;
 	
 	LET vresult = vresult + 1;
@@ -251,3 +254,52 @@ END IF;
 
 RETURN 	vresult,vmensaje;
 END PROCEDURE; 
+
+
+select *
+from   empxrutc 
+where  fec_eruc BETWEEN '2024-02-12' AND '2024-02-25' and rut_eruc = 'C064'
+
+select  *
+from	vtaxemp
+where 	ruta_vemp = 'C010' 
+        and fec_vemp BETWEEN '2024-02-12' AND '2024-02-25'
+        
+update  vtaxemp
+set 	vta_vemp = 1140
+where 	ruta_vemp = 'C010' and fec_vemp = '2024-02-24'
+
+select  MAX(fec_vemp)
+from	vtaxemp
+where 	ruta_vemp = 'C064' and emp_vemp = '0884'
+		and fec_vemp BETWEEN '2024-02-12' AND '2024-02-25'
+		
+select *
+from 	vta_empkgs
+
+delete 
+from 	vta_empkgs
+where 	quit_vempkgs = 1 and mes_vempkgs = 4 and anio_vempkgs = 2024
+
+update  vta_empkgs
+set 	quit_vempkgs = 2
+where 	quit_vempkgs = 1 and mes_vempkgs = 5 and anio_vempkgs = 2024
+
+SELECT 	rut_eruc,chf_eruc,SUM(kgsu_eruc),(SUM(kgsu_eruc)/20)
+	FROM 	empxrutc
+	WHERE 	fec_eruc BETWEEN '2024-02-12' AND '2024-02-25'
+	  		AND edo_eruc = 'C'
+AND chf_eruc IS NOT NULL AND LENGTH(chf_eruc) > 0
+GROUP BY 1,2
+HAVING 	SUM(kgsu_eruc) > 0
+
+
+select *
+from   vtaxemp
+where  fec_vemp = '2023-02-15' and ncon_vemp = 0 and nanf_vemp = 0 and ruta_vemp[1] = 'C'
+order by ruta_vemp
+
+select *
+from   vtaxemp
+where  fec_vemp = '2023-02-15' and ruta_vemp = 'C002'
+order by ruta_vemp

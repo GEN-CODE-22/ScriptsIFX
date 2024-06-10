@@ -1,5 +1,5 @@
 DROP PROCEDURE RPT_factlista;
-EXECUTE PROCEDURE  RPT_factlista('','','','2023-05-05','2023-05-05','','');
+EXECUTE PROCEDURE  RPT_factlista('','','','2023-10-16','2023-10-18','S','N');
 EXECUTE PROCEDURE  RPT_factlista('15','08','','2023-01-12','2023-01-12');
 
 CREATE PROCEDURE RPT_factlista
@@ -39,6 +39,7 @@ DEFINE vrfc 	CHAR(13);
 DEFINE vedo 	CHAR(1);
 DEFINE vtpa		CHAR(20);
 DEFINE vimpt  	DECIMAL;
+DEFINE vtipo 	CHAR(4);
 --DEFINE vmpa		CHAR(3);
 --DEFINE vfpa		CHAR(1);
 DEFINE vpla1 	CHAR(2);
@@ -50,6 +51,12 @@ DEFINE vpla6 	CHAR(2);
 DEFINE vpla7 	CHAR(2);
 DEFINE vpla8 	CHAR(2);
 DEFINE vpla9 	CHAR(2);
+
+LET vtipo = '[' || paramTipo || ']';
+
+IF paramTipo = 'S'	THEN
+	LET vtipo = '[SY]';
+END IF;
 
 LET vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9 = get_plantas(paramPla);
 
@@ -67,7 +74,7 @@ FOREACH cFacturas FOR
 			AND (faccer_fac = paramCierre OR paramCierre = '')
 			AND (feccan_fac is null OR feccan_fac <> fec_fac) 
 			AND (frf_fac is null OR frf_fac = 0)
-			AND (tfac_fac = paramTipo OR paramTipo = '')
+			AND (tfac_fac MATCHES vtipo OR paramTipo = '')
 	ORDER BY fec_fac,cia_fac,pla_fac,fol_fac
 	LET vnomcte = '';
 	IF vnocte <> '' THEN

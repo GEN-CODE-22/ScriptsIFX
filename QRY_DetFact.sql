@@ -1,5 +1,5 @@
 DROP PROCEDURE QRY_DetFact;
-EXECUTE PROCEDURE  QRY_DetFact('15','02',5000000,'EAB');
+EXECUTE PROCEDURE  QRY_DetFact('15','09',241359,'EAP');
 
 CREATE PROCEDURE QRY_DetFact
 (
@@ -14,7 +14,7 @@ RETURNING
  CHAR(2),
  INT,
  CHAR(4), 
- SMALLINT,
+ INT,
  CHAR(1),
  INT,
  DECIMAL,
@@ -32,7 +32,7 @@ DEFINE vfolio 	INT;
 DEFINE vserie   CHAR(4);
 DEFINE vcia     CHAR(2);
 DEFINE vpla     CHAR(2);
-DEFINE vmov   	SMALLINT;
+DEFINE vmov   	INT;
 DEFINE vtipo    CHAR(1);
 DEFINE vfnvta   INT;
 DEFINE vffis    DECIMAL;
