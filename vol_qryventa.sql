@@ -1,8 +1,8 @@
 DROP PROCEDURE vol_qryventa;
-EXECUTE PROCEDURE  vol_qryventa('N','E','2022-01-01','2022-01-31','2022-02-01','2022-02-05',4); 
-EXECUTE PROCEDURE  vol_qryventa('P','B','2022-01-01','2022-01-31','2022-02-01','2022-02-05',4); 
-EXECUTE PROCEDURE  vol_qryventa('C','B','2022-01-01','2022-01-31','2022-02-01','2022-02-05',4); 
-EXECUTE PROCEDURE  vol_qryventa('M','E','2022-07-01','2022-07-31','2022-02-01','2022-02-05',4); 
+EXECUTE PROCEDURE  vol_qryventa('N','E','2022-04-25','2022-04-30','2022-05-01','2022-05-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('P','E','2022-04-01','2022-04-30','2022-05-01','2022-05-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('C','E','2022-04-01','2022-04-30','2022-05-01','2022-05-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('M','E','2022-07-01','2022-07-28','2022-04-01','2022-02-05',18); 
 EXECUTE PROCEDURE  vol_qryventa('S','E','2023-07-01','2023-07-31','2022-02-01','2022-02-05',20); 
 
 CREATE PROCEDURE vol_qryventa
@@ -86,7 +86,7 @@ IF	paramTipo = 'N' THEN
 				and (aju_nvta is null or aju_nvta = "")
 				AND fac_nvta is not null
 				AND edo_nvta = 'A'	
-		ORDER BY fac_nvta, ser_nvta
+		--ORDER BY fac_nvta, ser_nvta
 		
 		SELECT  TRIM(uuid_fac),fyh_fac, rfc_fac
 		INTO	vuuid,vfyh,vrfc
@@ -117,6 +117,20 @@ IF	paramTipo = 'P' THEN
 	LET vtipfac = 'G';
 	LET vtipcfd = 'I';
 	
+	SELECT  fol_fac, ser_fac,TRIM(uuid_fac),fyh_fac
+	INTO	vfolfac,vserfac,vuuid,vfyh
+	FROM 	factura, det_fac
+	WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
+			and tid_dfac MATCHES vtipsvr and faccer_fac = 'S' and fec_fac = paramFecFin
+			and impasi_dfac = 0 and tlts_dfac > 0 and edo_fac <> 'C' and tfac_fac = 'M';
+			
+	SELECT  SUM(NVL(tlts_dfac,0))
+	INTO	vtltsfac
+	FROM 	factura, det_fac
+	WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
+			and tid_dfac MATCHES vtipsvr and faccer_fac = 'S' and fec_fac = paramFecFin
+			and impasi_dfac = 0 and tlts_dfac > 0 and edo_fac <> 'C' and tfac_fac = 'M';
+			
 	FOREACH cNotasP FOR	
 		SELECT 	tip_nvta,tpa_nvta,tlts_nvta,pru_nvta,impt_nvta,ruta_nvta,pcre_rut,fes_nvta,fol_nvta
 		INTO    vtipo,vtpa,vtlts,vimpt,vpru,vruta,vpcre,vfecsur,vfolio
@@ -128,20 +142,6 @@ IF	paramTipo = 'P' THEN
 				and (aju_nvta is null or aju_nvta = "")
 				AND fac_nvta is null
 				AND edo_nvta = 'A'
-		
-		SELECT  fol_fac, ser_fac,TRIM(uuid_fac),fyh_fac
-		INTO	vfolfac,vserfac,vuuid,vfyh
-		FROM 	factura, det_fac
-		WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
-				and tid_dfac MATCHES vtipsvr and faccer_fac = 'S' and fec_fac = paramFecFin
-				and impasi_dfac = 0 and tlts_dfac > 0 and edo_fac <> 'C' and tfac_fac = 'M';
-				
-		SELECT  SUM(NVL(tlts_dfac,0))
-		INTO	vtltsfac
-		FROM 	factura, det_fac
-		WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
-				and tid_dfac MATCHES vtipsvr and faccer_fac = 'S' and fec_fac = paramFecFin
-				and impasi_dfac = 0 and tlts_dfac > 0 and edo_fac <> 'C' and tfac_fac = 'M';
 		
 		LET vidpcre = vol_getpcre(vidsvr,vpcre);	
 		
@@ -155,6 +155,21 @@ IF	paramTipo = 'C' THEN
 	LET vcliente = 'PUBLICO EN GENERAL';
 	LET vtipfac = 'G';
 	LET vtipcfd = 'I';
+	
+	SELECT  fol_fac, ser_fac,TRIM(uuid_fac),fyh_fac
+	INTO	vfolfac,vserfac,vuuid,vfyh
+	FROM 	factura, det_fac
+	WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
+			and tid_dfac MATCHES vtipsvr and faccer_fac = 'S' and fec_fac between paramFecIniC and paramFecFinC
+			and impasi_dfac = 0 and tlts_dfac > 0 and edo_fac <> 'C' and tfac_fac = 'M';
+			
+	SELECT  SUM(NVL(tlts_dfac,0))
+	INTO	vtltsfac
+	FROM 	factura, det_fac
+	WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
+			and tid_dfac MATCHES vtipsvr and faccer_fac = 'S' and fec_fac between paramFecIniC and paramFecFinC
+			and impasi_dfac = 0 and tlts_dfac > 0 and edo_fac <> 'C' and tfac_fac = 'M';
+			
 	FOREACH cNotasC FOR	
 		SELECT 	tip_nvta,tpa_nvta,tlts_nvta,impt_nvta,pru_nvta,ruta_nvta,pcre_rut,fes_nvta,fol_nvta
 		INTO    vtipo,vtpa,vtlts,vimpt,vpru,vruta,vpcre,vfecsur,vfolio
@@ -165,20 +180,6 @@ IF	paramTipo = 'C' THEN
 				and (aju_nvta is null or aju_nvta = "")
 				AND fac_nvta is null
 				AND edo_nvta = 'A'
-		
-		SELECT  fol_fac, ser_fac,TRIM(uuid_fac),fyh_fac
-		INTO	vfolfac,vserfac,vuuid,vfyh
-		FROM 	factura, det_fac
-		WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
-				and tid_dfac MATCHES vtipsvr and faccer_fac = 'S' and fec_fac between paramFecIniC and paramFecFinC
-				and impasi_dfac = 0 and tlts_dfac > 0 and edo_fac <> 'C' and tfac_fac = 'M';
-				
-		SELECT  SUM(NVL(tlts_dfac,0))
-		INTO	vtltsfac
-		FROM 	factura, det_fac
-		WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
-				and tid_dfac MATCHES vtipsvr and faccer_fac = 'S' and fec_fac between paramFecIniC and paramFecFinC
-				and impasi_dfac = 0 and tlts_dfac > 0 and edo_fac <> 'C' and tfac_fac = 'M';
 		
 		LET vidpcre = vol_getpcre(vidsvr,vpcre);	
 		
@@ -193,6 +194,21 @@ IF	paramTipo = 'M' THEN
 	LET vcliente = 'PUBLICO EN GENERAL';
 	LET vtipfac = 'G';
 	LET vtipcfd = 'I';
+	
+	SELECT  fol_fac, ser_fac,TRIM(uuid_fac),fyh_fac
+	INTO	vfolfac,vserfac,vuuid,vfyh
+	FROM 	factura, det_fac
+	WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
+			and tid_dfac MATCHES vtipsvr and faccer_fac = 'S' and fec_fac between paramFecIniC and paramFecFinC
+			and impasi_dfac = 0 and tlts_dfac > 0 and edo_fac <> 'C' and tfac_fac = 'M';
+			
+	SELECT  SUM(NVL(tlts_dfac,0))
+	INTO	vtltsfac
+	FROM 	factura, det_fac
+	WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
+			and tid_dfac MATCHES vtipsvr and faccer_fac = 'S' and fec_fac between paramFecIniC and paramFecFinC
+			and impasi_dfac = 0 and tlts_dfac > 0 and edo_fac <> 'C' and tfac_fac = 'M';
+				
 	FOREACH cNotasM FOR	
 		SELECT 	tip_nvta,tpa_nvta,tlts_nvta,impt_nvta,pru_nvta,ruta_nvta,pcre_rut,fes_nvta,fol_nvta
 		INTO    vtipo,vtpa,vtlts,vimpt,vpru,vruta,vpcre,vfecsur,vfolio
@@ -204,20 +220,6 @@ IF	paramTipo = 'M' THEN
 				and (aju_nvta is null or aju_nvta = "")
 				AND fac_nvta is null
 				AND edo_nvta = 'A'
-		
-		SELECT  fol_fac, ser_fac,TRIM(uuid_fac),fyh_fac
-		INTO	vfolfac,vserfac,vuuid,vfyh
-		FROM 	factura, det_fac
-		WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
-				and tid_dfac MATCHES vtipsvr and faccer_fac = 'S' and fec_fac between paramFecIniC and paramFecFinC
-				and impasi_dfac = 0 and tlts_dfac > 0 and edo_fac <> 'C' and tfac_fac = 'M';
-				
-		SELECT  SUM(NVL(tlts_dfac,0))
-		INTO	vtltsfac
-		FROM 	factura, det_fac
-		WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
-				and tid_dfac MATCHES vtipsvr and faccer_fac = 'S' and fec_fac between paramFecIniC and paramFecFinC
-				and impasi_dfac = 0 and tlts_dfac > 0 and edo_fac <> 'C' and tfac_fac = 'M';
 		
 		LET vidpcre = vol_getpcre(vidsvr,vpcre);	
 		
@@ -278,4 +280,63 @@ END PROCEDURE;
 
 select max(fes_nvta)
 from   znota_vta
+
+SELECT 	tip_nvta,tpa_nvta,tlts_nvta,impt_nvta,pru_nvta,ruta_nvta,fac_nvta,ser_nvta,pcre_rut,fes_nvta,fol_nvta,numcte_nvta
+FROM 	znota_vta,ruta 
+WHERE 	fes_nvta >= '2022-04-01'
+		and fes_nvta <= '2022-04-30'
+		and tip_nvta MATCHES 'E' 
+		and ruta_nvta = cve_rut
+		and (aju_nvta is null or aju_nvta = "")
+		AND fac_nvta is not null
+		AND edo_nvta = 'A'	
+ORDER BY fac_nvta, ser_nvta
+
+SELECT	count(*)
+FROM 	znota_vta n
+WHERE	fes_nvta between '2022-01-01' and '2022-01-07' AND edo_nvta = 'A' 				
+		AND tip_nvta IN('B')
+		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
+		AND fac_nvta is not null
+
+SELECT	count(*)
+FROM 	znota_vta n
+WHERE	fes_nvta between  '2022-03-01' and '2022-03-31' AND edo_nvta = 'A' 				
+		AND tip_nvta IN('E')
+		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
+		AND fac_nvta is null	
+		
+SELECT	count(*)
+FROM 	znota_vta n
+WHERE	fes_nvta between '2022-04-01' and '2022-04-30' AND edo_nvta = 'A' 				
+		AND tip_nvta IN('E','B','C','D','2','3','4')
+		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
+		AND fac_nvta is null
+
+select 	*
+from 	znota_vta
+
+select 	*
+from 	ruta where pcre_rut = 'LP/23615/DIST/PLA/2020'
+where 	cve_rut = 'B040'
+
+B056   116
+BG08
+H002
+ME01
+ME50
+ME03
+ME73
+CE30
+CE88
+BE01
+DE01
+HE01
+CE52
+
+SELECT	count(*)
+FROM 	znota_vta n
+WHERE	fes_nvta between '2022-01-01' and '2022-04-30' AND edo_nvta = 'A' 	
+		and ruta_nvta in('BG08','H002','ME01','ME50','ME03','ME73','CE30','CE88','BE01','DE01','HE01','CE52')
+
 

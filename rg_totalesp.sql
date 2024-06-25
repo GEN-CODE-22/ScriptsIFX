@@ -1,7 +1,7 @@
 DROP PROCEDURE rg_totalesp;
 
-EXECUTE PROCEDURE rg_totales('2024-01-01','2024-01-31');
-EXECUTE PROCEDURE rg_totalesp('2024-01-01','2024-01-31');
+EXECUTE PROCEDURE rg_totales('2020-01-01','2020-01-31');
+EXECUTE PROCEDURE rg_totalesp('2020-01-01','2020-01-31');
 
 CREATE PROCEDURE rg_totalesp
 (
@@ -64,7 +64,10 @@ RETURNING
 	DECIMAL(16,2), -- IVA ANTICIPOS APLICADOS
 	DECIMAL(16,2), -- TOTAL DONATIVOS
 	DECIMAL(16,2), -- SUBTOTAL DONATIVOS
-	DECIMAL(16,2); -- IVA DONATIVOS
+	DECIMAL(16,2), -- IVA DONATIVOS
+	DECIMAL(16,2), -- TOTAL FACTURAS CANCELADAS
+	DECIMAL(16,2), -- SUBTOTAL FACTURAS CANCELADAS
+	DECIMAL(16,2); -- IVA FACTURAS CANCELADAS
 	
 DEFINE vtotvest    	DECIMAL(16,2); -- TOTAL VENTA ESTACIONARIO
 DEFINE vstotvest   	DECIMAL(16,2); -- SUBTOTAL VENTA ESTACIONARIO
@@ -122,6 +125,9 @@ DEFINE vantaiva  	DECIMAL(16,2); -- IVA ANTICIPOS APLICADOS
 DEFINE vdonatot  	DECIMAL(16,2); -- TOTAL DONATIVOS
 DEFINE vdonastot  	DECIMAL(16,2); -- SUBTOTAL DONATIVOS
 DEFINE vdonaiva  	DECIMAL(16,2); -- IVA DONATIVOS
+DEFINE vtotfacc  	DECIMAL(16,2); -- TOTAL FACTURAS CANCELADAS
+DEFINE vstotfacc  	DECIMAL(16,2); -- SUBTOTAL FACTURAS CANCELADAS
+DEFINE vivafacc  	DECIMAL(16,2); -- IVA FACTURAS CANCELADAS
 
 DEFINE xfecd      DATE;
 DEFINE xdia       SMALLINT;
@@ -406,12 +412,24 @@ WHERE 	fec_mcxc >= paramFecIni AND fec_mcxc <= paramFecFin
 LET vdonaiva = NVL((vdonatot / vsiva * viva),0.00);
 LET vdonastot = vdonatot - vdonaiva;
 
+-- FACTURAS CANCELADAS
+SELECT 	NVL(SUM(impt_fac),0), NVL(SUM(simp_fac),0), NVL(SUM(iva_fac),0)
+INTO    vtotfacc,vstotfacc,vivafacc
+FROM 	factura
+WHERE 	feccan_fac >= paramFecIni AND feccan_fac <= paramFecFin
+     	AND impr_fac = 'E'
+     	AND tdoc_fac = 'I'
+     	AND edo_fac  = 'C'
+     	AND faccer_fac = 'N'
+     	AND fec_fac <> feccan_fac
+     	AND (frf_fac IS NULL OR frf_fac = 0);
+
 RETURN  vtotvest,vstotvest,vivavest,vtotvcil,vstotvcil,vivavcil,vtotvcar,vstotvcar,vivavcar,vtotfac,
 		vstotfac,vivafac,venctotefe,vencstotefe,vencivaefe,vcnctotcre,vcncstotcre,vcncivacre,vvtotefe,vvstotefe,
 		vvivaefe,vcobtot,vcobrtot,vcobrstot,vcobriva,vcdcobrtot,vcdcobrstot,vcdcobriva,vcreding,vcdingtot,
 		vcdingstot,vcdingiva,vdatot,vdastot,vdaiva,vdctot,vdcstot,vdciva,vcomptot,vcompstot,
 		vcompiva,vintptot,vintpstot,vintpiva,vpagbtot,vpagbstot,vpagbiva,vantrtot,vantrsstot,vantriva,
-		vantatot,vantastot,vantaiva,vdonatot,vdonastot,vdonaiva;
+		vantatot,vantastot,vantaiva,vdonatot,vdonastot,vdonaiva,vtotfacc,vstotfacc,vivafacc;
 		
 END PROCEDURE; 
 
@@ -577,4 +595,10 @@ WHERE	fec_fac >= '2024-01-01' and fec_fac <= '2024-01-31'
      	AND (feccan_fac is null OR feccan_fac <> fec_fac)
      	AND (frf_fac IS NULL OR frf_fac = 0)
      	and (simp_fac + iva_fac) <> impt_fac;
+     
+ select *
+ from 	fuente.factura 
+ where 	fec_fac between '2020-01-01' and '2020-01-31'
+ 		and edo_fac = 'C' and tdoc_fac = 'I'
+ 		AND (frf_fac IS NULL OR frf_fac = 0)
      	

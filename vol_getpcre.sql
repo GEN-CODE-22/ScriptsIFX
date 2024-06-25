@@ -1,5 +1,5 @@
 DROP PROCEDURE vol_getpcre;
-EXECUTE PROCEDURE vol_getpcre('celaya','LP/15294/EXP/ES/2016-2211011585566075');
+EXECUTE PROCEDURE vol_getpcre(18,'LP/15453/EXP/ES/2016-2211011585566075');
 
 CREATE PROCEDURE vol_getpcre
 (
@@ -443,7 +443,7 @@ IF paramSvr = 18  THEN
 	IF paramPcre matches 'LP/15452/EXP/ES/2016*'	THEN
 		LET vcvepcre = 119;
 	END IF;
-	IF paramPcre matches 'LP/20975/EXP/ES/2018*'	THEN
+	IF paramPcre matches 'LP/15453/EXP/ES/2016*'	THEN
 		LET vcvepcre = 120;
 	END IF;
 	IF paramPcre matches 'LP/16373/EXP/ES/2016*'	THEN

@@ -1,5 +1,5 @@
 DROP PROCEDURE LiqVta_UndoCerrar;
-EXECUTE PROCEDURE  LiqVta_UndoCerrar('2022-05-30'); 	
+EXECUTE PROCEDURE  LiqVta_UndoCerrar('2024-06-24'); 	
 
 CREATE PROCEDURE LiqVta_UndoCerrar
 (
@@ -21,12 +21,14 @@ DEFINE vcia		CHAR(2);
 DEFINE vpla		CHAR(2);
 DEFINE vvuelta	INT;
 DEFINE vcargo   DECIMAL;
+DEFINE vmonto   DECIMAL;
 
 LET vresult = 1;
 LET vmensaje = '';
 LET vtotal = 0;
 LET vproceso = 0;
 LET vmsg = '';
+LET vmonto = 0;
 
 IF NOT EXISTS(SELECT 	1 
 		  	FROM 	e_posaj 
@@ -38,7 +40,7 @@ IF NOT EXISTS(SELECT 	1
 		FROM	doctos 
 		WHERE	femi_doc = paramFecha 
 		
-		LET vproceso,vmsg = cxc_bajadocumento(vfolio,vcia,vpla,vvuelta); 
+		LET vproceso,vmsg,vmonto = cxc_bajadocumento(vfolio,vcia,vpla,vvuelta); 
 		
 		IF vproceso = 1 THEN
 			UPDATE 	nota_vta
@@ -100,3 +102,19 @@ END PROCEDURE;
 SELECT 	* 
 FROM 	e_posaj 
 WHERE 	epo_fec = '2022-05-30'
+
+SELECT	cia_doc, pla_doc, fol_doc, vuelta_doc, car_doc
+FROM	doctos 
+WHERE	femi_doc = '2024-05-29' 
+
+select	*
+from	nota_vta
+where	fes_nvta = '2024-06-24' and edo_nvta in('A','S') and tpa_nvta in('C','G') and napl_nvta = 'C'
+
+select	*
+from	nota_vta
+where	fes_nvta = '2024-06-24' and edo_nvta in('A','S') and tpa_nvta in('C','G') and napl_nvta = 'C'
+
+select	*
+from	doctos
+where	femi_doc = '2024-06-24' and tpa_doc in('C','G')
