@@ -1,5 +1,5 @@
 DROP PROCEDURE LiqCob_PagoDoc;
-EXECUTE PROCEDURE  LiqCob_PagoDoc(44952,113995,'15','33','01','50',9452.50,'2021-10-22','EFECTIVO','fuente');
+EXECUTE PROCEDURE  LiqCob_PagoDoc(73248,856141,'15','55','01','58',676.17,'2024-07-12','EFECTIVO','paulina',1,'');
 EXECUTE PROCEDURE  LiqCob_PagoDoc(44938,200499,'15','02','01','fuente');
 
 CREATE PROCEDURE LiqCob_PagoDoc
@@ -57,11 +57,13 @@ LET vmsg = '';
 LET vsaldo = 0;
 LET vimppag = 0;
 
+LET paramVuelta = NVL(paramVuelta,0);
+
 IF (NOT EXISTS(SELECT 	1 
 		  	FROM 	mov_cxc 
 		  	WHERE 	doc_mcxc = paramFolDoc AND cia_mcxc = paramCia AND pla_mcxc = paramPla AND sta_mcxc = 'A'
-		  			AND (vuelta_mcxc = paramVuelta OR tip_mcxc = paramTipo) AND fliq_mcxc = paramFolLiq) OR paramTipmov = '55')
-		  			AND paramImp > 0 THEN
+		  			AND (vuelta_mcxc = paramVuelta OR (tip_mcxc = paramTipo and vuelta_mcxc IS NULL)) AND fliq_mcxc = paramFolLiq) 
+		  			OR paramTipmov = '55') AND paramImp > 0 THEN
 	LET vproceso = 1;	
 	IF paramVuelta > 0 THEN
 		SELECT  cte_doc, tip_doc, fol_doc, ffis_doc, ser_doc, cia_doc, pla_doc, ffac_doc, sfac_doc, sta_doc, tpa_doc, uso_doc,
@@ -162,9 +164,23 @@ END IF;
 
 RETURN 	vproceso,vmsg,vimppag,vsaldo;
 END PROCEDURE;                    
--- NO PAGADO 113578 
--- 
+ 
 
+SELECT 	*
+FROM 	mov_cxc 
+WHERE 	doc_mcxc = 4093 AND cia_mcxc = '15' AND pla_mcxc = '02' AND sta_mcxc = 'A'
+		 AND (vuelta_mcxc = 2 OR (tip_mcxc = '01' and vuelta_mcxc is null)) AND fliq_mcxc = 68673
+		 
+SELECT 	*
+FROM 	mov_cxc 
+WHERE 	doc_mcxc = 4093 AND cia_mcxc = '15' AND pla_mcxc = '02' AND sta_mcxc = 'A'
+		 AND (vuelta_mcxc is NULL OR (tip_mcxc = '03' and vuelta_mcxc is null)) AND fliq_mcxc = 68673
+		 
+SELECT 	*
+FROM 	mov_cxc 
+WHERE 	doc_mcxc = 4093 AND cia_mcxc = '15' AND pla_mcxc = '02' AND sta_mcxc = 'A'
+		 AND (tip_mcxc = '03' and vuelta_mcxc is null)
+		  			
 SELECT  cte_doc, tip_doc, fol_doc, ffis_doc, ser_doc, cia_doc, pla_doc, ffac_doc, sfac_doc, sta_doc, tpa_doc, uso_doc,
 			sal_doc, fven_doc,vuelta_doc, fult_doc, car_doc, abo_doc
 	FROM	doctos
@@ -173,15 +189,19 @@ SELECT  cte_doc, tip_doc, fol_doc, ffis_doc, ser_doc, cia_doc, pla_doc, ffac_doc
 	
 select	*
 from	doctos
-where	fol_doc in(962227) and cte_doc = '08869'
+where	fol_doc in(157695,157696,166254,166255) and vuelta_doc = 15
+
+select	*
+from	doctos
+where	tip_doc = '03' and cte_doc = '128335'
 
 select	*
 from	mov_cxc
-where	doc_mcxc in(964517) and pla_mcxc ='23' and cte_mcxc = '061549' and tpm_mcxc = '50'
+where	doc_mcxc in(4093) and pla_mcxc ='02' and cte_mcxc = '296207' and vuelta_mcxc = 15
 
 select	saldo_cte, abono_cte, cargo_cte, fecuab_cte, * 
 from	cliente
-where   num_cte = '086579'
+where   num_cte = '000325'
 
 update	cliente
 set		cargo_cte = 4799607.49, saldo_cte = 44182.17, abono_cte = 4755425.32--, abono_cte = 20116161.05--, fecuab_cte = '2022-09-20'
@@ -190,7 +210,7 @@ where   num_cte = '011516'
 
 select	sum(abo_doc),sum(car_doc)
 from	doctos
-where	cte_doc in('086579') and sta_doc = 'A'
+where	cte_doc in('050660') and sta_doc = 'A'
 
 select	*
 from	doctos
