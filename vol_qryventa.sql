@@ -10,6 +10,9 @@ EXECUTE PROCEDURE  vol_qryventa('P','C','2022-01-01','2022-01-31','2022-02-01','
 EXECUTE PROCEDURE  vol_qryventa('C','C','2022-02-01','2022-02-28','2022-03-01','2022-03-10',18); 
 EXECUTE PROCEDURE  vol_qryventa('T','T','2022-04-01','2022-04-30','2022-05-01','2022-05-10',18); 
 EXECUTE PROCEDURE  vol_qryventa('A','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('D','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',4); 
+EXECUTE PROCEDURE  vol_qryventa('F','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',4); 
+EXECUTE PROCEDURE  vol_qryventa('I','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',4); 
 
 
 CREATE PROCEDURE vol_qryventa
@@ -125,7 +128,7 @@ IF	paramTipo = 'N' THEN
 		--ORDER BY fac_nvta, ser_nvta
 		LET vtkgs = vtlts;
 		IF	paramTipSvr = 'C' THEN
-			LET vtkgs = vtlts / vconkl;
+			LET vtlts = vtkgs / vconkl;
 		END IF;
 		
 		SELECT  TRIM(uuid_fac),fyh_fac, rfc_fac, impt_fac
@@ -217,7 +220,7 @@ IF	paramTipo = 'P' THEN
 		
 		LET vtkgs = vtlts;
 		IF	paramTipSvr = 'C' THEN
-			LET vtkgs = vtlts / vconkl;
+			LET vtlts = vtkgs / vconkl;
 		END IF;
 		
 		LET vidpcre = vol_getpcre(vidsvr,vpcre);
@@ -275,7 +278,7 @@ IF	paramTipo = 'C' THEN
 		
 		LET vtkgs = vtlts;
 		IF	paramTipSvr = 'C' THEN
-			LET vtkgs = vtlts / vconkl;
+			LET vtlts = vtkgs / vconkl;
 		END IF;
 		
 		SELECT	MAX(fhs_mnvta)
@@ -335,7 +338,7 @@ IF	paramTipo = 'M' THEN
 				
 		LET vtkgs = vtlts;
 		IF	paramTipSvr = 'C' THEN
-			LET vtkgs = vtlts / vconkl;
+			LET vtlts = vtkgs / vconkl;
 		END IF;
 		
 		LET vidpcre = vol_getpcre(vidsvr,vpcre);	
@@ -374,7 +377,7 @@ IF	paramTipo = 'S' THEN
 		
 		LET vtkgs = vtlts;
 		IF	paramTipSvr = 'C' THEN
-			LET vtkgs = vtlts / vconkl;
+			LET vtlts = vtkgs / vconkl;
 		END IF;
 		
 		SELECT  TRIM(uuid_fac),fyh_fac, rfc_fac, faccer_fac, impt_fac
@@ -547,7 +550,7 @@ IF	paramTipo = 'A' THEN
 		IF  vimpt > 0 AND vtlts > 0 THEN
 			LET vtkgs = vtlts;
 			IF	paramTipSvr = 'C' THEN
-				LET vtkgs = vtlts / vconkl;
+				LET vtlts = vtkgs / vconkl;
 			END IF;
 			LET vpru = vimpt / vtlts;		
 			
@@ -584,6 +587,125 @@ IF	paramTipo = 'A' THEN
 			WITH RESUME;
 		END IF;
 	END FOREACH;
+END IF;
+
+IF	paramTipo = 'D' THEN 
+	LET vrfc = '';
+	LET vtipfac = 'N';
+	LET vtipcfd = 'I';
+	LET vimptfac = 0;
+	LET vfyh = '';
+	LET vfyhn = '';
+	LET vuuid = '';
+	LET vtltsfac = 0;
+	LET vidpcred = 0;
+
+	FOREACH cNotasD FOR	
+		SELECT  tip_nvta,tpa_nvta,tlts_nvta,impt_nvta,pru_nvta,ruta_nvta,ruta_nvta[1],fac_nvta,ser_nvta,pcre_rut,fes_nvta,fol_nvta,NVL(uso_nvta,''),numcte_nvta,
+				cia_nvta,pla_nvta,vuelta_nvta
+		INTO    vtipo,vtpa,vtlts,vimpt,vpru,vruta,vtiprut,vfolfac,vserfac,vpcre,vfecsur,vfolio,vuso,vnocte,vcia,vpla,vvuelta
+		FROM	znota_vta,ruta 
+		WHERE   fes_nvta >= paramFecIni
+				AND  fes_nvta <= paramFecFin	
+				AND  (tip_nvta = 'P' or tip_nvta = 'F') 
+				AND  ruta_nvta = cve_rut AND (aju_nvta is null or aju_nvta = '') 	
+
+		SELECT  CASE WHEN razsoc_cte IS NOT NULL THEN TRIM(NVL(razsoc_cte,''))	ELSE TRIM(NVL(nom_cte,''))||' '|| TRIM(NVL(ape_cte,'')) end 
+		INTO	vcliente
+		FROM    cliente 
+		WHERE 	num_cte = vnocte;
+			
+		LET vtkgs = vtlts;
+		
+		LET vidpcre = vol_getpcre(vidsvr,vpcre);
+		
+		RETURN 	vtipo,vtpa,vtlts,vimpt,vpru,vruta,vtiprut,vfolfac,vserfac,vfecsur,vfolio,vuso,vfyhn,vuuid,vfyh,vrfc,vcliente,vtipfac,vtipcfd,vtltsfac,vimptfac,vidpcre,vidsvr,vidpcred,vtkgs
+		WITH RESUME;
+	END FOREACH;
+END IF;
+
+IF	paramTipo = 'F' THEN 
+	LET vrfc = '';
+	LET vtipfac = 'N';
+	LET vtipcfd = 'I';
+	LET vimptfac = 0;
+	LET vfyhn = '';
+	LET vfyh = '';
+	LET vuuid = '';	
+	LET vtltsfac = 0;
+	LET vidpcred = 0;
+
+	FOREACH cNotasF FOR	
+		SELECT  tip_nvta,tpa_nvta,tlts_nvta,impt_nvta,pru_nvta,ruta_nvta,ruta_nvta[1],fac_nvta,ser_nvta,pcre_rut,fes_nvta,fol_nvta,NVL(uso_nvta,''),numcte_nvta,
+				cia_nvta,pla_nvta,vuelta_nvta
+		INTO    vtipo,vtpa,vtlts,vimpt,vpru,vruta,vtiprut,vfolfac,vserfac,vpcre,vfecsur,vfolio,vuso,vnocte,vcia,vpla,vvuelta
+		FROM	znota_vta,ruta 
+		WHERE   fes_nvta >= paramFecIni
+				AND  fes_nvta <= paramFecFin	
+				AND  (tip_nvta = 'K' or tip_nvta = 'Q') 
+				AND  ruta_nvta = cve_rut AND (aju_nvta is null or aju_nvta = '') 	
+
+		SELECT  CASE WHEN razsoc_cte IS NOT NULL THEN TRIM(NVL(razsoc_cte,''))	ELSE TRIM(NVL(nom_cte,''))||' '|| TRIM(NVL(ape_cte,'')) end 
+		INTO	vcliente
+		FROM    cliente 
+		WHERE 	num_cte = vnocte;
+		
+		LET vtkgs = vtlts;
+		IF	paramTipSvr = 'C' THEN
+			LET vtlts = vtkgs / vconkl;
+		END IF;
+		
+		LET vidpcre = vol_getpcre(vidsvr,vpcre);
+		
+		RETURN 	vtipo,vtpa,vtlts,vimpt,vpru,vruta,vtiprut,vfolfac,vserfac,vfecsur,vfolio,vuso,vfyhn,vuuid,vfyh,vrfc,vcliente,vtipfac,vtipcfd,vtltsfac,vimptfac,vidpcre,vidsvr,vidpcred,vtkgs
+		WITH RESUME;
+	END FOREACH;
+END IF;
+
+IF	paramTipo = 'I' THEN 
+	LET vrfc = '';
+	LET vcliente = '';
+	LET vtipfac = 'N';
+	LET vtipcfd = 'I';
+	LET vimptfac = 0;
+	LET vtipo = 'I';
+	LET vtpa = 'E';
+	LET vtiprut = 'I';
+	LET vuso = '1';
+	LET vfyh = '';
+	LET vfyhn = '';
+	LET vuuid = '';
+	LET vtltsfac = 0;
+	LET vidpcred = 0;
+	LET vfolfac = 0;
+	LET vserfac = '';
+	LET vtiprut = 'I';
+	LET vruta = '';
+	LET vpru = 0.00;
+	LET vimpt = 0.00;
+	LET vfecsur = paramFecFin;
+	
+	SELECT  SUM(epo_coni) 
+	INTO    vtkgs
+	FROM	e_posaj 
+	WHERE   epo_fec >= paramFecIni AND epo_fec <= paramFecFin;
+	
+	IF	paramTipSvr = 'C' THEN
+		LET vtlts = vtkgs / vconkl;
+	END IF;
+	
+	SELECT	MIN(pcre_rut)
+	INTO    vpcre
+	FROM	ruta
+	WHERE   pcre_rut IS NOT NULL;
+	
+	LET vidpcre = vol_getpcre(vidsvr,vpcre);
+	
+	LET vfolio = MONTH(paramFecIni) + YEAR(paramFecIni);
+	
+	RETURN 	vtipo,vtpa,vtlts,vimpt,vpru,vruta,vtiprut,vfolfac,vserfac,vfecsur,vfolio,vuso,vfyhn,vuuid,vfyh,vrfc,vcliente,vtipfac,vtipcfd,vtltsfac,vimptfac,vidpcre,vidsvr,vidpcred,vtkgs;
+	
+	
 END IF;
 
 END PROCEDURE; 
@@ -825,4 +947,15 @@ WHERE
 	   AND tlts_nvta > 0
 	   
 
+select *
+from   znota_vta n,ruta
+where  fes_nvta >= '2022-01-01'
+	   AND  n.fes_nvta <= '2022-01-31'
+	   AND  (tip_nvta = 'P' or tip_nvta = 'F') 
+		AND  ruta_nvta = cve_rut AND (aju_nvta is null or aju_nvta = '') 	
 		
+select tip_nvta,tpa_nvta,(tlts_nvta),impt_nvta,ruta_nvta,fac_nvta,ser_nvta,pcre_rut,fes_nvta,fol_nvta 
+from znota_vta,ruta 
+Where month(fes_nvta) =  1 and year(fes_nvta) = 2022 and  (tip_nvta = 'P' or tip_nvta = 'F') 
+     and ruta_nvta = cve_rut --and (aju_nvta is null or aju_nvta = '') 
+     order by pcre_rut
