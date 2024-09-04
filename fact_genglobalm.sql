@@ -211,11 +211,11 @@ IF EXISTS(SELECT 	1
 						LET vtotiva = vtotiva + viva;
 	
 						IF vnum = 0 THEN
-							SELECT	serfce_pla				
+							SELECT	serfceg_pla				
 							INTO	vserfac
 							FROM	planta
 							WHERE	cia_pla = paramCia AND cve_pla = paramPla;
-							LET vfolfac = GETVAL_EX_MODE(paramCia,paramPla,null,'folfce_pla');
+							LET vfolfac = GETVAL_EX_MODE(paramCia,paramPla,null,'folfceg_pla');
 							IF vfolfac <= 0 THEN
 								LET vproceso = 0;
 								LET vmsg = 'NO SE PUDO OBTENER EL FOLIO PARA LA FACURA GLOBAL DEL DIA DE ESTACIONARIO.';	
@@ -280,11 +280,11 @@ IF EXISTS(SELECT 	1
 						LET vtotiva = vtotiva + viva;
 						
 						IF vnum = 0 THEN
-							SELECT	serfce_pla				
+							SELECT	serfceg_pla				
 							INTO	vserfac
 							FROM	planta
 							WHERE	cia_pla = paramCia AND cve_pla = paramPla;
-							LET vfolfac = GETVAL_EX_MODE(paramCia,paramPla,null,'folfce_pla');
+							LET vfolfac = GETVAL_EX_MODE(paramCia,paramPla,null,'folfceg_pla');
 							IF vfolfac <= 0 THEN
 								LET vproceso = 0;
 								LET vmsg = 'NO SE PUDO OBTENER EL FOLIO PARA LA FACURA GLOBAL DEL DIA DE CARBURACION.';	
@@ -350,11 +350,11 @@ IF EXISTS(SELECT 	1
 						LET vtotiva = vtotiva + viva;
 						
 						IF vnum = 0 THEN
-							SELECT	serfce_pla				
+							SELECT	serfceg_pla				
 							INTO	vserfac
 							FROM	planta
 							WHERE	cia_pla = paramCia AND cve_pla = paramPla;
-							LET vfolfac = GETVAL_EX_MODE(paramCia,paramPla,null,'folfce_pla');
+							LET vfolfac = GETVAL_EX_MODE(paramCia,paramPla,null,'folfceg_pla');
 							IF vfolfac <= 0 THEN
 								LET vproceso = 0;
 								LET vmsg = 'NO SE PUDO OBTENER EL FOLIO PARA LA FACURA GLOBAL DEL DIA DE CILINDRO.';	
@@ -666,10 +666,62 @@ order by fes_nvta
 
 select	*
 from	nota_vta 
-where	fac_nvta is null and fes_nvta = '2023-05-01' and edo_nvta = 'A'
+where	fac_nvta is null and fes_nvta = '2022-02-01' and edo_nvta = 'A'
 		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
 		AND tip_nvta IN('B','C','D','E')
+		AND fac_nvta is NULL
+		
+select	tip_nvta,sum(tlts_nvta) / 0.54
+from	znota_vta 
+where	fes_nvta BETWEEN '2022-02-01' AND '2022-02-28'
+		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
+		AND tip_nvta IN('C','2','3','4')
+group by 1
+
+select	tip_nvta,count(*)
+from	znota_vta 
+where	fes_nvta BETWEEN '2022-01-01' AND '2022-01-31'
+		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
+		AND tip_nvta IN('B')
+		and edo_nvta  = 'A'
+group by 1
+
+select	tip_nvta,count(*)
+from	znota_vta 
+where	fes_nvta BETWEEN '2022-01-01' AND '2022-01-31'
+		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
+		AND tip_nvta IN('B')
+		and edo_nvta  = 'A'
+		and fac_nvta is not null
+group by 1
+
+select	tip_nvta,count(*)
+from	znota_vta 
+where	fes_nvta BETWEEN '2022-01-01' AND '2022-01-30'
+		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
+		AND tip_nvta IN('B')
+		and edo_nvta  = 'A'
+		and fac_nvta is null
+group by 1
+
+SELECT 	tip_nvta,count(*)
+FROM 	znota_vta,ruta 
+WHERE 	fes_nvta = '2022-01-31'
+		and tip_nvta in('B') 
+		and ruta_nvta = cve_rut
+		and (aju_nvta is null or aju_nvta = "")
 		AND fac_nvta is null
+		AND edo_nvta = 'A'
+group by 1
+
+select	tip_nvta,count(*)
+from	znota_vta 
+where	fes_nvta = '2022-01-31'
+		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
+		AND tip_nvta IN('E')
+		and edo_nvta  = 'A'
+		and fac_nvta is null
+group by 1
 
 SELECT	*
 from	nota_vta
@@ -706,7 +758,7 @@ where	epo_fec >= '2023-04-01'
 SELECT	*
 FROM 	nota_vta n, cte_fac cf
 WHERE	n.numcte_nvta = cf.numcte_cfac 					
-		AND fes_nvta = '2024-02-01' AND edo_nvta = 'A' AND impt_nvta > 0
+		AND fes_nvta = '2024-06-08' AND edo_nvta = 'A' AND impt_nvta > 0
 		AND tip_nvta IN('B','C','D','E','2','3','4')
 		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
 		AND fac_nvta IS NULL
@@ -761,8 +813,6 @@ where	edo_nvta = 'A'
 		AND fes_nvta = '2023-05-02'
 group by 1
 
-EXECUTE PROCEDURE obt_facturado('2023-05-02','2023-05-02');
-
 select	sum(simp_nvta), sum(iva_nvta), sum(impt_nvta), sum(NVL(impasi_nvta,0))
 from	nota_vta
 where	fes_nvta = '2023-05-02' and edo_nvta = 'A' 
@@ -788,7 +838,7 @@ order by fol_nvta;
 		
 SELECT	sum(impt_nvta), sum(nvl(impasi_nvta,0))
 FROM 	nota_vta n
-WHERE	fes_nvta = '2023-09-28' AND edo_nvta = 'A' AND impt_nvta > 0 --and impasi_nvta > 0
+WHERE	fes_nvta = '2024-06-07' --AND edo_nvta = 'A' AND impt_nvta > 0 --and impasi_nvta > 0
 		--AND (aju_nvta IS NULL OR aju_nvta <> 'S')
 		--AND fac_nvta in (156914)
 		AND tip_nvta matches '[CD234]'
@@ -910,11 +960,12 @@ WHERE	fes_nvta = '2023-10-15' AND edo_nvta = 'A' AND impasi_nvta > 0
 		AND fac_nvta IS NULL
 		AND tip_nvta IN('C','D','2','3','4')
 		
-SELECT	sum(*)
+SELECT	count(*)
 FROM 	nota_vta n
-WHERE	fes_nvta = '2023-09-24' AND edo_nvta = 'A' AND impasi_nvta > 0							
-		AND fac_nvta IS NULL
+WHERE	fes_nvta between '2024-06-01' and '2024-06-30' AND edo_nvta = 'A' 				
 		AND tip_nvta IN('C','D','2','3','4')
+		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
+		and fac_nvta is null
 		
 select	*
 from	det_fac

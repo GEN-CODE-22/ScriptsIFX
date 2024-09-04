@@ -1,5 +1,10 @@
 DROP PROCEDURE GETVAL_EX_MODE;
-EXECUTE PROCEDURE GETVAL_EX_MODE('','','','numlcob_dat');
+EXECUTE PROCEDURE GETVAL_EX_MODE('15','09','','folfceg_pla');
+
+select * from planta
+update planta
+set 	folfceg_pla = null 
+where  cve_pla = '09'
 CREATE PROCEDURE GETVAL_EX_MODE(
 				paramCia   CHAR(2),
                 paramPla   CHAR(2),
@@ -220,6 +225,29 @@ IF paramValue=="folfce_pla" THEN
 
 	UPDATE  planta
 	SET     folfce_pla = valueReturn
+	WHERE   cia_pla = paramCia
+	   AND cve_pla = paramPla;
+
+	UNLOCK TABLE planta;
+	
+	RETURN valueReturn;
+
+END IF;
+
+IF paramValue=="folfceg_pla" THEN
+
+	LOCK TABLE planta IN EXCLUSIVE MODE;
+	
+	SELECT NVL(folfceg_pla,0) 
+	INTO   valueReturn 
+	FROM   planta
+	WHERE  cia_pla = paramCia 
+	    AND cve_pla = paramPla;
+
+	LET valueReturn = valueReturn + 1;
+
+	UPDATE  planta
+	SET     folfceg_pla = valueReturn
 	WHERE   cia_pla = paramCia
 	   AND cve_pla = paramPla;
 

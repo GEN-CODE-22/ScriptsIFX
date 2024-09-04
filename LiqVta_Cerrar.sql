@@ -1,36 +1,58 @@
 DROP PROCEDURE LiqVta_Cerrar;
 EXECUTE PROCEDURE  LiqVta_Cerrar(2835, 'AP01','A','laura'); 	-- ANDEN
-EXECUTE PROCEDURE  LiqVta_Cerrar(9098, 'B008','B','jocelin'); 	-- MEDIDOR
-EXECUTE PROCEDURE  LiqVta_Cerrar(3409, 'M027','E','edith'); 	-- PIPA
-EXECUTE PROCEDURE  LiqVta_Cerrar(7880, 'C007','C','esther'); 	-- CILINDRO
+EXECUTE PROCEDURE  LiqVta_Cerrar(6937, 'BP01','B','cristina'); 	-- MEDIDOR
+EXECUTE PROCEDURE  LiqVta_Cerrar(3572, 'M008','E','pueblito'); 	-- PIPA
+EXECUTE PROCEDURE  LiqVta_Cerrar(6069, 'C059','C','esther'); 	-- CILINDRO
 
 select	rowid,*
 from	vtaxemp 
-where	ruta_vemp in('M001') and fec_vemp >= '2024-01-12'
+where	ruta_vemp in('M003') and fec_vemp = '2024-06-25' and fec_vemp >= '2024-02-22'
+
+select	rowid,*
+from	vtaxemp 
+where	emp_vemp = '0387' and fec_vemp = '2024-04-15' 
+
+select  *
+from 	vtaxemp
+where 	fec_vemp  = '2024-06-25' and ruta_vemp[1] = 'M' order by ruta_vemp
 
 delete
 from	vtaxemp
-where	ruta_vemp in('M001') and fec_vemp = '2024-01-12' and coa_vemp = '29'
+where	fec_vemp  = '2024-05-29' ruta_vemp in('C021') and fec_vemp = '2024-05-13' and coa_vemp = '29'
 
+update	vtaxemp
+set		vta_vemp = 3329.80, ncon_vemp = 22
+where	ruta_vemp in('M023') and fec_vemp = '2023-12-30'
 
 select	rowid,*
 from	vtaxemp 
-where	ruta_vemp[1] = 'B' and fec_vemp >= '2024-01-05'
+where	ruta_vemp[1] = 'B' and fec_vemp = '2024-01-26' order by ruta_vemp
 
 select	rowid,*
 from	vtaxemp 
-where	coa_vemp = '29' and fec_vemp >= '2023-12-12'
+where	coa_vemp = '29' and fec_vemp >= '2024-01-20'
 
 update	empxrutc
-set		edo_eruc = 'P'
-where	fliq_eruc = 7646 and rut_eruc = 'C002'
+set		edo_eruc = 'C'
+where	fliq_eruc = 5332 and rut_eruc = 'CM06'
+
+update	empxrutp
+set		edo_erup = 'P'
+where	fliq_erup = 815 and rut_erup = 'M021'
+
+select 	*
+from 	ruta
+where   tip_rut = 'T'
+order by cve_rut 
+
 
 CREATE PROCEDURE LiqVta_Cerrar
 (
 	paramFolio  INT,
 	paramRuta	CHAR(4),
 	paramTipo	CHAR(1),
-	paramUsr	CHAR(8)
+	paramUsr	CHAR(8),
+	paramCerrar CHAR(1)
 )
 
 RETURNING  
@@ -98,14 +120,14 @@ IF paramTipo = 'A' THEN
 END IF;
 
 IF paramTipo = 'G' THEN
-	SELECT	fec_ggas, NVL(tlts_ggas,0) , NVL(tlts_ggas,0), NVL(impt_ggas, 0),  NVL(impt_ggas, 0), 0, NVL(tlts_ggas,0)
+	SELECT	fec_ggas, NVL(tlts_ggas,0) , NVL(tlts_ggas,0), NVL(impt_ggas, 0),  NVL(impt_ggas, 0), 0, NVL(lec_ggas,0)
 	INTO	vfecha, vtlts, vstlts, vtimpt, vstimpt, vtasist, vdif
 	FROM	gto_gas
 	WHERE	fliq_ggas = paramFolio AND rut_ggas = paramRuta;
 END IF;
 
 IF paramTipo = 'S' THEN
-	SELECT	fec_gdie, NVL(tlts_gdie, 0), NVL(tlts_gdie, 0), NVL(impt_gdie, 0), NVL(impt_gdie, 0), 0, NVL(tlts_gdie, 0)
+	SELECT	fec_gdie, NVL(tlts_gdie, 0), NVL(tlts_gdie, 0), NVL(impt_gdie, 0), NVL(impt_gdie, 0), 0, NVL(ldi_gdie, 0)
 	INTO	vfecha, vtlts, vstlts, vtimpt, vstimpt, vtasist, vdif
 	FROM	gto_die
 	WHERE	fliq_gdie = paramFolio AND rut_gdie = paramRuta;
@@ -122,22 +144,25 @@ END IF;
 IF paramTipo = 'E' THEN	
 	LET vproceso,vmsg = LiqVta_Verif(paramFolio,paramRuta,'E',vfecha, vtlts, vstlts, vtimpt, vstimpt, vtasist, vdif);
 	IF vproceso = 1 THEN
-		UPDATE	empxrutp
-		SET		edo_erup = 'C'
-		WHERE	fliq_erup = paramFolio AND rut_erup = paramRuta;
-		
-		LET vproceso,vmsg = LiqVta_ProcNvta(paramFolio, paramRuta,'E',paramUsr);
-		IF vproceso = 1 THEN
-			IF vtlts > 0 THEN
-				LET vproceso,vmsg = LiqVta_emperup(paramFolio, paramRuta);
-			END IF;
+		LET vmensaje = 'OK';
+		IF	paramCerrar = 'C' THEN		
+			UPDATE	empxrutp
+			SET		edo_erup = 'C'
+			WHERE	fliq_erup = paramFolio AND rut_erup = paramRuta;
+			
+			LET vproceso,vmsg = LiqVta_ProcNvta(paramFolio, paramRuta,'E',paramUsr);
 			IF vproceso = 1 THEN
-				LET vmensaje = 'OK';
+				IF vtlts > 0 THEN
+					LET vproceso,vmsg = LiqVta_emperup(paramFolio, paramRuta);
+				END IF;
+				IF vproceso = 1 THEN
+					LET vmensaje = 'OK';
+				ELSE
+					LET vmensaje = 'ERROR AL REGISTAR LA VENTA DEL EMPLEADO';
+				END IF;
 			ELSE
-				LET vmensaje = 'ERROR AL REGISTAR LA VENTA DEL EMPLEADO';
+				LET vmensaje = 'ERROR AL PROCESAR NOTAS DE VENTA';
 			END IF;
-		ELSE
-			LET vmensaje = 'ERROR AL PROCESAR NOTAS DE VENTA';
 		END IF;
 	END IF;
 END IF;
@@ -145,22 +170,25 @@ END IF;
 IF paramTipo = 'B' THEN
 	LET vproceso,vmsg = LiqVta_Verif(paramFolio,paramRuta,'B',vfecha, vtlts, vstlts, vtimpt, vstimpt, vtasist, vdif);
 	IF vproceso = 1 THEN 
-		UPDATE	venxmed
-		SET		edo_vmed = 'C'
-		WHERE	fliq_vmed = paramFolio AND rut_vmed = paramRuta;
-		
-		LET vproceso,vmsg = LiqVta_ProcNvta(paramFolio, paramRuta,'B',paramUsr);
-		IF vproceso = 1 THEN
-			IF vtlts > 0 THEN
-				LET vproceso,vmsg = LiqVta_emperum(paramFolio, paramRuta);
-			END IF;
+		LET vmensaje = 'OK';
+		IF	paramCerrar = 'C' THEN		
+			UPDATE	venxmed
+			SET		edo_vmed = 'C'
+			WHERE	fliq_vmed = paramFolio AND rut_vmed = paramRuta;
+			
+			LET vproceso,vmsg = LiqVta_ProcNvta(paramFolio, paramRuta,'B',paramUsr);
 			IF vproceso = 1 THEN
-				LET vmensaje = 'OK';
+				IF vtlts > 0 THEN
+					LET vproceso,vmsg = LiqVta_emperum(paramFolio, paramRuta);
+				END IF;
+				IF vproceso = 1 THEN
+					LET vmensaje = 'OK';
+				ELSE
+					LET vmensaje = 'ERROR AL REGISTAR LA VENTA DEL EMPLEADO';
+				END IF;
 			ELSE
-				LET vmensaje = 'ERROR AL REGISTAR LA VENTA DEL EMPLEADO';
+				LET vmensaje = 'ERROR AL PROCESAR NOTAS DE VENTA';
 			END IF;
-		ELSE
-			LET vmensaje = 'ERROR AL PROCESAR NOTAS DE VENTA';
 		END IF;
 	END IF;
 END IF;
@@ -168,15 +196,18 @@ END IF;
 IF paramTipo = 'D' THEN
 	LET vproceso,vmsg = LiqVta_Verif(paramFolio,paramRuta,'D',vfecha, vtlts, vstlts, vtimpt, vstimpt, vtasist, vdif);
 	IF vproceso = 1 THEN 
-		UPDATE	des_dir
-		SET		edo_desd = 'C'
-		WHERE	fliq_desd = paramFolio AND rut_desd = paramRuta;
-		
-		LET vproceso,vmsg = LiqVta_ProcNvta(paramFolio, paramRuta,'D',paramUsr);
-		IF vproceso = 1 THEN
-			LET vmensaje = 'OK';
-		ELSE
-			LET vmensaje = 'ERROR AL PROCESAR NOTAS DE VENTA';
+		LET vmensaje = 'OK';
+		IF	paramCerrar = 'C' THEN		
+			UPDATE	des_dir
+			SET		edo_desd = 'C'
+			WHERE	fliq_desd = paramFolio AND rut_desd = paramRuta;
+			
+			LET vproceso,vmsg = LiqVta_ProcNvta(paramFolio, paramRuta,'D',paramUsr);
+			IF vproceso = 1 THEN
+				LET vmensaje = 'OK';
+			ELSE
+				LET vmensaje = 'ERROR AL PROCESAR NOTAS DE VENTA';
+			END IF;
 		END IF;
 	END IF;
 END IF;
@@ -184,38 +215,44 @@ END IF;
 IF paramTipo = 'C' THEN
 	LET vproceso,vmsg = LiqVta_Verif(paramFolio,paramRuta,'C',vfecha, vtlts, vstlts, vtimpt, vstimpt, vtasist, vdif);
 	IF vproceso = 1 THEN 
-		UPDATE	empxrutc
-		SET		edo_eruc = 'C'
-		WHERE	fliq_eruc = paramFolio AND rut_eruc = paramRuta;
-		
-		LET vproceso,vmsg = LiqVta_ProcNvta(paramFolio, paramRuta,'C',paramUsr);
-		IF vproceso = 1 THEN
-			IF vtlts > 0 THEN
-				LET vproceso,vmsg = LiqVta_emperuc(paramFolio, paramRuta);
-			END IF;
+		LET vmensaje = 'OK';
+		IF	paramCerrar = 'C' THEN		
+			UPDATE	empxrutc
+			SET		edo_eruc = 'C'
+			WHERE	fliq_eruc = paramFolio AND rut_eruc = paramRuta;
+			
+			LET vproceso,vmsg = LiqVta_ProcNvta(paramFolio, paramRuta,'C',paramUsr);
 			IF vproceso = 1 THEN
-				LET vmensaje = 'OK';
+				IF vtlts > 0 THEN
+					LET vproceso,vmsg = LiqVta_emperuc(paramFolio, paramRuta);
+				END IF;
+				IF vproceso = 1 THEN
+					LET vmensaje = 'OK';
+				ELSE
+					LET vmensaje = 'ERROR AL REGISTAR LA VENTA DEL EMPLEADO';
+				END IF;
 			ELSE
-				LET vmensaje = 'ERROR AL REGISTAR LA VENTA DEL EMPLEADO';
-			END IF;
-		ELSE
-			LET vmensaje = 'ERROR AL PROCESAR NOTAS DE VENTA';
-		END IF;	
+				LET vmensaje = 'ERROR AL PROCESAR NOTAS DE VENTA';
+			END IF;	
+		END IF;
 	END IF;
 END IF;
 
 IF paramTipo = 'A' THEN
 	LET vproceso,vmsg = LiqVta_Verif(paramFolio,paramRuta,'A',vfecha, vtlts, vstlts, vtimpt, vstimpt, vtasist, vdif);
 	IF vproceso = 1 THEN 
-		UPDATE	venxand
-		SET		edo_vand = 'C'
-		WHERE	fliq_vand = paramFolio AND rut_vand = paramRuta;
-		
-		LET vproceso,vmsg = LiqVta_ProcNvta(paramFolio, paramRuta,'A',paramUsr);
-		IF vproceso = 1 THEN
-			LET vmensaje = 'OK';
-		ELSE
-			LET vmensaje = 'ERROR AL PROCESAR NOTAS DE VENTA';
+		LET vmensaje = 'OK';
+		IF	paramCerrar = 'C' THEN		
+			UPDATE	venxand
+			SET		edo_vand = 'C'
+			WHERE	fliq_vand = paramFolio AND rut_vand = paramRuta;
+			
+			LET vproceso,vmsg = LiqVta_ProcNvta(paramFolio, paramRuta,'A',paramUsr);
+			IF vproceso = 1 THEN
+				LET vmensaje = 'OK';
+			ELSE
+				LET vmensaje = 'ERROR AL PROCESAR NOTAS DE VENTA';
+			END IF;
 		END IF;
 	END IF;
 END IF;
@@ -223,15 +260,18 @@ END IF;
 IF paramTipo = 'G' THEN
 	LET vproceso,vmsg = LiqVta_Verif(paramFolio,paramRuta,'G',vfecha, vtlts, vstlts, vtimpt, vstimpt, vtasist, vdif);
 	IF vproceso = 1 THEN 
-		UPDATE	gto_gas
-		SET		edo_ggas = 'C'
-		WHERE	fliq_ggas = paramFolio AND rut_ggas = paramRuta;
-		
-		LET vproceso,vmsg = LiqVta_ProcNvta(paramFolio, paramRuta,'G',paramUsr);
-		IF vproceso = 1 THEN
-			LET vmensaje = 'OK';
-		ELSE
-			LET vmensaje = 'ERROR AL PROCESAR NOTAS DE VENTA';
+		LET vmensaje = 'OK';
+		IF	paramCerrar = 'C' THEN		
+			UPDATE	gto_gas
+			SET		edo_ggas = 'C'
+			WHERE	fliq_ggas = paramFolio AND rut_ggas = paramRuta;
+			
+			LET vproceso,vmsg = LiqVta_ProcNvta(paramFolio, paramRuta,'G',paramUsr);
+			IF vproceso = 1 THEN
+				LET vmensaje = 'OK';
+			ELSE
+				LET vmensaje = 'ERROR AL PROCESAR NOTAS DE VENTA';
+			END IF;
 		END IF;
 	END IF;
 END IF;
@@ -239,15 +279,18 @@ END IF;
 IF paramTipo = 'S' THEN
 	LET vproceso,vmsg = LiqVta_Verif(paramFolio,paramRuta,'S',vfecha, vtlts, vstlts, vtimpt, vstimpt, vtasist, vdif);
 	IF vproceso = 1 THEN 
-		UPDATE	gto_die
-		SET		edo_gdie = 'C'
-		WHERE	fliq_gdie = paramFolio AND rut_gdie = paramRuta;
-		
-		LET vproceso,vmsg =  LiqVta_ProcNvta(paramFolio, paramRuta,'S',paramUsr);
-		IF vproceso = 1 THEN
-			LET vmensaje = 'OK';
-		ELSE
-			LET vmensaje = 'ERROR AL PROCESAR NOTAS DE VENTA';
+		LET vmensaje = 'OK';
+		IF	paramCerrar = 'C' THEN		 
+			UPDATE	gto_die
+			SET		edo_gdie = 'C'
+			WHERE	fliq_gdie = paramFolio AND rut_gdie = paramRuta;
+			
+			LET vproceso,vmsg =  LiqVta_ProcNvta(paramFolio, paramRuta,'S',paramUsr);
+			IF vproceso = 1 THEN
+				LET vmensaje = 'OK';
+			ELSE
+				LET vmensaje = 'ERROR AL PROCESAR NOTAS DE VENTA';
+			END IF;
 		END IF;
 	END IF;
 END IF;
@@ -258,40 +301,74 @@ LET vmensaje = TRIM(vmensaje) || ' ' || TRIM(vmsg);
 RETURN 	vresult,vmensaje;
 END PROCEDURE; 
 
+
 select	*
 from	empxrutp
-where	fec_erup >= '2024-01-12' and rut_erup = 'M001'
+where	fec_erup = '2024-08-20' and edo_erup = 'C'  and rut_erup = 'M053' and sfac_erup is not null and sfac_erup[1] != 'T'_erup = 'C' order by rut_erup --rut_erup = 'M001'
 
+update empxrutp
+set 	edo_erup  = 'P'
+where	fec_erup = '2024-05-29' and edo_erup = 'C' and fliq_erup = 4099 and rut_erup =  'M053'
+
+select *
+from 	nota_vta
+where   fliq_nvta = 3929 and ruta_nvta ='B012' and tpa_nvta = 'C'
+
+update 	nota_vta
+set 	fes_nvta = '2024-04-15'
+where   fliq_nvta = 6671 and ruta_nvta ='CS18' and tpa_nvta = 'C'
+		   
+select	*
+from	empxrutp
+where   fec_erup = '2024-07-06' and rut_erup = 'M059'  vcre_erup > 0 and vefe_erup > 0
 
 update	empxrutp
-set		edo_erup = 'P'
-where	fec_erup = '2023-09-25' and rut_erup = 'M021'
+set		impase_erup = 0.00, impasi_erup = 0.00
+where	fec_erup = '2024-02-05' and rut_erup = 'M024' and fliq_erup = 1352
 
 
 select * 
 from	venxmed
-where	fec_vmed >= '2024-01-13' and rut_vmed = 'B002'
+where	fec_vmed = '2024-08-20' and edo_vmed = 'C'  order by rut_vmed and rut_vmed = 'B002'
+3863
+update  venxmed
+set 	edo_vmed = 'P'
+where	fec_vmed = '2024-05-29' and edo_vmed = 'C'
 
+select  distinct desp_vmed 
+from	venxmed
+where	fec_vmed = '2024-01-24' and desp_vmed is not null
+union  
+select  distinct ayu1_vmed 
+from	venxmed
+where	fec_vmed = '2024-01-24' and ayu1_vmed is not null
 
 update	venxmed
 set		edo_vmed = 'P'
-where	fec_vmed = '2023-09-25' and rut_vmed = 'BP02' and fliq_vmed = 3925
+where	fec_vmed = '2023-09-23' and rut_vmed = 'BP02' and fliq_vmed = 3925
 
 select * 
 from	des_dir
-where	fec_desd >= '2023-10-02'
+where	fec_desd >= '2024-08-15'
 
 select	*
-from	empxrutc where fec_eruc = '2024-01-05' and rut_eruc = 'C010' fliq_eruc = 6546
-where	fec_eruc = '2023-12-14' order by rut_eruc and rut_eruc = 'C010'
+from	empxrutc where fec_eruc = '2024-08-18' and edo_eruc = 'C' and rut_eruc = 'C031' fliq_eruc = 6546
+where	fec_eruc = '2023-12-14' order by rut_eruc and rut_eruc = 'C009'
+
+update 	empxrutc 
+set 	edo_eruc = 'P' 
+where   fec_eruc = '2024-05-29' and edo_eruc = 'C'
+
+select	*
+from	empxrutcbaj where fec_eruc >= '2024-02-26' and rut_eruc = 'C003'
 
 update	empxrutc
-set		edo_eruc = 'P' --, impase_eruc = 0.00
-where	fec_eruc = '2023-12-13' and rut_eruc = 'C025' and fliq_eruc = 8201
+set		edo_eruc = '' --, impase_eruc = 0.00
+where	fec_eruc = '2024-01-29' and rut_eruc = 'C009' and fliq_eruc = 7428
 
 select * 
 from	venxand
-where	fec_vand = '2023-12-15'
+where	fec_vand = '2024-08-17'
 
 update	venxand
 set		edo_vand = 'C'
@@ -299,15 +376,15 @@ where	fliq_vand = 4291 and rut_vand = 'A010'
 
 select * 
 from	gto_gas
-where	fec_ggas = '2023-11-28'
+where	fec_ggas >= '2024-08-01'
 
 select * 
 from	gto_die
-where	fec_gdie = '2023-10-05'
+where	fec_gdie >= '2024-08-01' and edo_gdie = 'C'
 
 update	gto_die
-set		tlts_gdie = 179.00, impt_gdie = 3753.63
-where	fliq_gdie = 2337 and rut_gdie = 'H002'
+set		edo_gdie = 'P'
+where	fec_gdie = '2024-04-03' and edo_gdie = 'C'
 
 
 select	*
@@ -320,7 +397,11 @@ where	fol_dodom = 14413
 
 select	*
 from	nota_vta
-where	fliq_nvta = 2466 and ruta_nvta = 'M032' and tpa_nvta = 'C'
+where	fliq_nvta = 2226  and ruta_nvta = 'H002' and tpa_nvta = 'C'
+365
+update  nota_vta
+set 	edo_nvta = 'S'
+where	fliq_nvta = 4099 and ruta_nvta = 'M053' and tpa_nvta = 'C'
 
 select	tpa_nvta, sum(impt_nvta), sum(impasi_nvta)
 from	nota_vta 
@@ -343,6 +424,11 @@ where	numcte_tqe = '006092' and numtqe_tqe = 1
 select	*
 from	nota_vta
 where	edo_nvta = 'S' and fliq_nvta > 0 and numcte_nvta is not null
+order by fes_nvta
+
+select	*
+from	nota_vta
+where	edo_nvta = 'A' and fes_nvta = '2024-06-05'
 order by fes_nvta
 
 select 	*
@@ -431,6 +517,10 @@ select	rowid,*
 from	vtaxemp
 where	ruta_vemp in('M021') and fec_vemp >= '2023-11-06'
 
+select	rowid,*
+from	vtaxemp
+where 	fec_vemp = '2024-05-27' and ncon_vemp = 0 and nanf_vemp = 0
+
 insert into vtaxemp values('2726','2020-04-29','46','CP13',16,450.00,'K',0)
 
 delete
@@ -462,7 +552,11 @@ order by cve_rut
 
 select	*
 from	nota_vta
-where	fes_nvta = '2023-09-25' and edo_nvta = 'A'
+where	fes_nvta = '2024-04-02' and tpa_nvta = 'C' and napl_nvta = 'S'
+
+update	nota_vta
+set		edo_nvta = 'S'
+where	fes_nvta = '2024-04-02' and tpa_nvta = 'C' and napl_nvta = 'S'
 
 select	fliq_nvta, ruta_nvta
 from	nota_vta
@@ -470,3 +564,25 @@ where	fes_nvta = '2023-09-25' and edo_nvta = 'A'
 		and tip_nvta in('C','D','2','3','4')
 group by 1,2
 order by 2
+
+
+select  *
+from    vtaxemp v, empxrutp e
+where   e.fec_erup = '2024-04-15'
+		and 
+
+select  *
+from    empxrutp e
+where   e.fec_erup between  '2024-04-01' and '2024-05-06'
+		and chf_erup not in (select emp_vemp from vtaxemp where fec_vemp = e.fec_erup)
+		and rut_erup <> 'M099'
+		and imp_erup > 0
+
+select  *
+from    empxrutp e
+where   e.fec_erup between  '2024-04-01' and '2024-05-06'
+		and ay1_erup not in (select emp_vemp from vtaxemp where fec_vemp = e.fec_erup)
+		and ay1_erup <> ''
+		and rut_erup <> 'M099'
+		and imp_erup > 0
+		

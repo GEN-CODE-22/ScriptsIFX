@@ -588,7 +588,7 @@ IF	paramTipo = 'A' THEN
 		END IF;
 	END FOREACH;
 END IF;
-
+--DONACIONES-----------------------------------------------------------
 IF	paramTipo = 'D' THEN 
 	LET vrfc = '';
 	LET vtipfac = 'N';
@@ -624,6 +624,7 @@ IF	paramTipo = 'D' THEN
 	END FOREACH;
 END IF;
 
+--FUGAS-----------------------------------------------------------
 IF	paramTipo = 'F' THEN 
 	LET vrfc = '';
 	LET vtipfac = 'N';
@@ -661,7 +662,7 @@ IF	paramTipo = 'F' THEN
 		WITH RESUME;
 	END FOREACH;
 END IF;
-
+--CONSUMO INTERNO-----------------------------------------------------------
 IF	paramTipo = 'I' THEN 
 	LET vrfc = '';
 	LET vcliente = '';
@@ -684,28 +685,29 @@ IF	paramTipo = 'I' THEN
 	LET vpru = 0.00;
 	LET vimpt = 0.00;
 	LET vfecsur = paramFecFin;
+	LET vtkgs = 0;
 	
-	SELECT  SUM(epo_coni) 
+	SELECT  NVL(SUM(epo_coni),0) 
 	INTO    vtkgs
 	FROM	e_posaj 
 	WHERE   epo_fec >= paramFecIni AND epo_fec <= paramFecFin;
 	
-	IF	paramTipSvr = 'C' THEN
-		LET vtlts = vtkgs / vconkl;
-	END IF;
-	
-	SELECT	MIN(pcre_rut)
-	INTO    vpcre
-	FROM	ruta
-	WHERE   pcre_rut IS NOT NULL;
-	
-	LET vidpcre = vol_getpcre(vidsvr,vpcre);
-	
-	LET vfolio = MONTH(paramFecIni) + YEAR(paramFecIni);
-	
-	RETURN 	vtipo,vtpa,vtlts,vimpt,vpru,vruta,vtiprut,vfolfac,vserfac,vfecsur,vfolio,vuso,vfyhn,vuuid,vfyh,vrfc,vcliente,vtipfac,vtipcfd,vtltsfac,vimptfac,vidpcre,vidsvr,vidpcred,vtkgs;
-	
-	
+	IF vtkgs > 0 THEN
+		IF	paramTipSvr = 'C' THEN
+			LET vtlts = vtkgs / vconkl;
+		END IF;
+		
+		SELECT	MIN(pcre_rut)
+		INTO    vpcre
+		FROM	ruta
+		WHERE   pcre_rut IS NOT NULL;
+		
+		LET vidpcre = vol_getpcre(vidsvr,vpcre);
+		
+		LET vfolio = YEAR(paramFecIni) || MONTH(paramFecIni) || DAY(paramFecIni);
+		RETURN 	vtipo,vtpa,vtlts,vimpt,vpru,vruta,vtiprut,vfolfac,vserfac,vfecsur,vfolio,vuso,vfyhn,vuuid,vfyh,vrfc,vcliente,vtipfac,vtipcfd,vtltsfac,vimptfac,vidpcre,vidsvr,vidpcred,vtkgs;
+				
+	END IF;	
 END IF;
 
 END PROCEDURE; 
