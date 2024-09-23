@@ -2,11 +2,11 @@ DROP PROCEDURE LiqVta_Cerrar;
 EXECUTE PROCEDURE  LiqVta_Cerrar(2835, 'AP01','A','laura'); 	-- ANDEN
 EXECUTE PROCEDURE  LiqVta_Cerrar(6937, 'BP01','B','cristina'); 	-- MEDIDOR
 EXECUTE PROCEDURE  LiqVta_Cerrar(3572, 'M008','E','pueblito'); 	-- PIPA
-EXECUTE PROCEDURE  LiqVta_Cerrar(6069, 'C059','C','esther'); 	-- CILINDRO
+EXECUTE PROCEDURE  LiqVta_Cerrar(8334, 'C002','C','vero','C'); 	-- CILINDRO
 
 select	rowid,*
 from	vtaxemp 
-where	ruta_vemp in('M003') and fec_vemp = '2024-06-25' and fec_vemp >= '2024-02-22'
+where	ruta_vemp in('M021') and fec_vemp = '2024-08-29' and fec_vemp >= '2024-02-22'
 
 select	rowid,*
 from	vtaxemp 
@@ -33,8 +33,8 @@ from	vtaxemp
 where	coa_vemp = '29' and fec_vemp >= '2024-01-20'
 
 update	empxrutc
-set		edo_eruc = 'C'
-where	fliq_eruc = 5332 and rut_eruc = 'CM06'
+set		edo_eruc = 'P'
+where	fliq_eruc = 8334 and rut_eruc = 'C002'
 
 update	empxrutp
 set		edo_erup = 'P'
@@ -79,7 +79,7 @@ LET vmsg = '';
 IF paramTipo = 'E' THEN
 	SELECT	fec_erup, NVL(tot_erup,0), NVL(lcre_erup,0) + NVL(lefe_erup,0) + NVL(lpar_erup,0) + NVL(lotr_erup,0), NVL(imp_erup,0), 
 			NVL(vcre_erup,0) + NVL(vefe_erup,0) + NVL(votr_erup,0), NVL(impasc_erup,0) + NVL(impase_erup,0) + NVL(impaso_erup,0),
-			ldi_erup
+			NVL(ldi_erup,0)
 	INTO	vfecha, vtlts, vstlts, vtimpt, vstimpt, vtasist, vdif
 	FROM	empxrutp
 	WHERE	fliq_erup = paramFolio AND rut_erup = paramRuta;
@@ -88,7 +88,7 @@ END IF;
 IF paramTipo = 'B' THEN
 	SELECT	fec_vmed, NVL(tlts_vmed,0), NVL(vefe_vmed,0) + NVL(vcrd_vmed,0) + NVL(votr_vmed,0) + NVL(cint_vmed,0), NVL(impt_vmed,0), 
 			NVL(icrd_vmed,0) + NVL(iefe_vmed,0) + NVL(iotr_vmed,0) + NVL(icin_vmed,0), 
-			NVL(impasc_vmed,0) + NVL(impase_vmed,0) + NVL(impaso_vmed,0), ldi_vmed
+			NVL(impasc_vmed,0) + NVL(impase_vmed,0) + NVL(impaso_vmed,0), NVL(ldi_vmed,0)
 	INTO	vfecha, vtlts, vstlts, vtimpt, vstimpt, vtasist, vdif
 	FROM	venxmed
 	WHERE	fliq_vmed = paramFolio AND rut_vmed = paramRuta;
@@ -96,7 +96,7 @@ END IF;
 
 IF paramTipo = 'D' THEN
 	SELECT	fec_desd, NVL(tkgs_desd,0), NVL(kcrd_desd,0) + NVL(kefe_desd,0), NVL(impt_desd,0), 
-			NVL(icrd_desd,0) + NVL(iefe_desd,0), NVL(impase_desd,0) + NVL(impasc_desd,0), lec_desd
+			NVL(icrd_desd,0) + NVL(iefe_desd,0), NVL(impase_desd,0) + NVL(impasc_desd,0), NVL(lec_desd,0)
 	INTO	vfecha, vtlts, vstlts, vtimpt, vstimpt, vtasist, vdif
 	FROM	des_dir
 	WHERE	fliq_desd = paramFolio AND rut_desd = paramRuta;
@@ -105,7 +105,7 @@ END IF;
 IF paramTipo = 'C' THEN
 	SELECT	fec_eruc, NVL(tkgs_eruc,0), NVL(kefe_eruc,0) + NVL(kcrd_eruc,0) + NVL(kpar_eruc,0) +  + NVL(kotr_eruc,0), NVL(impt_eruc,0), 
 			NVL(iefe_eruc,0) + NVL(icrd_eruc,0) + NVL(iotr_eruc,0), NVL(impasc_eruc,0) + NVL(impase_eruc,0) + NVL(impaso_eruc,0),
-			tkgs_eruc
+			NVL(tkgs_eruc,0)
 	INTO	vfecha, vtlts, vstlts, vtimpt, vstimpt, vtasist, vdif
 	FROM	empxrutc
 	WHERE	fliq_eruc = paramFolio AND rut_eruc = paramRuta;
@@ -304,15 +304,15 @@ END PROCEDURE;
 
 select	*
 from	empxrutp
-where	fec_erup = '2024-08-20' and edo_erup = 'C'  and rut_erup = 'M053' and sfac_erup is not null and sfac_erup[1] != 'T'_erup = 'C' order by rut_erup --rut_erup = 'M001'
+where	fec_erup = '2024-09-05' and edo_erup = 'C'  and rut_erup = 'M053' and sfac_erup is not null and sfac_erup[1] != 'T'_erup = 'C' order by rut_erup --rut_erup = 'M001'
 
 update empxrutp
 set 	edo_erup  = 'P'
-where	fec_erup = '2024-05-29' and edo_erup = 'C' and fliq_erup = 4099 and rut_erup =  'M053'
+where	fec_erup = '2024-08-29' and edo_erup = 'C' and fliq_erup = 6163 and rut_erup =  'M021'
 
 select *
 from 	nota_vta
-where   fliq_nvta = 3929 and ruta_nvta ='B012' and tpa_nvta = 'C'
+where   fliq_nvta = 6163 and ruta_nvta ='M021' and tpa_nvta = 'C'
 
 update 	nota_vta
 set 	fes_nvta = '2024-04-15'
@@ -329,7 +329,7 @@ where	fec_erup = '2024-02-05' and rut_erup = 'M024' and fliq_erup = 1352
 
 select * 
 from	venxmed
-where	fec_vmed = '2024-08-20' and edo_vmed = 'C'  order by rut_vmed and rut_vmed = 'B002'
+where	fec_vmed = '2024-08-24' and edo_vmed = 'C'  order by rut_vmed and rut_vmed = 'B002'
 3863
 update  venxmed
 set 	edo_vmed = 'P'
@@ -352,7 +352,7 @@ from	des_dir
 where	fec_desd >= '2024-08-15'
 
 select	*
-from	empxrutc where fec_eruc = '2024-08-18' and edo_eruc = 'C' and rut_eruc = 'C031' fliq_eruc = 6546
+from	empxrutc where fec_eruc = '2024-08-26' and edo_eruc = 'C' and rut_eruc = 'C031' fliq_eruc = 6546
 where	fec_eruc = '2023-12-14' order by rut_eruc and rut_eruc = 'C009'
 
 update 	empxrutc 
@@ -585,4 +585,10 @@ where   e.fec_erup between  '2024-04-01' and '2024-05-06'
 		and ay1_erup <> ''
 		and rut_erup <> 'M099'
 		and imp_erup > 0
+		
+SELECT	fec_erup, NVL(tot_erup,0), NVL(lcre_erup,0) + NVL(lefe_erup,0) + NVL(lpar_erup,0) + NVL(lotr_erup,0), NVL(imp_erup,0), 
+			NVL(vcre_erup,0) + NVL(vefe_erup,0) + NVL(votr_erup,0), NVL(impasc_erup,0) + NVL(impase_erup,0) + NVL(impaso_erup,0),
+			ldi_erup
+	FROM	empxrutp
+	WHERE	fliq_erup = 9205 AND rut_erup = 'M003';
 		

@@ -1,5 +1,5 @@
 DROP PROCEDURE LiqVta_emperup;
-EXECUTE PROCEDURE  LiqVta_emperup(5572, 'M008');
+EXECUTE PROCEDURE  LiqVta_emperup(7244, 'M003');
 
 CREATE PROCEDURE LiqVta_emperup
 (
@@ -67,7 +67,7 @@ IF vpla = '04' OR vpla = '05' OR vpla = '10' OR vpla = '15' OR vpla = '20' OR vp
 END IF;
    
 IF vpla = '01' OR vpla = '93' THEN
-  SELECT COUNT(*), ((SUM(CASE WHEN tpa_nvta = 'C' AND tlts_nvta <= 50 
+  /*SELECT COUNT(*), ((SUM(CASE WHEN tpa_nvta = 'C' AND tlts_nvta <= 50 
  		 THEN tlts_nvta ELSE 0 END) / 50) + 
  		 (SUM(CASE WHEN tpa_nvta = 'E' AND impt_nvta <= 300 
  		 THEN impt_nvta ELSE 0 END) / 300) + 0.5) 
@@ -77,6 +77,21 @@ IF vpla = '01' OR vpla = '93' THEN
   		 AND edo_nvta = 'A'
 		 AND (tpa_nvta = 'C' and tlts_nvta <= 50
 		 OR   tpa_nvta = 'E' and impt_nvta <= 300)
+		 AND fliq_nvta = paramFolio
+		 AND ruta_nvta = paramRuta;*/
+  SELECT COUNT(*), ((SUM(CASE WHEN tpa_nvta = 'C' AND tlts_nvta <= 50 
+ 		 THEN tlts_nvta ELSE 0 END) / 50) + 
+ 		 (SUM(CASE WHEN tpa_nvta = 'E' AND impt_nvta <= 300 AND numcte_nvta NOT IN('000001','008090','064721','064722')
+ 		 THEN impt_nvta ELSE 0 END) / 300) + 0.5 +
+ 		 (SUM(CASE WHEN tpa_nvta = 'E' AND tlts_nvta <= 50 AND numcte_nvta IN('000001','008090','064721','064722')
+ 		 THEN tlts_nvta ELSE 0 END) / 50))
+  INTO	 vnnve,vnnveo
+  FROM 	 nota_vta 
+  WHERE  fes_nvta = vfecha
+  		 AND edo_nvta = 'A'
+		 AND (tpa_nvta = 'C' and tlts_nvta <= 50
+		 OR   tpa_nvta = 'E' and impt_nvta <= 300 AND numcte_nvta NOT IN ('000001','008090','064721','064722')
+		 OR   tpa_nvta = 'E' and tlts_nvta <= 50 AND numcte_nvta IN ('000001','008090','064721','064722'))
 		 AND fliq_nvta = paramFolio
 		 AND ruta_nvta = paramRuta;
   LET vnnv = vnnv - NVL(vnnve,0) + NVL(vnnveo,0);
@@ -162,7 +177,7 @@ END PROCEDURE;
 
 select	*
 from	empxrutp
-where	fec_erup >= '2018-01-01' and pcs_erup = 'S'
+where	fec_erup = '2024-06-25' and pcs_erup = 'S'
 
 select	*
 from	empxrutp

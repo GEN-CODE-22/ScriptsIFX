@@ -1,7 +1,6 @@
 DROP PROCEDURE rg_totalesp;
 
-EXECUTE PROCEDURE rg_totales('2020-01-01','2020-01-31');
-EXECUTE PROCEDURE rg_totalesp('2020-01-01','2020-01-31');
+EXECUTE PROCEDURE rg_totalesp('2024-08-02','2024-08-02');
 
 CREATE PROCEDURE rg_totalesp
 (
@@ -128,6 +127,9 @@ DEFINE vdonaiva  	DECIMAL(16,2); -- IVA DONATIVOS
 DEFINE vtotfacc  	DECIMAL(16,2); -- TOTAL FACTURAS CANCELADAS
 DEFINE vstotfacc  	DECIMAL(16,2); -- SUBTOTAL FACTURAS CANCELADAS
 DEFINE vivafacc  	DECIMAL(16,2); -- IVA FACTURAS CANCELADAS
+DEFINE vcreajutot  	DECIMAL(16,2); -- TOTAL VTA CREDITO AJU
+DEFINE vcreajustot 	DECIMAL(16,2); -- TOTAL VTA CREDITO AJU
+DEFINE vcreajuiva 	DECIMAL(16,2); -- IVA VTA CREDITO AJU
 
 DEFINE xfecd      DATE;
 DEFINE xdia       SMALLINT;
@@ -324,6 +326,13 @@ IF paramFecIni < xfecd THEN
 	WHERE	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin AND edo_nvta = 'A' 
 			AND (aju_nvta IS NULL OR aju_nvta <> 'S')
 			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta NOT IN('C','G');
+			
+	SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
+	INTO	vcreajutot,vcreajustot,vcreajuiva
+	FROM    urdnota_vta
+	WHERE	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin AND edo_nvta = 'A' 
+			AND aju_nvta='S'
+			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta IN('C','G');
 ELSE
   	SELECT	NVL(SUM(impt_nvta),0.00),NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
 	INTO	vvtotefe,vvstotefe,vvivaefe
@@ -331,8 +340,17 @@ ELSE
 	WHERE	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin AND edo_nvta = 'A' 
 			AND (aju_nvta IS NULL OR aju_nvta <> 'S')
 			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta NOT IN('C','G');
+			
+	SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
+	INTO	vcreajutot,vcreajustot,vcreajuiva
+	FROM    nota_vta
+	WHERE	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin AND edo_nvta = 'A' 
+			AND aju_nvta='S'
+			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta IN('C','G');
 END IF;
-		
+LET vvtotefe = vvtotefe - vcreajutot;
+LET vvstotefe = vvstotefe - vcreajustot;
+LET vvivaefe = vvivaefe - vcreajuiva;
 
 -- DEUDORES ABONO Y CREDITO
 SELECT  SUM(epo_cded),SUM(epo_crdd)
@@ -601,4 +619,10 @@ WHERE	fec_fac >= '2024-01-01' and fec_fac <= '2024-01-31'
  where 	fec_fac between '2020-01-01' and '2020-01-31'
  		and edo_fac = 'C' and tdoc_fac = 'I'
  		AND (frf_fac IS NULL OR frf_fac = 0)
+ 		
+ SELECT 	NVL(SUM(imp_mant),0.00)
+FROM 	mov_ant
+WHERE 	fec_mant >= '2024-08-01' AND fec_mant <= '2024-08-01'
+		AND sta_mant = 'A'
+		AND tpm_mant = '99';
      	
