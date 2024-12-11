@@ -1,5 +1,6 @@
 DROP PROCEDURE RPT_factlista;
-EXECUTE PROCEDURE  RPT_factlista('','','','2023-10-16','2023-10-18','S','N');
+EXECUTE PROCEDURE  RPT_factlista('','','','2023-08-01','2023-08-31','','N');
+EXECUTE PROCEDURE  RPT_factlista('','','','2024-09-01','2024-09-23','','N');
 EXECUTE PROCEDURE  RPT_factlista('15','08','','2023-01-12','2023-01-12');
 
 CREATE PROCEDURE RPT_factlista
@@ -24,8 +25,8 @@ RETURNING
  CHAR(13),	-- RFC
  CHAR(1),	-- Estado
  CHAR(20),	-- Tipo pago
- DECIMAL;	-- Importe
- --CHAR(3),	-- Metodo Pago
+ DECIMAL,	-- Importe
+ CHAR(40);	-- Uuid
  --CHAR(1);	-- Forma pago
  
 DEFINE vcia		CHAR(2);	
@@ -40,6 +41,7 @@ DEFINE vedo 	CHAR(1);
 DEFINE vtpa		CHAR(20);
 DEFINE vimpt  	DECIMAL;
 DEFINE vtipo 	CHAR(4);
+DEFINE vuuid	CHAR(40);
 --DEFINE vmpa		CHAR(3);
 --DEFINE vfpa		CHAR(1);
 DEFINE vpla1 	CHAR(2);
@@ -61,10 +63,10 @@ END IF;
 LET vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9 = get_plantas(paramPla);
 
 FOREACH cFacturas FOR
-	SELECT	numcte_fac, cia_fac, pla_fac, fol_fac, ser_fac, fec_fac, edo_fac, rfc_fac, tpa_fac, impt_fac--,
+	SELECT	numcte_fac, cia_fac, pla_fac, fol_fac, ser_fac, fec_fac, edo_fac, rfc_fac, tpa_fac, impt_fac, uuid_fac--,
 			--CASE WHEN tpa_fac IN('C','G') THEN 'PPD' ELSE 'PUE' END,
 			--pago_cte
-	INTO	vnocte, vcia, vpla, vfolio, vserie, vfecha, vedo, vrfc, vtpa, vimpt--, vmpa, vfpa
+	INTO	vnocte, vcia, vpla, vfolio, vserie, vfecha, vedo, vrfc, vtpa, vimpt, vuuid--, vmpa, vfpa
 	FROM	factura, cliente
 	WHERE	numcte_fac = num_cte AND (cia_fac = paramCia OR paramCia = '')
 			AND (pla_fac in(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9) OR paramPla = '')
@@ -103,7 +105,7 @@ FOREACH cFacturas FOR
 		END IF; 
 	END IF;	
 
-	RETURN 	vcia,vpla,vfolio,vserie,vfecha,vnocte,vnomcte,vrfc,vedo,vtpa,vimpt--,vmpa,vfpa
+	RETURN 	vcia,vpla,vfolio,vserie,vfecha,vnocte,vnomcte,vrfc,vedo,vtpa,vimpt,vuuid--,vmpa,vfpa
 	WITH RESUME;
 END FOREACH;
 END PROCEDURE; 

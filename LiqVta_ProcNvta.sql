@@ -22,7 +22,7 @@ DEFINE vcia		CHAR(2);
 DEFINE vpla		CHAR(2);
 DEFINE vvuelta	INT;
 DEFINE vnapl	CHAR(1);
-DEFINE vtpa		CHAR(1);
+DEFINE vtpa		CHAR(1);  
 DEFINE vimpt	DECIMAL;
 DEFINE vimpta	DECIMAL;
 DEFINE vnocte	CHAR(6);

@@ -1,5 +1,5 @@
-EXECUTE PROCEDURE RPT_NCRepCM('2024-01-01','2024-01-31','T');
-EXECUTE PROCEDURE RPT_NCRepCM('2024-01-01','2024-01-31','R');
+EXECUTE PROCEDURE RPT_NCRepCM('2023-08-01','2023-08-31','T');
+EXECUTE PROCEDURE RPT_NCRepCM('2023-08-01','2023-08-31','R');
 
 DROP PROCEDURE RPT_NCRepCM;
 CREATE PROCEDURE RPT_NCRepCM
@@ -17,7 +17,8 @@ RETURNING
  DECIMAL,
  DECIMAL,
  CHAR(1), 
- CHAR(1);
+ CHAR(1),
+ CHAR(40);
 
 DEFINE vrfc    	CHAR(13);
 DEFINE vserie  	CHAR(4);
@@ -32,16 +33,17 @@ DEFINE vsrnc  	CHAR(4);
 DEFINE vedo     CHAR(1);
 DEFINE vcia     CHAR(2);
 DEFINE vpla     CHAR(2);
+DEFINE vuuid    CHAR(40);
 
 IF paramTipo = 'T' THEN
 	FOREACH cFacturas FOR
-		SELECT 	rfc_ncrd, ser_ncrd, fol_ncrd, fec_ncrd, impt_ncrd, iva_ncrd, edo_ncrd, frnc_ncrd, srnc_ncrd, cia_ncrd, pla_ncrd, impr_ncrd, tdoc_ncrd
-		INTO    vrfc,vserie,vfolnc,vfecnc,vimporte,viva,vedo,vfrnc,vsrnc,vcia,vpla,vimpr,vtdoc
+		SELECT 	rfc_ncrd, ser_ncrd, fol_ncrd, fec_ncrd, impt_ncrd, iva_ncrd, edo_ncrd, frnc_ncrd, srnc_ncrd, cia_ncrd, pla_ncrd, impr_ncrd, tdoc_ncrd, uuid_ncrd
+		INTO    vrfc,vserie,vfolnc,vfecnc,vimporte,viva,vedo,vfrnc,vsrnc,vcia,vpla,vimpr,vtdoc,vuuid
 		FROM 	nota_crd,cliente
 		WHERE 	numcte_ncrd = num_cte
 				AND fec_ncrd BETWEEN paramFecIni AND paramFecFin
 		UNION
-		SELECT 	" ", ser_ncrd, fol_ncrd, fec_ncrd, impt_ncrd, iva_ncrd, edo_ncrd, 0, " ", cia_ncrd, pla_ncrd, impr_ncrd, tdoc_ncrd				
+		SELECT 	" ", ser_ncrd, fol_ncrd, fec_ncrd, impt_ncrd, iva_ncrd, edo_ncrd, 0, " ", cia_ncrd, pla_ncrd, impr_ncrd, tdoc_ncrd, uuid_ncrd			
 		FROM 	nota_crd
 		WHERE 	numcte_ncrd IS NULL
 				AND fec_ncrd BETWEEN paramFecIni AND paramFecFin
@@ -55,7 +57,7 @@ IF paramTipo = 'T' THEN
 			LET vimpr = '0';
 		END IF;
 	
-		RETURN 	vrfc,vserie,vfolnc,vfecnc,vimporte,viva,vimpr,vtdoc
+		RETURN 	vrfc,vserie,vfolnc,vfecnc,vimporte,viva,vimpr,vtdoc,vuuid
 		WITH RESUME;
 		
 		IF vfrnc IS NOT NULL AND vfrnc > 0 THEN
@@ -63,26 +65,26 @@ IF paramTipo = 'T' THEN
 			LET viva = viva * -1;
 			LET vimpr = '0';
 			
-			SELECT 	rfc_ncrd,ser_ncrd,fol_ncrd,fec_ncrd,tdoc_ncrd
-            INTO 	vrfc,vserie,vfolnc,vfecnc,vtdoc
+			SELECT 	rfc_ncrd,ser_ncrd,fol_ncrd,fec_ncrd,tdoc_ncrd,uuid_ncrd
+            INTO 	vrfc,vserie,vfolnc,vfecnc,vtdoc,vuuid
             FROM    nota_crd
             WHERE   fol_ncrd = vfrnc AND ser_ncrd = vsrnc;
            
-			RETURN 	vrfc,vserie,vfolnc,vfecnc,vimporte,viva,vimpr,vtdoc
+			RETURN 	vrfc,vserie,vfolnc,vfecnc,vimporte,viva,vimpr,vtdoc,vuuid
 			WITH RESUME;			
 		END IF;
 	END FOREACH;
 ELSE
 	IF paramTipo = 'R' THEN
 		FOREACH cFacturas FOR
-			SELECT 	rfc_ncrd, ser_ncrd, fol_ncrd, fec_ncrd, impt_ncrd, iva_ncrd, edo_ncrd, frnc_ncrd, srnc_ncrd, cia_ncrd, pla_ncrd, impr_ncrd, tdoc_ncrd
-			INTO    vrfc,vserie,vfolnc,vfecnc,vimporte,viva,vedo,vfrnc,vsrnc,vcia,vpla,vimpr,vtdoc
+			SELECT 	rfc_ncrd, ser_ncrd, fol_ncrd, fec_ncrd, impt_ncrd, iva_ncrd, edo_ncrd, frnc_ncrd, srnc_ncrd, cia_ncrd, pla_ncrd, impr_ncrd, tdoc_ncrd,uuid_ncrd
+			INTO    vrfc,vserie,vfolnc,vfecnc,vimporte,viva,vedo,vfrnc,vsrnc,vcia,vpla,vimpr,vtdoc,vuuid
 			FROM 	nota_crd,cliente
 			WHERE 	numcte_ncrd = num_cte
 					AND fec_ncrd BETWEEN paramFecIni AND paramFecFin
 					AND frnc_ncrd IS NOT NULL
 			UNION
-			SELECT 	" ", ser_ncrd, fol_ncrd, fec_ncrd, impt_ncrd, iva_ncrd, edo_ncrd, 0, " ", cia_ncrd, pla_ncrd, impr_ncrd, tdoc_ncrd				
+			SELECT 	" ", ser_ncrd, fol_ncrd, fec_ncrd, impt_ncrd, iva_ncrd, edo_ncrd, 0, " ", cia_ncrd, pla_ncrd, impr_ncrd, tdoc_ncrd, uuid_ncrd			
 			FROM 	nota_crd
 			WHERE 	numcte_ncrd IS NULL
 					AND fec_ncrd BETWEEN paramFecIni AND paramFecFin
@@ -91,18 +93,18 @@ ELSE
 			
 			LET vimpr = '1';			
 			
-			RETURN 	vrfc,vserie,vfolnc,vfecnc,vimporte,viva,vimpr,vtdoc
+			RETURN 	vrfc,vserie,vfolnc,vfecnc,vimporte,viva,vimpr,vtdoc,vuuid
 			WITH RESUME;
 			
-			SELECT 	rfc_ncrd,ser_ncrd,fol_ncrd,fec_ncrd,tdoc_ncrd
-            INTO 	vrfc,vserie,vfolnc,vfecnc,vtdoc
+			SELECT 	rfc_ncrd,ser_ncrd,fol_ncrd,fec_ncrd,tdoc_ncrd,uuid_ncrd
+            INTO 	vrfc,vserie,vfolnc,vfecnc,vtdoc,vuuid
             FROM    nota_crd
             WHERE   fol_ncrd = vfrnc AND ser_ncrd = vsrnc;
 			LET vimpr = '0';
 			LET viva = viva * -1;
 		    LET vimporte = vimporte * -1;
 			LET vimpr = '0';	
-			RETURN 	vrfc,vserie,vfolnc,vfecnc,vimporte,viva,vimpr,vtdoc
+			RETURN 	vrfc,vserie,vfolnc,vfecnc,vimporte,viva,vimpr,vtdoc,vuuid
 			WITH RESUME;
 
 		END FOREACH;

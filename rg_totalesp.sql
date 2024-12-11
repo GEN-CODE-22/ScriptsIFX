@@ -1,6 +1,6 @@
 DROP PROCEDURE rg_totalesp;
 
-EXECUTE PROCEDURE rg_totalesp('2024-08-02','2024-08-02');
+EXECUTE PROCEDURE rg_totalesp('2024-10-02','2024-10-02');
 
 CREATE PROCEDURE rg_totalesp
 (
@@ -134,6 +134,7 @@ DEFINE vcreajuiva 	DECIMAL(16,2); -- IVA VTA CREDITO AJU
 DEFINE xfecd      DATE;
 DEFINE xdia       SMALLINT;
 DEFINE xdia2      SMALLINT;
+DEFINE xndias     SMALLINT;
 DEFINE xmes1      SMALLINT;
 DEFINE xanio1     SMALLINT;
 DEFINE viva  	  DECIMAL(16,2); -- IVA 
@@ -162,7 +163,9 @@ ELSE
      END IF;
   END IF;
 END IF;
+--LET xndias = DAY(TODAY - xdia);
 LET xfecd  = xfecd - xdia2 - xdia + 1;
+--LET xfecd  = xfecd - xndias - xdia + 1;
 
 -- VENTA ESTACIONARIO
 IF paramFecIni < xfecd THEN
@@ -351,6 +354,9 @@ END IF;
 LET vvtotefe = vvtotefe - vcreajutot;
 LET vvstotefe = vvstotefe - vcreajustot;
 LET vvivaefe = vvivaefe - vcreajuiva;
+
+--LET vvivaefe = NVL((vvtotefe / vsiva * viva),0.00);
+--LET vvstotefe = vvtotefe - vvivaefe;
 
 -- DEUDORES ABONO Y CREDITO
 SELECT  SUM(epo_cded),SUM(epo_crdd)
@@ -625,4 +631,43 @@ FROM 	mov_ant
 WHERE 	fec_mant >= '2024-08-01' AND fec_mant <= '2024-08-01'
 		AND sta_mant = 'A'
 		AND tpm_mant = '99';
+	
+select TODAY - 31 - 10 + 1
+from   datos
+
+select TODAY - 30 - 10 + 1
+from   datos
+
+select TODAY - 2 units month
+from   datos
+
+select (TODAY - 40) 
+from   datos
+
+select TODAY - 39
+from   datos
+
+SELECT  NVL(SUM(impt_nvta),0.00)
+    FROM 	nota_vta
+    WHERE 	fes_nvta >= '2024-09-01' AND fes_nvta <= '2024-09-01'
+       		AND tip_nvta = 'E'
+	       	AND edo_nvta = 'A'
+	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S');
+	       
+SELECT	*
+FROM 	nota_crd
+WHERE 	fec_ncrd >= '2024-09-06' AND fec_ncrd <= '2024-09-06'
+		AND apl_ncrd = 'N'
+		AnD edo_ncrd <> 'C'
+		AND tdoc_ncrd = 'E'
+		AND (tpa_ncrd = 'E' OR tpa_ncrd = 'X')
+		AND impr_ncrd = 'E'
+		AND (frnc_ncrd = 0 OR frnc_ncrd IS NULL);
+	
+SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
+	FROM    nota_vta
+	WHERE	fes_nvta = '2024-10-02'  AND edo_nvta = 'A' 
+		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
+		AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta not IN('C','G');
+	
      	

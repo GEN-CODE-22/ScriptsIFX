@@ -389,7 +389,7 @@ IF EXISTS(SELECT 	1
 							AND tip_nvta IN('C','D','2','3','4');
 					RETURN 	vproceso,vmsg,vfolfac,vserfac;
 				ELSE
-					RETURN 	vproceso,vmsg,0,'';
+					RETURN 	vproceso,vmsg,0,'';  
 				END IF;			
 			ELSE
 				LET vproceso = 0;

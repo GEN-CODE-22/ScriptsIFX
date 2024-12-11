@@ -1,7 +1,6 @@
 DROP PROCEDURE fact_setnotarel;
-EXECUTE PROCEDURE  fact_setnotarel(75031,'EAOA','I');
-EXECUTE PROCEDURE  fact_setnotarel(404320,'EAF','I');
-EXECUTE PROCEDURE  fact_setnotarel(216021,'EAE','C');
+EXECUTE PROCEDURE  fact_setnotarel(248145,'EAE','I');
+EXECUTE PROCEDURE  fact_setnotarel(248145,'EAE','C');
 			
 CREATE PROCEDURE fact_setnotarel
 (
@@ -64,7 +63,7 @@ IF paramAction = 'C' THEN
 		INTO	vcierre
 		FROM	factura
 		WHERE	fol_fac = vfolrf and ser_fac = vserrf;	
-		IF vcierre = 'N' THEN
+		IF vcierre = 'S' THEN
 			LET vfolfac = vfolrf;
 			LET vserfac = vserrf;
 		END IF;
@@ -213,8 +212,8 @@ where	ffac_mcxc = 157706 and sfac_mcxc = 'EAM'
 
 select	*
 from	factura f, det_fac d
-where	f.fol_fac <> 404109 and f.fol_fac = d.fol_dfac and f.ser_fac = d.ser_dfac AND f.faccer_fac = 'N'
-		and f.fec_fac > TODAY - 6 and d.fnvta_dfac in(select fnvta_dfac from det_fac where fol_dfac = 404109 and ser_dfac = 'EAF'
+where	f.fol_fac <> 1161324 and f.fol_fac = d.fol_dfac and f.ser_fac = d.ser_dfac AND f.faccer_fac = 'N'
+		and f.fec_fac > TODAY - 6 and d.fnvta_dfac in(select fnvta_dfac from det_fac where fol_dfac = 1161324 and ser_dfac = 'EAB'
 							and cia_dfac = d.cia_dfac and pla_dfac = d.pla_dfac and fnvta_dfac = d.fnvta_dfac 
 							and vuelta_dfac = d.vuelta_dfac)
 							
@@ -225,3 +224,7 @@ where	tdoc_fac = 'I' and fec_fac >= '2023-09-01' and faccer_fac = 'S'
 select	*
 from	factura
 where	frf_fac = 404109
+
+select	*
+from	changes_liq
+where	nvta_cliq = 287311

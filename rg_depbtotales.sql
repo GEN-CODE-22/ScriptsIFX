@@ -41,7 +41,7 @@ FOREACH cDepositos FOR
 			AND con_ddep = cve_con AND rep_ddep = rep_dddep 
 			AND cia_ddep = cia_dddep AND pla_ddep = pla_dddep 
 			AND unn_ddep = unn_dddep and num_ddep = ndd_dddep 
-			AND tip_ddep = tip_dddep and (tip_ddep <> 'S' AND tip_ddep <> '0') 
+			AND tip_ddep = tip_dddep and (tip_ddep <> 'S' AND tip_ddep <> 'O') 
 			AND imp_dddep <> 0 
 	GROUP BY nct_dddep 
 	ORDER BY nct_dddep
@@ -57,11 +57,10 @@ END FOREACH;
 
 END PROCEDURE; 
 
-SELECT 	SUM(imp_dddep), NVL(SUM(imp_dddep / 1.16),0.00), NVL(SUM(imp_dddep / 1.16) * 0.16,0.00), nct_dddep, COUNT(*),
-		cont_cta
+SELECT 	SUM(imp_dddep), NVL(SUM(imp_dddep / 1.16),0.00), NVL(SUM(imp_dddep / 1.16) * 0.16,0.00), nct_dddep, COUNT(*)
 FROM	caja_dddep, caja_dep,caja_ddep,caja_dcon,caja_cuentas
 WHERE	cia_dep = '15' AND  unn_dep = '0' 
-		AND fec_dep >= '2024-01-01' AND fec_dep <= '2024-01-22'
+		AND fec_dep >= '2024-08-07' AND fec_dep <= '2024-08-07'
 		AND num_dep = rep_ddep AND cia_dep = cia_ddep  
 		AND	pla_dep = pla_ddep AND unn_dep = unn_ddep
 		AND con_ddep = cve_con AND rep_ddep = rep_dddep 
@@ -75,4 +74,8 @@ ORDER BY nct_dddep
 
 select *
 from 	fuente.caja_cuentas 
+
+select *
+from   e_posaj
+where  epo_fec = '2024-08-07'
 
