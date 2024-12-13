@@ -1,6 +1,6 @@
-EXECUTE PROCEDURE RPT_FactRepAD('2024-01-01','2024-01-31','T');
+EXECUTE PROCEDURE RPT_FactRepAD('2023-07-01','2023-07-31','T');
 EXECUTE PROCEDURE RPT_FactRepAD('2024-01-01','2024-01-31','R');
-EXECUTE PROCEDURE RPT_FactRepAD('2023-08-01','2023-08-31','C');
+EXECUTE PROCEDURE RPT_FactRepAD('2023-09-01','2023-09-30','C');
 
 
 DROP PROCEDURE RPT_FactRepAD;
@@ -53,7 +53,7 @@ IF paramTipo = 'T' THEN
 		FROM 	factura, OUTER det_fac
 		WHERE 	fec_fac BETWEEN paramFecIni AND paramFecFin
 				AND impr_fac = 'E'
-				AND tdoc_fac = 'I'
+				AND tdoc_fac IN('I','V')
 				AND fol_fac = fol_dfac
 				AND ser_fac = ser_dfac		
                 AND simp_dfac > 0				
@@ -105,7 +105,7 @@ ELSE
 			FROM 	factura, OUTER det_fac
 			WHERE 	fec_fac BETWEEN paramFecIni AND paramFecFin
 					AND impr_fac = 'E'
-					AND tdoc_fac = 'I'
+					AND tdoc_fac IN('I','V')
 					AND fol_fac = fol_dfac
 					AND ser_fac = ser_dfac					
 					AND frf_fac IS NOT NULL
@@ -154,7 +154,7 @@ ELSE
 				FROM 	factura,OUTER det_fac
 				WHERE 	fec_fac BETWEEN paramFecIni AND paramFecFin
 						AND impr_fac = 'E'
-						AND tdoc_fac = 'I'
+						AND tdoc_fac IN('I','V')
 						AND fol_fac = fol_dfac
 						AND ser_fac = ser_dfac						
 						AND faccer_fac = 'S'
@@ -268,3 +268,56 @@ WHERE 	fec_fac BETWEEN '2023-08-01' AND '2023-08-31'
 		--and fol_fac = 85672
 GROUP BY 1,2,3,4,5,9,10,11,12,13
 ORDER BY 3,4
+
+select * from	 ruta
+
+SELECT 	pcre_rut,fol_fac,ser_fac,rfc_fac, 'N',
+		(CASE WHEN razsoc_cte IS NOT NULL THEN TRIM(razsoc_cte)	ELSE TRIM(nom_cte)||' '|| TRIM(ape_cte) end) cliente,
+		'I',uuid_fac,
+		NVL(SUM(CASE WHEN edo_fac = 'C' THEN 0 ELSE simp_dfac END) / SUM(CASE WHEN edo_fac = 'C' THEN 1 ELSE tlts_dfac END),0) precio,				
+		fec_fac ||' '||	extend(fyh_fac,HOUR TO SECOND)
+FROM 	factura, det_fac, hnota_vta, cliente,ruta
+WHERE 	fec_fac BETWEEN '2022-01-01' AND '2022-01-31'
+		AND impr_fac = 'E'
+		AND tdoc_fac = 'I'
+		AND fol_fac = fol_dfac
+		AND ser_fac = ser_dfac		
+		AND faccer_fac = 'N'
+		AND simp_dfac > 0
+		and fnvta_dfac = fol_nvta and vuelta_dfac = vuelta_nvta
+		and fol_dfac = fac_nvta
+		and ruta_nvta = cve_rut
+		and numcte_fac = num_cte
+		and pla_fac = '01'
+GROUP BY 1,2,3,4,5,6,7,8,10
+ORDER BY 1,2,3
+
+SELECT 	fol_fac,ser_fac
+FROM 	factura, det_fac, hnota_vta, cliente,ruta
+WHERE 	fec_fac BETWEEN '2022-01-01' AND '2022-01-31'
+		AND impr_fac = 'E'
+		AND tdoc_fac = 'I'
+		AND fol_fac = fol_dfac
+		AND ser_fac = ser_dfac	
+		and pla_fac = '01'
+		AND faccer_fac = 'N'
+		AND simp_dfac > 0
+		and numcte_fac = num_cte
+		and pla_dfac = pla_nvta and fnvta_dfac = fol_nvta and vuelta_dfac = vuelta_nvta
+		and fol_dfac = fac_nvta
+		and ruta_nvta = cve_rut
+		and numcte_fac = num_cte
+		
+
+
+select *
+from   fuente.factura , det_fac,hnota_vta
+where  fec_fac BETWEEN '2022-01-01' AND '2022-01-31'
+		AND impr_fac = 'E'
+		AND tdoc_fac = 'I'
+		AND (fol_fac = fol_dfac
+		AND ser_fac = ser_dfac	
+		and pla_fac = pla_dfac
+		and pla_nvta = pla_fac and fol_nvta = fnvta_dfac and vuelta_dfac = vuelta_nvta)
+		and pla_fac = '01'
+ORDER BY 1,2,3

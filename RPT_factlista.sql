@@ -72,7 +72,7 @@ FOREACH cFacturas FOR
 			AND (pla_fac in(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9) OR paramPla = '')
 			AND (numcte_fac = paramCte OR paramCte = '')
 			AND fec_fac BETWEEN paramFecI AND paramFecF
-			AND tdoc_fac = 'I' AND impr_fac = 'E' 
+			AND tdoc_fac IN('I','V') AND impr_fac = 'E' 
 			AND (faccer_fac = paramCierre OR paramCierre = '')
 			AND (feccan_fac is null OR feccan_fac <> fec_fac) 
 			AND (frf_fac is null OR frf_fac = 0)

@@ -4,7 +4,7 @@ EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,NULL,'01-01-2023','31-01-2023','D');
 EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,null,'2022-09-01','2022-09-30','F');
 EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,null,'2022-09-01','2022-09-30','C');
 EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,null,'2022-09-01','2022-09-30','R');
-EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,'019404','2024-04-28','2024-04-29','D');
+EXECUTE PROCEDURE RPT_FactRepCia(NULL,NULL,'005948','2024-10-01','2024-10-10','D');
 
 DROP PROCEDURE RPT_FactRepCia;
 CREATE PROCEDURE RPT_FactRepCia
@@ -95,7 +95,7 @@ IF paramTipo = 'G' THEN
 			vasicil
 		FROM 	factura,det_fac
 		WHERE 	fec_fac between paramFecIni and paramFecFin	
-  				and tdoc_fac = 'I'
+  				and tdoc_fac IN('I','V')
 			  	and edo_fac <> 'C'
 				and frf_fac is null
 				and fol_fac = fol_dfac
@@ -178,7 +178,7 @@ IF paramTipo = 'D' THEN
 				and (cia_fac = paramCia OR paramCia IS NULL)
 				and (pla_fac = paramPla OR paramPla IS NULL)
 				and (numcte_fac = paramCte OR paramCte IS NULL)
-		  		and tdoc_fac = 'I'
+		  		and tdoc_fac IN('I','V')
 			  	and edo_fac <> 'C'
 				and frf_fac is null
 				and fol_fac = fol_dfac
@@ -203,7 +203,7 @@ IF paramTipo = 'D' THEN
 				and (cia_fac = paramCia OR paramCia IS NULL)
 				and (pla_fac = paramPla OR paramPla IS NULL)
 				and (numcte_fac = paramCte OR paramCte IS NULL)
-		  		and tdoc_fac = 'I'
+		  		and tdoc_fac IN('I','V')
 			  	and edo_fac = 'C'
 			  	and numcte_fac = num_cte
 		UNION ALL
@@ -222,7 +222,7 @@ IF paramTipo = 'D' THEN
 				and (cia_fac = paramCia OR paramCia IS NULL)
 				and (pla_fac = paramPla OR paramPla IS NULL)
 				and (numcte_fac = paramCte OR paramCte IS NULL)
-		  		and tdoc_fac = 'I'
+		  		and tdoc_fac IN('I','V')
 		  		and frf_fac is not null
 		  		and numcte_fac = num_cte
 		order by 1,2,3,4,5,6,7,8
@@ -283,7 +283,7 @@ IF paramTipo = 'F' THEN
 				and (cia_fac = paramCia OR paramCia IS NULL)
 				and (pla_fac = paramPla OR paramPla IS NULL)
 				and (numcte_fac = paramCte OR paramCte IS NULL)
-		  		and tdoc_fac = 'I'
+		  		and tdoc_fac IN('I','V')
 			  	and edo_fac = 'C'
 			  	and numcte_fac = num_cte
 		UNION ALL		
@@ -302,7 +302,7 @@ IF paramTipo = 'F' THEN
 				and (cia_fac = paramCia OR paramCia IS NULL)
 				and (pla_fac = paramPla OR paramPla IS NULL)
 				and (numcte_fac = paramCte OR paramCte IS NULL)
-		  		and tdoc_fac = 'I'
+		  		and tdoc_fac IN('I','V')
 		  		and frf_fac is not null
 		  		and numcte_fac = num_cte
 		RETURN 	vcia,
@@ -361,7 +361,7 @@ IF paramTipo = 'C' THEN
 				and (cia_fac = paramCia OR paramCia IS NULL)
 				and (pla_fac = paramPla OR paramPla IS NULL)
 				and (numcte_fac = paramCte OR paramCte IS NULL)
-		  		and tdoc_fac = 'I'
+		  		and tdoc_fac IN('I','V')
 			  	and edo_fac = 'C'
 			  	and numcte_fac = num_cte
 		order by 8
@@ -422,7 +422,7 @@ IF paramTipo = 'R' THEN
 				and (cia_fac = paramCia OR paramCia IS NULL)
 				and (pla_fac = paramPla OR paramPla IS NULL)
 				and (numcte_fac = paramCte OR paramCte IS NULL)
-		  		and tdoc_fac = 'I'
+		  		and tdoc_fac IN('I','V')
 		  		and frf_fac is not null
 		  		and numcte_fac = num_cte
 		order by 8
@@ -612,4 +612,57 @@ WHERE 	fec_fac between '2023-11-01' and '2023-11-30'
 		--and cia_fac = cia_dfac
 		--and pla_fac = pla_dfac
 		and numcte_fac = num_cte
-GROUP BY 1,2,3,4,5,6,7,8,9		
+GROUP BY 1,2,3,4,5,6,7,8,9	
+
+
+select 	sum(tlts_nvta)
+from 	factura,det_fac, nota_vta
+WHERE 	fec_fac between '2024-10-01' and '2024-10-31'		
+  		and tdoc_fac = 'I'
+	  	and edo_fac <> 'C'
+		and frf_fac is null
+		and fol_fac = fol_dfac
+		and ser_fac = ser_dfac
+		and fnvta_dfac = fol_nvta
+		and vuelta_dfac = vuelta_nvta
+		and pla_dfac = pla_nvta
+		and tip_nvta = 'E'
+		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
+		and impt_nvta > 0
+		
+select 	*
+from 	factura,det_fac
+WHERE 	fec_fac between '2024-10-01' and '2024-10-31'		
+  		and tdoc_fac = 'I'
+	  	and edo_fac <> 'C'
+		and frf_fac is null
+		and fol_fac = fol_dfac
+		and ser_fac = ser_dfac
+		and tlts_dfac = 0
+		
+select 	*
+from 	nota_vta
+where 	fes_nvta between '2024-10-01' and '2024-10-31'		
+		and edo_nvta = 'A'
+		AND tip_nvta IN('E')
+		and fol_nvta not in (select fnvta_dfac from factura, det_fac
+							where fec_fac between '2024-10-01' and '2024-10-31'		
+					  		and tdoc_fac = 'I'
+						  	and edo_fac <> 'C'
+							and frf_fac is null
+							and fol_fac = fol_dfac
+							and ser_fac = ser_dfac
+							and pla_dfac  = pla_nvta and vuelta_dfac = vuelta_nvta)
+							
+select 	*
+from 	nota_vta
+where 	fes_nvta between '2024-10-01' and '2024-10-31'		
+		and edo_nvta = 'A'
+		AND tip_nvta IN('E')
+		and tlts_nvta > 0
+		and impt_nvta = 0
+
+
+
+
+
