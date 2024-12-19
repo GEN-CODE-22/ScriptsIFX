@@ -1,4 +1,5 @@
 DROP PROCEDURE vol_qryventa;
+--PRECIERRE Y CIERRE -----------------------------------------------------------
 EXECUTE PROCEDURE  vol_qryventa('N','E','2022-01-01','2022-01-02','2022-02-01','2022-02-10',18); 
 EXECUTE PROCEDURE  vol_qryventa('P','E','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
 EXECUTE PROCEDURE  vol_qryventa('C','E','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
@@ -10,9 +11,30 @@ EXECUTE PROCEDURE  vol_qryventa('P','C','2022-01-01','2022-01-31','2022-02-01','
 EXECUTE PROCEDURE  vol_qryventa('C','C','2022-02-01','2022-02-28','2022-03-01','2022-03-10',18); 
 EXECUTE PROCEDURE  vol_qryventa('T','T','2022-04-01','2022-04-30','2022-05-01','2022-05-10',18); 
 EXECUTE PROCEDURE  vol_qryventa('A','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
-EXECUTE PROCEDURE  vol_qryventa('D','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',4); 
-EXECUTE PROCEDURE  vol_qryventa('F','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',4); 
-EXECUTE PROCEDURE  vol_qryventa('I','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',4); 
+EXECUTE PROCEDURE  vol_qryventa('D','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('F','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('I','C','2022-01-01','2022-01-01','2022-02-01','2022-02-10',18); 
+--CIERRE -----------------------------------------------------------
+EXECUTE PROCEDURE  vol_qryventa('N','E','2022-01-01','2022-01-02','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('M','E','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('N','B','2022-01-01','2022-01-02','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('M','B','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('N','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('M','C','2022-02-01','2022-02-28','2022-03-01','2022-03-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('T','T','2022-04-01','2022-04-30','2022-05-01','2022-05-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('A','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('D','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('F','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('I','C','2022-01-01','2022-01-01','2022-02-01','2022-02-10',18); 
+--CIERRE DIARIO-----------------------------------------------------------
+EXECUTE PROCEDURE  vol_qryventa('S','E','2022-01-01','2022-01-02','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('S','B','2022-01-01','2022-01-02','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('S','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('T','T','2022-04-01','2022-04-30','2022-05-01','2022-05-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('A','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('D','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('F','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('I','C','2022-01-01','2022-01-01','2022-02-01','2022-02-10',18); 
 
 
 CREATE PROCEDURE vol_qryventa
@@ -82,6 +104,7 @@ DEFINE vidpcre  INT;
 DEFINE vidsvr   INT;
 DEFINE vidpcred INT;
 DEFINE vtkgs	DECIMAL;
+DEFINE vtkgspre	DECIMAL;
 
 DEFINE vnocte	CHAR(6);
 DEFINE vtipsvr	CHAR(6);
@@ -108,6 +131,7 @@ IF paramTipSvr = 'C' THEN
 	LET vtipsvr = '[CD234]';
 END IF;
 
+--NOTAS DEL MES(SE EJECUTA SIEMPRE) -----------------------------------------------------------
 IF	paramTipo = 'N' THEN 
 	LET vtipfac = 'N';
 	LET vtipcfd = 'I';
@@ -180,6 +204,7 @@ IF	paramTipo = 'N' THEN
 	END FOREACH;
 END IF;
 
+--NOTAS DEL MES(SE EJECUTA SOLO PARA PRECIERRE Y CIERRE) -----------------------------------------------------------
 IF	paramTipo = 'P' THEN 
 	LET vrfc = 'XAXX010101000';
 	LET vcliente = 'PUBLICO EN GENERAL';
@@ -239,6 +264,7 @@ IF	paramTipo = 'P' THEN
 	END FOREACH;
 END IF;
 
+--NOTAS DEL MES(SE EJECUTA SOLO PARA PRECIERRE Y CIERRE) -----------------------------------------------------------
 IF	paramTipo = 'C' THEN 
 	LET vrfc = 'XAXX010101000';
 	LET vcliente = 'PUBLICO EN GENERAL';
@@ -297,7 +323,7 @@ IF	paramTipo = 'C' THEN
 	END FOREACH;
 END IF;
 
-	
+--NOTAS DEL MES(SE EJECUTA SOLO PARA CIERRE) -----------------------------------------------------------
 IF	paramTipo = 'M' THEN 
 	LET vrfc = 'XAXX010101000';
 	LET vcliente = 'PUBLICO EN GENERAL';
@@ -357,7 +383,7 @@ IF	paramTipo = 'M' THEN
 	END FOREACH;
 END IF;
 
-
+--NOTAS DEL MES(SE EJECUTA SOLO PARA CIERRE DIARIO) -----------------------------------------------------------
 IF	paramTipo = 'S' THEN 
 	
 	FOREACH cNotasS FOR	
@@ -444,6 +470,7 @@ IF	paramTipo = 'S' THEN
 	END FOREACH;
 END IF;
 
+-- TRASLADO NOTAS DEL MES(SE EJECUTA SIEMPRE) -----------------------------------------------------------
 IF	paramTipo = 'T' THEN 
 	LET vrfc = 'GEN700527K14';
 	LET vcliente = 'GAS EXPRESS NIETO';
@@ -499,6 +526,7 @@ IF	paramTipo = 'T' THEN
 	END FOREACH;
 END IF;
 
+--NOTAS DEL MES(SE EJECUTA SIEMPRE) -----------------------------------------------------------
 IF	paramTipo = 'A' THEN 
 	LET vrfc = 'GEN700527K14';
 	LET vcliente = 'GAS EXPRESS NIETO';
@@ -588,7 +616,8 @@ IF	paramTipo = 'A' THEN
 		END IF;
 	END FOREACH;
 END IF;
---DONACIONES-----------------------------------------------------------
+
+--DONACIONES (SE EJECUTA SIEMPRE)-----------------------------------------------------------
 IF	paramTipo = 'D' THEN 
 	LET vrfc = '';
 	LET vtipfac = 'N';
@@ -624,7 +653,7 @@ IF	paramTipo = 'D' THEN
 	END FOREACH;
 END IF;
 
---FUGAS-----------------------------------------------------------
+--FUGAS (SE JECUTA SIEMPRE)-----------------------------------------------------------
 IF	paramTipo = 'F' THEN 
 	LET vrfc = '';
 	LET vtipfac = 'N';
@@ -662,7 +691,8 @@ IF	paramTipo = 'F' THEN
 		WITH RESUME;
 	END FOREACH;
 END IF;
---CONSUMO INTERNO-----------------------------------------------------------
+
+--CONSUMO INTERNO (SE EJECUTA SIEMPRE)-----------------------------------------------------------
 IF	paramTipo = 'I' THEN 
 	LET vrfc = '';
 	LET vcliente = '';
@@ -686,21 +716,30 @@ IF	paramTipo = 'I' THEN
 	LET vimpt = 0.00;
 	LET vfecsur = paramFecFin;
 	LET vtkgs = 0;
-	
+	LET vtkgspre = 0;
+	  
 	SELECT  NVL(SUM(epo_coni),0) 
 	INTO    vtkgs
 	FROM	e_posaj 
 	WHERE   epo_fec >= paramFecIni AND epo_fec <= paramFecFin;
 	
-	IF vtkgs > 0 THEN
+	SELECT  NVL(SUM(epr_coni),0) 
+	INTO    vtkgspre
+	FROM	e_preaj 
+	WHERE   epr_fec >= paramFecIni AND epr_fec <= paramFecFin;
+	
+	IF vtkgs > 0 AND vtkgspre > 0 THEN
 		IF	paramTipSvr = 'C' THEN
-			LET vtlts = vtkgs / vconkl;
+			LET vtlts = (vtkgspre - vtkgs) * 0.9 / vconkl;
 		END IF;
 		
 		SELECT	MIN(pcre_rut)
-		INTO    vpcre
+		INTO	vpcre
 		FROM	ruta
-		WHERE   pcre_rut IS NOT NULL;
+		WHERE   pcre_rut IS NOT NULL 
+				AND pla_rut IN (SELECT cve_pla FROM planta WHERE cia_pla = '15' AND LENGTH(serfce_pla) = 3);
+		
+		LET vpcre = TRIM(vpcre);
 		
 		LET vidpcre = vol_getpcre(vidsvr,vpcre);
 		
@@ -961,3 +1000,11 @@ from znota_vta,ruta
 Where month(fes_nvta) =  1 and year(fes_nvta) = 2022 and  (tip_nvta = 'P' or tip_nvta = 'F') 
      and ruta_nvta = cve_rut --and (aju_nvta is null or aju_nvta = '') 
      order by pcre_rut
+     
+select 	sum(epr_coni)
+from 	e_preaj
+where 	epr_fec >= '2022-01-01' AND epr_fec <= '2022-01-31';
+
+select 	sum(epo_coni)
+from 	e_posaj
+where 	epo_fec >= '2022-01-01' AND epo_fec <= '2022-01-31';

@@ -1,5 +1,5 @@
 DROP PROCEDURE LiqVta_ProcNvta;
-EXECUTE PROCEDURE  LiqVta_ProcNvta(4347, 'B021','B','edith');
+EXECUTE PROCEDURE  LiqVta_ProcNvta(7404, 'M003','E','victor');
 
 CREATE PROCEDURE LiqVta_ProcNvta
 (
@@ -22,7 +22,7 @@ DEFINE vcia		CHAR(2);
 DEFINE vpla		CHAR(2);
 DEFINE vvuelta	INT;
 DEFINE vnapl	CHAR(1);
-DEFINE vtpa		CHAR(1);  
+DEFINE vtpa		CHAR(1);
 DEFINE vimpt	DECIMAL;
 DEFINE vimpta	DECIMAL;
 DEFINE vnocte	CHAR(6);
@@ -45,7 +45,7 @@ FOREACH cNotas FOR
 			NVL(numtqe_nvta,0), numcte_nvta, usr_nvta, NVL(ped_nvta,0), fes_nvta
 	INTO	vcia,vpla,vfolio,vvuelta,vimpasi,vnapl,vtpa,vimpt,vnotqe,vnocte,vusr,vpedido,vfecha
 	FROM	nota_vta 
-	WHERE	fliq_nvta = paramFolio AND ruta_nvta = paramRuta
+	WHERE	fliq_nvta = paramFolio AND ruta_nvta = paramRuta and edo_nvta = 'S' 
 	
 	--ACTUALIZA CXC--------------------------------------------------------------------------------------------------------------
 	IF vnapl <> 'C' AND (vtpa = 'C' OR vtpa = 'G') THEN	
@@ -155,3 +155,8 @@ from	pedidos
 where   num_ped = 3281223
 311174
 311176
+
+SELECT	cia_nvta, pla_nvta, fol_nvta, vuelta_nvta, NVL(impasi_nvta, 0), napl_nvta, tpa_nvta, impt_nvta, 
+			NVL(numtqe_nvta,0), numcte_nvta, usr_nvta, NVL(ped_nvta,0), fes_nvta
+	FROM	nota_vta 
+	WHERE	fliq_nvta = 7632 AND ruta_nvta = 'M002'
