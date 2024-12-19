@@ -728,9 +728,9 @@ IF	paramTipo = 'I' THEN
 	FROM	e_preaj 
 	WHERE   epr_fec >= paramFecIni AND epr_fec <= paramFecFin;
 	
-	IF vtkgs > 0 AND vtkgspre > 0 THEN
+	IF vtkgspre > 0 THEN
 		IF	paramTipSvr = 'C' THEN
-			LET vtlts = (vtkgspre - vtkgs) * 0.9 / vconkl;
+			LET vtlts = vtkgspre * 0.95 / vconkl;
 		END IF;
 		
 		SELECT	MIN(pcre_rut)
