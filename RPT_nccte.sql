@@ -1,7 +1,7 @@
 DROP PROCEDURE RPT_nccte;
 EXECUTE PROCEDURE  RPT_nccte('15','79','001224','2022-11-01','2022-11-16');
 EXECUTE PROCEDURE  RPT_nccte('15','15','','2022-09-01','2022-09-26');
-EXECUTE PROCEDURE  RPT_nccte('','','','2022-09-26','2022-09-26');
+EXECUTE PROCEDURE  RPT_nccte('','','','2024-12-01','2024-12-31');
 EXECUTE PROCEDURE  RPT_nccte('','','003593','2022-09-21','2022-09-26');
 
 CREATE PROCEDURE RPT_nccte
@@ -55,7 +55,7 @@ FOREACH cClientes FOR
 	GROUP BY 1
 	ORDER bY 1
 			
-	SELECT	NVL(SUM(tlts_dncrd),0.0), NVL(SUM(n.impt_ncrd),0.0), NVL(MAX(pru_ncrd),0.0)
+	SELECT	NVL(SUM(tlts_dncrd),0.0), NVL(SUM(d.tlts_dncrd * n.pru_ncrd),0.0), NVL(MAX(pru_ncrd),0.0)
 	INTO	vlitros, vimplts, vdescl
 	FROM	det_ncrd d, nota_crd n
 	WHERE	d.fol_dncrd = n.fol_ncrd AND d.ser_dncrd = n.ser_ncrd AND(n.cia_ncrd = paramCia OR paramCia = '')
@@ -65,7 +65,7 @@ FOREACH cClientes FOR
 			AND tdoc_ncrd = 'E' AND lok_dncrd = 'L' AND edo_ncrd <> 'C';	
 	
 
-	SELECT	NVL(SUM(tlts_dncrd),0.0), NVL(SUM(n.impt_ncrd),0.0), NVL(MAX(pru_ncrd),0.0)
+	SELECT	NVL(SUM(tlts_dncrd),0.0), NVL(SUM(d.tlts_dncrd * n.pru_ncrd),0.0), NVL(MAX(pru_ncrd),0.0)
 	INTO	vkilos, vimpkgs, vdesck
 	FROM	det_ncrd d, nota_crd n
 	WHERE	d.fol_dncrd = n.fol_ncrd AND d.ser_dncrd = n.ser_ncrd AND(n.cia_ncrd = paramCia OR paramCia = '')
@@ -102,3 +102,24 @@ WHERE	n.numcte_ncrd = '001224'
 		AND tdoc_ncrd = 'E'
 GROUP BY 1
 ORDER bY 1
+
+SELECT	NVL(SUM(tlts_dncrd),0.0), NVL(SUM(d.tlts_dncrd * n.pru_ncrd),0.0), NVL(MAX(pru_ncrd),0.0)
+	FROM	det_ncrd d, nota_crd n
+	WHERE	d.fol_dncrd = n.fol_ncrd AND d.ser_dncrd = n.ser_ncrd 
+
+AND n.numcte_ncrd = '012626'
+AND n.fec_ncrd BETWEEN '2024-12-01' AND '2024-12-31'
+AND tdoc_ncrd = 'E' AND lok_dncrd = 'L' AND edo_ncrd <> 'C';	
+
+SELECT	*
+	FROM	det_ncrd d, nota_crd n
+	WHERE	d.fol_dncrd = n.fol_ncrd AND d.ser_dncrd = n.ser_ncrd 
+
+AND n.numcte_ncrd = '012626'
+AND n.fec_ncrd BETWEEN '2024-12-01' AND '2024-12-31'
+AND tdoc_ncrd = 'E' AND lok_dncrd = 'L' AND edo_ncrd <> 'C';	
+
+
+
+012626
+026044

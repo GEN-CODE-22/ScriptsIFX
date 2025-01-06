@@ -1,6 +1,6 @@
 DROP PROCEDURE rg_totalesp;
 
-EXECUTE PROCEDURE rg_totalesp('2024-10-02','2024-10-02');
+EXECUTE PROCEDURE rg_totalesp('2024-12-13','2024-12-13');
 
 CREATE PROCEDURE rg_totalesp
 (
@@ -282,7 +282,7 @@ INTO	vcobrtot
 FROM 	mov_cxc
 WHERE 	fec_mcxc >= paramFecIni AND fec_mcxc <= paramFecFin
 		AND sta_mcxc = 'A'
-		AND tip_mcxc = '01'
+		AND (tip_mcxc = '01' OR (tip_mcxc >= '11' AND tip_mcxc <= '99'))
 		AND tpm_mcxc IN('50','51','55','56','58','60','61','62','63');
 		
 LET vcobriva = NVL((vcobrtot / vsiva * viva),0.00);
@@ -669,5 +669,37 @@ SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.0
 	WHERE	fes_nvta = '2024-10-02'  AND edo_nvta = 'A' 
 		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
 		AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta not IN('C','G');
+
+
+SELECT 	NVL(SUM(imp_mcxc),0.00)
+FROM 	mov_cxc
+WHERE 	fec_mcxc >= '2024-12-13' AND fec_mcxc <= '2024-12-13'
+		AND sta_mcxc = 'A'
+		AND tip_mcxc = '01'
+		AND tpm_mcxc IN('50','51','55','56','58','60','61','62','63');
+
+SELECT 	NVL(SUM(imp_mcxc),0.00)
+INTO	vcobtot
+FROM 	mov_cxc
+WHERE 	fec_mcxc >= paramFecIni AND fec_mcxc <= paramFecFin
+		AND sta_mcxc = 'A'
+		AND tpm_mcxc >= '50';
+
+SELECT 	tpm_mcxc, NVL(SUM(imp_mcxc),0.00)
+FROM 	mov_cxc
+WHERE 	fec_mcxc >= '2024-12-13' AND fec_mcxc <= '2024-12-13'
+		AND sta_mcxc = 'A'
+		AND tpm_mcxc >= '50'
+		AND tip_mcxc <> '01'
+group by tpm_mcxc
+
+SELECT 	*
+FROM 	mov_cxc
+WHERE 	fec_mcxc >= '2024-12-13' AND fec_mcxc <= '2024-12-13'
+		AND sta_mcxc = 'A'
+		AND tpm_mcxc >= '50'
+		AND tip_mcxc <> '01'
+
+		
 	
      	
