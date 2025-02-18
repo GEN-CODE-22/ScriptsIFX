@@ -1,13 +1,13 @@
 DROP PROCEDURE LiqVta_Verif;
 
-EXECUTE PROCEDURE  LiqVta_Verif(6728, 'M021','E','2023-09-25',711.00,711.00,6948.36,6948.36,0.00,711.00);
+EXECUTE PROCEDURE  LiqVta_Verif(6581, 'M025','E','2025-01-01',4218.00,4218.00,43936.20,43936.20,0.00,0.00);
 EXECUTE PROCEDURE  LiqVta_Verif(7711, 'M004','E','2023-04-19',3733.00,3733.00,36824.37,36824.37,0.00,3733.00);
 EXECUTE PROCEDURE  LiqVta_Verif(11441, 'B003','B','2023-07-22',1257.00,1257.00,10810.20,10810.20,00.00,1257.00);
 EXECUTE PROCEDURE  LiqVta_Verif(6654, 'CI02','C','2024-03-13',350.00,350.00,6825.00,6825.00,0.00,350.00);
 EXECUTE PROCEDURE  LiqVta_Verif(5191, 'A001','A','2024-04-23',14.53,14.53,300.04,300.04,0.00,0.00);
 EXECUTE PROCEDURE  LiqVta_Verif(6662, 'A001','A','2024-03-13',70.00,70.00,1540.50,1540.50,0.00,79.00);
 EXECUTE PROCEDURE  LiqVta_Verif(759, 'O010','G','2024-04-24',375.15,375.15,8125.81,8125.81,0.00,375.15);
-EXECUTE PROCEDURE  LiqVta_Verif(14441, 'B003','S','2023-04-19',89.00,89.00,1013.71,1013.71,0.00,89.00);
+EXECUTE PROCEDURE  LiqVta_Verif(2226, 'H002','S','2024-08-17',365.00,365.00,4157.35,4157.35,0.00,365.01);
 
 SELECT	fec_erup, NVL(tot_erup,0), NVL(lcre_erup,0) + NVL(lefe_erup,0) + NVL(lpar_erup,0) + NVL(lotr_erup,0), NVL(imp_erup,0), 
 			NVL(vcre_erup,0) + NVL(vefe_erup,0) + NVL(votr_erup,0), NVL(impasc_erup,0) + NVL(impase_erup,0) + NVL(impaso_erup,0),
@@ -94,7 +94,7 @@ IF	paramTipo = 'E' THEN
 	LET vdiaant = DAY(paramFecha);
 	LET vdiaa = DAY(TODAY);
 	LET vdif = paramFecha - TODAY;	
-	IF (vdif > 0 OR vdif < -5 OR (vdiaa = 4 OR vdiaa = 5) AND vdiaant > 25) THEN
+	IF (vdif > 0 OR vdif < -20 OR (vdiaa = 4 OR vdiaa = 5) AND vdiaant > 25) THEN
 		LET vresult = 0; 
 		LET vmensaje = 'LIQUIDACION: ' || paramFolio || ' RUTA: ' || paramRuta || ' TIENE MAS DE 5 DIAS';
 		RETURN 	vresult,vmensaje;
@@ -313,7 +313,7 @@ where	fec_ggas = '2024-04-24'
 
 select	*
 from	nota_vta
-where	fliq_nvta = 759 and ruta_nvta = 'O010'
+where	fliq_nvta = 1007 and ruta_nvta = 'O001'
 
 SELECT	NVL(SUM(tlts_nvta),0), NVL(SUM(impt_nvta),0)
 FROM	nota_vta

@@ -1,5 +1,5 @@
 DROP PROCEDURE LiqVta_emperup;
-EXECUTE PROCEDURE  LiqVta_emperup(7244, 'M003');
+EXECUTE PROCEDURE  LiqVta_emperup(805, 'M030');
 
 CREATE PROCEDURE LiqVta_emperup
 (
@@ -46,10 +46,10 @@ INTO	vcia,vpla,vruta,vpcs,vchf,vay1,vay2,varuta,vfecha,vtot,vnnv
 FROM	empxrutp
 WHERE	fliq_erup = paramFolio AND rut_erup = paramRuta;
 
-IF vpla = '04' OR vpla = '05' OR vpla = '10' OR vpla = '15' OR vpla = '20' OR vpla = '25' OR vpla = '21' OR
+IF vpla = '04' OR vpla = '05' OR vpla = '10'  OR vpla = '34' OR vpla = '15' OR vpla = '20' OR vpla = '25' OR vpla = '21' OR
    vpla = '28' OR vpla = '46' OR vpla = '50' OR vpla = '51' OR vpla = '52' OR vpla = '53' OR vpla = '54' OR
    vpla = '98' OR vpla = '65' OR vpla = '06' OR vpla = '88' OR vpla = '09' OR vpla = '40' OR vpla = '41'
-   OR vpla = '42' OR vpla = '43' OR vpla = '44' OR vpla = '85' OR vpla = '86' OR vpla = '19'AND (vruta <> 'M001' OR vruta <> 'M004' OR vruta <> 'M008') 
+   OR vpla = '42' OR vpla = '43' OR vpla = '44' OR vpla = '85' OR vpla = '86' OR vpla = '19' AND (vruta <> 'M001' OR vruta <> 'M004' OR vruta <> 'M008') 
    OR vpla = '67' THEN
 	IF vpla = '25' OR vpla = '46' THEN
 	     SELECT NVL(SUM(tlts_nvta),0), NVL(count(*),0)
@@ -58,11 +58,19 @@ IF vpla = '04' OR vpla = '05' OR vpla = '10' OR vpla = '15' OR vpla = '20' OR vp
 	     WHERE  fliq_nvta = paramFolio AND ruta_nvta = vruta
 	            AND tip_nvta  <> 'I' AND tip_nvta  <> 'P' AND tip_nvta  <> 'F' AND tip_nvta <> 'T';
   	ELSE
-     	 SELECT NVL(SUM(tlts_nvta),0), NVL(count(*),0)
-		 INTO	vtot,vnnv
-		 FROM	nota_vta
-		 WHERE	fliq_nvta = paramFolio AND ruta_nvta = vruta AND tip_nvta <> 'I' 
-				AND tip_nvta <> 'P' AND tip_nvta <> 'F' AND tip_nvta <> 'T';
+		IF vpla = '10' OR vpla = '34' OR vpla = '50' OR vpla = '51' OR vpla = '52' OR vpla = '53' OR vpla = '54' OR vpla = '98' THEN
+			SELECT NVL(SUM(tlts_nvta),0), NVL(count(*),0)
+			INTO	vtot,vnnv
+			FROM	nota_vta
+			WHERE	fliq_nvta = paramFolio AND ruta_nvta = vruta AND tip_nvta <> 'I' 
+					AND tip_nvta <> 'P' AND tip_nvta <> 'F' AND (tip_nvta <> 'T' OR (tip_nvta = 'T' AND numcte_nvta IN('000001','000003','000004','000005','000006','000007','000052','012202','012734','019282','027111','028730','050643','053269','055951')));
+		ELSE
+			SELECT NVL(SUM(tlts_nvta),0), NVL(count(*),0)
+			INTO	vtot,vnnv
+			FROM	nota_vta
+			WHERE	fliq_nvta = paramFolio AND ruta_nvta = vruta AND tip_nvta <> 'I' 
+					AND tip_nvta <> 'P' AND tip_nvta <> 'F' AND tip_nvta <> 'T';
+		END IF;
   END IF;
 END IF;
    
@@ -185,12 +193,53 @@ where	fec_erup >= '2018-01-01' and edo_erup = 'P'
 
 select	*
 from	nota_vta
-where	fliq_nvta = 425 and ruta_nvta = 'M032'
+where	fliq_nvta = 4586 and ruta_nvta = 'C049'
 
 
 SELECT 	NVL(SUM(tlts_nvta),0), NVL(count(*),0)
 FROM	nota_vta
 where 	fes_nvta = '2023-03-29'
 
+SELECT 	tip_nvta, NVL(SUM(tlts_nvta),0)
+FROM	nota_vta
+where 	fliq_nvta = 3826 and ruta_nvta = 'M018'
+group by 1
+
 select *
 from   planta
+
+SELECT  UNIQUE chf_eruc, NVL(ay1_eruc,''), NVL(ay2_eruc,''), NVL(ay3_eruc,''), NVL(ay4_eruc,'')
+FROM	empxrutc
+WHERE	rut_eruc = 'C049' AND fec_eruc = '2024-10-03';
+
+SELECT  MIN(fliq_eruc)
+FROM	empxrutc
+WHERE	rut_eruc = 'C049' AND fec_eruc = '2024-10-03';
+
+SELECT	NVL(gpa_emp,'')
+FROM 	empleado
+WHERE	cve_emp = '0493';
+
+SELECT	*
+	FROM	vtaxemp
+	WHERE   emp_vemp = '0491' AND fec_vemp = '2024-10-03' AND  ruta_vemp = 'C049' 
+
+SELECT	NVL(ncon_vemp,0), NVL(vta_vemp,0), NVL(nanf_vemp,0)
+	FROM	vtaxemp
+	WHERE   emp_vemp = '0491' AND fec_vemp = '2024-10-03' AND  ruta_vemp = 'C049' AND coa_vemp = '02';
+	
+SELECT NVL(SUM(tlts_nvta),0), NVL(count(*),0)
+FROM	nota_vta
+WHERE	fliq_nvta = 805 AND ruta_nvta = 'M030' AND tip_nvta <> 'I' 
+		AND tip_nvta <> 'P' AND tip_nvta <> 'F' AND tip_nvta <> 'T';
+
+SELECT NVL(SUM(tlts_nvta),0), NVL(count(*),0)
+FROM	nota_vta
+WHERE	fliq_nvta = 805 AND ruta_nvta = 'M030' AND tip_nvta <> 'I' 
+		AND tip_nvta <> 'P' AND tip_nvta <> 'F' AND (tip_nvta <> 'T' or (tip_nvta = 'T' and numcte_nvta = '000001'));
+
+select 	fes_nvta, count(*)
+from 	nota_vta
+where 	fes_nvta between '2025-01-01' and '2025-01-25'
+		and edo_nvta = 'A' and numcte_nvta = '000001'
+group by 1

@@ -1,6 +1,6 @@
 DROP PROCEDURE rg_totalesp;
 
-EXECUTE PROCEDURE rg_totalesp('2024-12-13','2024-12-13');
+EXECUTE PROCEDURE rg_totalesp('2025-01-31','2025-01-31');
 
 CREATE PROCEDURE rg_totalesp
 (
@@ -169,16 +169,16 @@ LET xfecd  = xfecd - xdia2 - xdia + 1;
 
 -- VENTA ESTACIONARIO
 IF paramFecIni < xfecd THEN
-  	SELECT	NVL(SUM(impt_nvta),0.00)
-    INTO 	vtotvest
+  	SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
+    INTO 	vtotvest,vstotvest,vivavest
     FROM 	urdnota_vta
     WHERE 	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin
 			AND tip_nvta = 'E'
 	       	AND edo_nvta = 'A'
 	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S');
 ELSE
-  	SELECT  NVL(SUM(impt_nvta),0.00)
-    INTO 	vtotvest
+  	SELECT  NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
+    INTO 	vtotvest,vstotvest,vivavest
     FROM 	nota_vta
     WHERE 	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin
        		AND tip_nvta = 'E'
@@ -186,21 +186,21 @@ ELSE
 	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S');
 END IF;
 
-LET vivavest = NVL((vtotvest / vsiva * viva),0.00);
-LET vstotvest = vtotvest - vivavest;
+--LET vivavest = NVL((vtotvest / vsiva * viva),0.00);
+--LET vstotvest = vtotvest - vivavest;
 
 -- VENTA PORTATIL
 IF paramFecIni < xfecd THEN
-  	SELECT	NVL(SUM(impt_nvta),0.00)
-    INTO 	vtotvcil
+  	SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
+    INTO 	vtotvcil,vstotvcil,vivavcil
     FROM 	urdnota_vta
     WHERE 	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin
 			AND tip_nvta IN('C','D','2','3','4')
 	       	AND edo_nvta = 'A'
 	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S');
 ELSE
-  	SELECT  NVL(SUM(impt_nvta),0.00)
-    INTO 	vtotvcil
+  	SELECT  NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
+    INTO 	vtotvcil,vstotvcil,vivavcil
     FROM 	nota_vta
     WHERE 	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin
        		AND tip_nvta IN('C','D','2','3','4')
@@ -208,21 +208,21 @@ ELSE
 	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S');
 END IF;
 
-LET vivavcil = NVL((vtotvcil / vsiva * viva),0.00);
-LET vstotvcil = vtotvcil - vivavcil;
+--LET vivavcil = NVL((vtotvcil / vsiva * viva),0.00);
+--LET vstotvcil = vtotvcil - vivavcil;
         
 -- VENTA CARBURACION
 IF paramFecIni < xfecd THEN
-  	SELECT	NVL(SUM(impt_nvta),0.00)
-    INTO 	vtotvcar
+  	SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
+    INTO 	vtotvcar,vstotvcar,vivavcar
     FROM 	urdnota_vta
     WHERE 	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin
 			AND tip_nvta IN('B')
 	       	AND edo_nvta = 'A'
 	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S');
 ELSE
-  	SELECT  NVL(SUM(impt_nvta),0.00)
-    INTO 	vtotvcar
+  	SELECT  NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
+    INTO 	vtotvcar,vstotvcar,vivavcar
     FROM 	nota_vta
     WHERE 	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin
        		AND tip_nvta IN('B')
@@ -230,8 +230,8 @@ ELSE
 	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S');
 END IF;
 
-LET vivavcar = NVL((vtotvcar / vsiva * viva),0.00);
-LET vstotvcar = vtotvcar - vivavcar;
+--LET vivavcar = NVL((vtotvcar / vsiva * viva),0.00);
+--LET vstotvcar = vtotvcar - vivavcar;
 
 -- TOTAL FACTURACION
 SELECT	NVL(SUM(impt_fac),0), NVL(SUM(simp_fac),0), NVL(SUM(iva_fac),0)
@@ -241,7 +241,7 @@ WHERE	fec_fac >= paramFecIni and fec_fac <= paramFecFin
 		AND impr_fac = 'E'
      	AND tdoc_fac = 'I'
      	AND faccer_fac = 'N'
-     	AND (feccan_fac is null OR feccan_fac <> fec_fac)
+     	AND (feccan_fac IS NULL OR feccan_fac <> fec_fac)
      	AND (frf_fac IS NULL OR frf_fac = 0);
 
 
@@ -701,5 +701,12 @@ WHERE 	fec_mcxc >= '2024-12-13' AND fec_mcxc <= '2024-12-13'
 		AND tip_mcxc <> '01'
 
 		
-	
+SELECT	NVL(SUM(impt_fac),0), NVL(SUM(simp_fac),0), NVL(SUM(iva_fac),0)
+FROM	factura
+WHERE	fec_fac >= '2025-01-31' and fec_fac <= '2025-01-31'
+		AND impr_fac = 'E'
+     	AND tdoc_fac = 'I'
+     	AND faccer_fac = 'N'
+     	AND (feccan_fac IS NULL OR feccan_fac <> fec_fac)
+     	AND (frf_fac IS NULL OR frf_fac = 0);	
      	

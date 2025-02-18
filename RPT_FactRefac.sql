@@ -1,5 +1,5 @@
-EXECUTE PROCEDURE RPT_FactRefac('2024-11-01','2024-11-30','F');
-EXECUTE PROCEDURE RPT_FactRefac('2024-11-01','2024-11-30','N');
+EXECUTE PROCEDURE RPT_FactRefac('2025-01-01','2025-01-31','F');
+EXECUTE PROCEDURE RPT_FactRefac('2025-01-01','2025-01-31','N');
 
 DROP PROCEDURE RPT_FactRefac;
 CREATE PROCEDURE RPT_FactRefac
@@ -53,11 +53,11 @@ IF paramTipo = 'F' THEN
 	FOREACH cFacturas FOR
 		SELECT 	rfc_fac, ser_fac, fol_fac, fec_fac, impt_fac, iva_fac, tdoc_fac, uuid_fac, srf_fac, frf_fac
 		INTO    vrfc,vserie,vfolfac,vfecfac,vimporte,viva,vtdoc,vuuid,vsrffac,vfrffac
-		FROM 	factura
+		FROM 	factura f
 		WHERE 	fec_fac BETWEEN paramFecIni AND paramFecFin
 				AND tdoc_fac = 'I' AND edo_fac <> 'C'
-				AND frf_fac in(select fol_fac from factura where faccer_fac = 'S')
-				
+				AND frf_fac in(select fol_fac from factura where faccer_fac = 'S' and fol_fac = f.frf_fac and ser_fac = f.srf_fac)
+		
 		SELECT	uuid_fac, '04'
 		INTO	vuuidrel, vtiprel
 		FROM	factura
@@ -122,23 +122,36 @@ END IF;
 
 END PROCEDURE; 
 
-SELECT 	feccan_fac, rfc_fac, ser_fac, fol_fac, fec_fac, impt_fac, iva_fac, edo_fac, tdoc_fac, uuid_fac, srf_fac, frf_fac
-FROM 	factura,cliente
-WHERE 	fec_fac BETWEEN '2024-11-01' AND '2024-11-30'
-		AND tdoc_fac = 'I'
-		AND frf_fac in(select fol_fac from factura where faccer_fac = 'S')
+SELECT 	rfc_fac, ser_fac, fol_fac, fec_fac, impt_fac, iva_fac, tdoc_fac, uuid_fac, srf_fac, frf_fac
+FROM 	factura f
+WHERE 	fec_fac BETWEEN '2025-01-01' AND '2025-01-31'
+		AND tdoc_fac = 'I' AND edo_fac <> 'C'
+		AND (frf_fac in(select fol_fac from factura where faccer_fac = 'S' and fol_fac = f.frf_fac and ser_fac = f.srf_fac)
+		or frf_fac in(select fol_fac from factura ff where fol_fac = f.frf_fac and ser_fac = f.srf_fac
+			and frf_fac in(select fol_fac from factura where faccer_fac = 'S' and fol_fac = ff.frf_fac and ser_fac = ff.srf_fac)))
 		
 SELECT 	rfc_ncrd, ser_ncrd, fol_ncrd, fec_ncrd, impt_ncrd, iva_ncrd, tdoc_ncrd, uuid_ncrd
 FROM 	nota_crd
-WHERE 	fec_ncrd BETWEEN '2024-11-01' AND '2024-11-30'
+WHERE 	fec_ncrd BETWEEN  '2025-01-01' AND '2025-01-08'
 					AND tdoc_ncrd = 'C' AND edo_ncrd <> 'C'
 		
 select	*
 from	nota_crd  
-where	fec_ncrd BETWEEN '2024-11-01' AND '2024-11-30'
+where	fec_ncrd BETWEEN '2024-12-01' AND '2024-12-31'
 		AND tdoc_ncrd = 'C' AND edo_ncrd <> 'C'
 		
 select	*
 from	det_ncrd 
 where	fol_dncrd = 5244 and ser_dncrd = 'CAB'
+
+select	*
+from	factura
+where	fol_fac = 10436 and ser_fac = 'EATA'
+
+select	*
+from	factura
+where	numcte_fac = '011986' and fec_fac >= '2024-12-01'
+
+select	'2025-01-01'- TODAY, '2025-01-01'- TODAY < -5
+from	datos
 		

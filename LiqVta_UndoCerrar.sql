@@ -1,5 +1,5 @@
 DROP PROCEDURE LiqVta_UndoCerrar;
-EXECUTE PROCEDURE  LiqVta_UndoCerrar(7422,'A001','2024-07-08'); 	
+EXECUTE PROCEDURE  LiqVta_UndoCerrar(8056,'M005','2025-01-09'); 	
 
 CREATE PROCEDURE LiqVta_UndoCerrar
 (
@@ -44,9 +44,10 @@ IF NOT EXISTS(SELECT 	1
 			SELECT	cia_doc, pla_doc, fol_doc, vuelta_doc, car_doc
 			INTO	vcia,vpla,vfolio,vvuelta,vcargo
 			FROM	doctos, nota_vta
-			WHERE	fol_doc = fol_nvta AND  vuelta_doc = vuelta_nvta
+			WHERE	cia_doc = cia_nvta AND pla_doc = pla_nvta 
+					AND fol_doc = fol_nvta AND  vuelta_doc = vuelta_nvta
 					AND fes_nvta = paramFecha AND edo_nvta = 'A' 
-					AND fliq_nvta = paramFliq AND ruta_nvta = paramRuta 
+					AND ruta_nvta = paramRuta 
 					AND femi_doc = paramFecha 
 			
 			LET vproceso,vmsg,vmonto = cxc_bajadocumento(vfolio,vcia,vpla,vvuelta); 
@@ -62,42 +63,42 @@ IF NOT EXISTS(SELECT 	1
 					
 		UPDATE	nota_vta
 		SET		edo_nvta = 'S'
-		WHERE	fes_nvta = paramFecha AND edo_nvta = 'A' AND fliq_nvta = paramFliq AND ruta_nvta = paramRuta;
+		WHERE	fes_nvta = paramFecha AND edo_nvta = 'A' AND ruta_nvta = paramRuta;
 		
 		IF	vtipo = 'M' THEN
 			UPDATE  empxrutp
 			SET 	edo_erup  = 'P'
-			WHERE	fliq_erup = paramFliq AND rut_erup = paramRuta;
+			WHERE	fec_erup = paramFecha AND rut_erup = paramRuta;
 		END IF;
 		IF	vtipo = 'C' THEN
 			UPDATE  empxrutc
 			SET 	edo_eruc  = 'P'
-			WHERE	fliq_eruc = paramFliq AND rut_eruc = paramRuta;
+			WHERE	fec_eruc = paramFecha AND rut_eruc = paramRuta;
 		END IF;
 		IF	vtipo = 'B' THEN
 			UPDATE  venxmed
 			SET 	edo_vmed  = 'P'
-			WHERE	fliq_vmed = paramFliq AND rut_vmed = paramRuta;
+			WHERE	fec_vmed = paramFecha AND rut_vmed = paramRuta;
 		END IF;
 		IF	vtipo = 'A' THEN
 			UPDATE  venxand
 			SET 	edo_vand  = 'P'
-			WHERE	fliq_vand = paramFliq AND rut_vand = paramRuta;
+			WHERE	fec_vand = paramFecha AND rut_vand = paramRuta;
 		END IF;
 		IF	vtipo = 'D' THEN
 			UPDATE  des_dir
 			SET 	edo_desd = 'P'
-			WHERE	fliq_desd = paramFliq AND rut_desd = paramRuta;
+			WHERE	fec_desd = paramFecha AND rut_desd = paramRuta;
 		END IF;
 		IF	vtipo = 'O' THEN
 			UPDATE  gto_gas
 			SET 	edo_ggas = 'P'
-			WHERE	fliq_ggas = paramFliq AND rut_ggas = paramRuta;
+			WHERE	fec_ggas = paramFecha AND rut_ggas = paramRuta;
 		END IF;
 		IF	vtipo = 'H' THEN
 			UPDATE  gto_die
 			SET 	edo_gdie = 'P'
-			WHERE	fliq_gdie = paramFliq AND rut_gdie = paramRuta;
+			WHERE	fec_gdie = paramFecha AND rut_gdie = paramRuta;
 		END IF;
 		
 		IF	vtipo = 'M' OR vtipo = 'C' OR vtipo = 'B' THEN
@@ -188,6 +189,10 @@ from	nota_vta
 where	fes_nvta = '2024-06-24' and edo_nvta in('A','S') and tpa_nvta in('C','G') and napl_nvta = 'C'
 
 select	*
+from	nota_vta
+where	fes_nvta = '2024-09-05' and edo_nvta in('A','S') and tpa_nvta in('C','G') and napl_nvta = 'C'
+
+select	*
 from	doctos
 where	femi_doc = '2024-06-24' and tpa_doc in('C','G')
 
@@ -197,4 +202,4 @@ where	fliq_vand = 7422 and rut_vand = 'A001'
 
 select *
 from 	nota_vta 
-where 	fliq_nvta = 7422 and ruta_nvta = 'A001'
+where 	fliq_nvta = 8056 and ruta_nvta = 'M005'

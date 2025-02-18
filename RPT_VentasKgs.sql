@@ -1,4 +1,4 @@
-EXECUTE PROCEDURE RPT_VentasKgs('2024-07-21','2024-07-31');
+EXECUTE PROCEDURE RPT_VentasKgs('2025-01-01','2025-01-31');
 
 DROP PROCEDURE RPT_VentasKgs;
 
@@ -15,13 +15,15 @@ RETURNING
  CHAR(6), 
  DECIMAL,
  DECIMAL,
- DECIMAL,   
+ DECIMAL,
  DECIMAL;
 
+DEFINE vcia 	CHAR(2);
 DEFINE vnocte 	CHAR(6);
 DEFINE vnomcte 	CHAR(80);
 DEFINE vrfc    	CHAR(13);
 DEFINE vuniop 	CHAR(6);
+DEFINE vuniopl 	CHAR(6);
 DEFINE vtotkgs 	DECIMAL;
 DEFINE vvtaiva 	DECIMAL;
 DEFINE vvtasimp	DECIMAL;
@@ -34,6 +36,7 @@ DEFINE vfecfin 	DATE;
 
 LET vcount = 0;
 LET vfecfin = paramFecIni + 3;
+LET vcia = '15';
 
 SELECT	COUNT(*)
 INTO 	vcount
@@ -57,7 +60,7 @@ IF vcount > 50 THEN
 				   END || trim(NVL(cliente.nom_cte,'PUBLICO')) || ' ' || TRIM(NVL(cliente.ape_cte,'EN GENERAL')) 
 				END AS ncom_cte,
 				NVL(rfc_cte,'XAXX010101000'),
-				NVL(cat_rut, 'planta'),
+				NVL(cat_rut, pla_rut),
 				SUM(CASE WHEN tip_nvta = 'E' THEN tlts_nvta * 0.54 ELSE 0 END) kgs_est,
 				SUM(CASE WHEN tip_nvta = 'B' THEN tlts_nvta * 0.54 ELSE 0 END) kgs_carb,
 				SUM(CASE WHEN tip_nvta matches '[CD234]' THEN 
@@ -70,7 +73,7 @@ IF vcount > 50 THEN
 				SUM(iva_nvta),
 				SUM(simp_nvta),
 				SUM(impt_nvta)
-		INTO 	vnocte,vnomcte,vrfc,vuniop,vtotest,vtotcar,vtotcil,vvtaiva,vvtasimp,vvtaimp
+		INTO 	vnocte,vnomcte,vrfc,vuniopl,vtotest,vtotcar,vtotcil,vvtaiva,vvtasimp,vvtaimp
 		FROM	nota_vta, cliente, ruta
 		WHERE	fes_nvta BETWEEN paramFecIni AND paramFecFin
 				AND edo_nvta = 'A' AND tip_nvta IN('E','B','C','D','2','3','4')
@@ -96,7 +99,7 @@ IF vcount > 50 THEN
 				   END || trim(NVL(cliente.nom_cte,'PUBLICO')) || ' ' || TRIM(NVL(cliente.ape_cte,'EN GENERAL')) 
 				END AS ncom_cte,
 				NVL(rfc_cte,'XAXX010101000'),
-				NVL(cat_rut, 'planta'),
+				NVL(cat_rut, pla_rut),
 				SUM(CASE WHEN tip_nvta = 'E' THEN tlts_nvta * 0.54 ELSE 0 END) kgs_est,
 				SUM(CASE WHEN tip_nvta = 'B' THEN tlts_nvta * 0.54 ELSE 0 END) kgs_carb,
 				SUM(CASE WHEN tip_nvta matches '[CD234]' THEN 
@@ -123,7 +126,7 @@ IF vcount > 50 THEN
 		UNION 
 		
 		SELECT	'000000', 'PUBLICO EN GENERAL', 'XAXX010101000',
-				NVL(cat_rut, 'planta'),
+				NVL(cat_rut, pla_rut),
 				SUM(CASE WHEN tip_nvta = 'E' THEN tlts_nvta * 0.54 ELSE 0 END) kgs_est,
 				SUM(CASE WHEN tip_nvta = 'B' THEN tlts_nvta * 0.54 ELSE 0 END) kgs_carb,
 				SUM(CASE WHEN tip_nvta matches '[CD234]' THEN 
@@ -149,7 +152,7 @@ IF vcount > 50 THEN
 		UNION
 		
 		SELECT	'000000', 'PUBLICO EN GENERAL', 'XAXX010101000',
-				NVL(cat_rut, 'planta'),
+				NVL(cat_rut, pla_rut),
 				SUM(CASE WHEN tip_nvta = 'E' THEN tlts_nvta * 0.54 ELSE 0 END) kgs_est,
 				SUM(CASE WHEN tip_nvta = 'B' THEN tlts_nvta * 0.54 ELSE 0 END) kgs_carb,
 				SUM(CASE WHEN tip_nvta matches '[CD234]' THEN 
@@ -174,11 +177,20 @@ IF vcount > 50 THEN
 		
 		ORDER BY 4,1
 	
-		IF vuniop =  'planta' THEN
-			SELECT	cve_unidad
+		IF LENGTH(TRIM(vuniopl)) =  2 THEN
+			SELECT	NVL(pla_unidaop,'planta')
 			INTO	vuniop
-			FROM	unidades_operativa
-			WHERE	principal = 1;
+			FROM	planta
+			WHERE	cia_pla = vcia and cve_pla = TRIM(vuniopl);
+			
+			IF vuniop =  'planta' THEN
+				SELECT	cve_unidad
+				INTO	vuniop
+				FROM	unidades_operativa
+				WHERE	principal = 1;
+			END IF;
+		ELSE 
+			LET vuniop = vuniopl;
 		END IF;
 		LET vtotkgs = NVL(vtotest,0) + NVL(vtotcar,0) + NVL(vtotcil,0);
 		
@@ -203,7 +215,7 @@ ELSE
 				   END || trim(NVL(cliente.nom_cte,'PUBLICO')) || ' ' || TRIM(NVL(cliente.ape_cte,'EN GENERAL')) 
 				END AS ncom_cte,
 				NVL(rfc_cte,'XAXX010101000'),
-				NVL(cat_rut, 'planta'),
+				NVL(cat_rut, pla_rut),
 				SUM(CASE WHEN tip_nvta = 'E' THEN tlts_nvta * 0.54 ELSE 0 END) kgs_est,
 				SUM(CASE WHEN tip_nvta = 'B' THEN tlts_nvta * 0.54 ELSE 0 END) kgs_carb,
 				SUM(CASE WHEN tip_nvta matches '[CD234]' THEN 
@@ -216,7 +228,7 @@ ELSE
 				SUM(iva_nvta),
 				SUM(simp_nvta),
 				SUM(impt_nvta)
-		INTO 	vnocte,vnomcte,vrfc,vuniop,vtotest,vtotcar,vtotcil,vvtaiva,vvtasimp,vvtaimp
+		INTO 	vnocte,vnomcte,vrfc,vuniopl,vtotest,vtotcar,vtotcil,vvtaiva,vvtasimp,vvtaimp
 		FROM	rdnota_vta, cliente, ruta
 		WHERE	fes_nvta BETWEEN paramFecIni AND paramFecFin
 				AND edo_nvta = 'A' AND tip_nvta IN('E','B','C','D','2','3','4')
@@ -242,7 +254,7 @@ ELSE
 				   END || trim(NVL(cliente.nom_cte,'PUBLICO')) || ' ' || TRIM(NVL(cliente.ape_cte,'EN GENERAL')) 
 				END AS ncom_cte,
 				NVL(rfc_cte,'XAXX010101000'),
-				NVL(cat_rut, 'planta'),
+				NVL(cat_rut, pla_rut),
 				SUM(CASE WHEN tip_nvta = 'E' THEN tlts_nvta * 0.54 ELSE 0 END) kgs_est,
 				SUM(CASE WHEN tip_nvta = 'B' THEN tlts_nvta * 0.54 ELSE 0 END) kgs_carb,
 				SUM(CASE WHEN tip_nvta matches '[CD234]' THEN 
@@ -269,7 +281,7 @@ ELSE
 		UNION 
 		
 		SELECT	'000000', 'PUBLICO EN GENERAL', 'XAXX010101000',
-				NVL(cat_rut, 'planta'),
+				NVL(cat_rut, pla_rut),
 				SUM(CASE WHEN tip_nvta = 'E' THEN tlts_nvta * 0.54 ELSE 0 END) kgs_est,
 				SUM(CASE WHEN tip_nvta = 'B' THEN tlts_nvta * 0.54 ELSE 0 END) kgs_carb,
 				SUM(CASE WHEN tip_nvta matches '[CD234]' THEN 
@@ -295,7 +307,7 @@ ELSE
 		UNION
 		
 		SELECT	'000000', 'PUBLICO EN GENERAL', 'XAXX010101000',
-				NVL(cat_rut, 'planta'),
+				NVL(cat_rut, pla_rut),
 				SUM(CASE WHEN tip_nvta = 'E' THEN tlts_nvta * 0.54 ELSE 0 END) kgs_est,
 				SUM(CASE WHEN tip_nvta = 'B' THEN tlts_nvta * 0.54 ELSE 0 END) kgs_carb,
 				SUM(CASE WHEN tip_nvta matches '[CD234]' THEN 
@@ -321,11 +333,25 @@ ELSE
 		ORDER BY 4,1
 	
 		LET vtotkgs = NVL(vtotest,0) + NVL(vtotcar,0) + NVL(vtotcil,0);
-		IF vuniop =  'planta' THEN
-			SELECT	cve_unidad
+		IF LENGTH(TRIM(vuniopl)) =  2 THEN
+			SELECT	NVL(pla_unidaop,'planta')
 			INTO	vuniop
-			FROM	unidades_operativa
-			WHERE	principal = 1;
+			FROM	planta
+			WHERE	cia_pla = vcia and cve_pla = TRIM(vuniopl);
+			
+			IF vuniop =  'planta' THEN
+				SELECT	cve_unidad
+				INTO	vuniop
+				FROM	unidades_operativa
+				WHERE	principal = 1;
+			END IF;
+		ELSE 
+			LET vuniop = vuniopl;
+		END IF;
+		LET vtotkgs = NVL(vtotest,0) + NVL(vtotcar,0) + NVL(vtotcil,0);
+		
+		IF vrfc = '' THEN
+			LET vrfc = 'XAXX010101000';
 		END IF;
 		
 		IF vrfc = '' THEN
@@ -546,4 +572,13 @@ where	fes_nvta = '2024-10-24'
 		and edo_nvta = 'A' and tip_nvta in('E','B','C','D','2','3','4')
 		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
 		and impt_nvta > 0
-		and ruta_nvta in(select cve_rut from ruta where tip_rut = 'E')
+		and ruta_nvta in(select cve_rut from ruta where tip_rut = 'E' and cat_rut = '.')
+		
+select	sum(tlts_nvta)
+from	rdnota_vta
+where	fes_nvta >= '2024-01-01'
+		and edo_nvta = 'A' and tip_nvta in('B')
+		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
+		and impt_nvta > 0
+		and ruta_nvta in(select cve_rut from ruta where tip_rut = 'E' and cat_rut = '.')
+		
