@@ -1,5 +1,5 @@
 EXECUTE PROCEDURE RPT_cfdiCM('2025-01-01','2025-01-31','F');
-EXECUTE PROCEDURE RPT_cfdiCM('2025-01-01','2025-01-31','N');
+EXECUTE PROCEDURE RPT_cfdiCM('2025-02-01','2025-02-28','N');
 
 DROP PROCEDURE RPT_cfdiCM;
 CREATE PROCEDURE RPT_cfdiCM
@@ -11,7 +11,8 @@ CREATE PROCEDURE RPT_cfdiCM
 
 RETURNING  
  CHAR(40),		-- UUID
- CHAR(2), 		-- TIPO RELACION CHAR(40), 		-- UUID RELACIONADO
+ CHAR(2), 		-- TIPO RELACION CHAR(40), 		
+ CHAR(40),		-- UUID RELACIONADO
  CHAR(13),		-- RFC
  INT,			-- FOLIO
  CHAR(4),		-- SERIE
@@ -93,7 +94,7 @@ ELSE
 	IF paramTipo = 'N' THEN		
 		FOREACH cNotasCrd FOR
 			SELECT 	rfc_ncrd, ser_ncrd, fol_ncrd, fec_ncrd, impt_ncrd, simp_ncrd,iva_ncrd, tdoc_ncrd, uuid_ncrd, edo_ncrd, frnc_ncrd, srnc_ncrd
-			INTO    vrfc,vserie,vfolio,vfecha,vimporte,vbase,viva,vtdoc,vuuid,vedo,vsrffac,vfrffac
+			INTO    vrfc,vserie,vfolio,vfecha,vimporte,vbase,viva,vtdoc,vuuid,vedo,vfrffac,vsrffac
 			FROM 	nota_crd
 			WHERE 	fec_ncrd BETWEEN paramFecIni AND paramFecFin
 					AND tdoc_ncrd IN('E','C') 

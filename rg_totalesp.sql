@@ -1,6 +1,6 @@
-DROP PROCEDURE rg_totalespf;
+DROP PROCEDURE rg_totalesp;
 
-EXECUTE PROCEDURE rg_totalesp('2025-01-01','2025-01-31');
+EXECUTE PROCEDURE rg_totalesp('2025-02-26','2025-02-26');
 
 CREATE PROCEDURE rg_totalesp
 (
@@ -169,7 +169,7 @@ LET xfecd  = xfecd - xdia2 - xdia + 1;
 
 -- VENTA ESTACIONARIO
 IF paramFecIni < xfecd THEN
-  	SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(impt_nvta / vsiva),0.00), NVL(SUM((impt_nvta / vsiva * viva)),0.00)
+  	SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
     INTO 	vtotvest,vstotvest,vivavest
     FROM 	urdnota_vta
     WHERE 	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin
@@ -177,7 +177,7 @@ IF paramFecIni < xfecd THEN
 	       	AND edo_nvta = 'A'
 	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S');
 ELSE
-  	SELECT  NVL(SUM(impt_nvta),0.00), NVL(SUM(impt_nvta / vsiva),0.00), NVL(SUM((impt_nvta / vsiva * viva)),0.00)
+  	SELECT  NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
     INTO 	vtotvest,vstotvest,vivavest
     FROM 	nota_vta
     WHERE 	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin
@@ -191,7 +191,7 @@ END IF;
 
 -- VENTA PORTATIL
 IF paramFecIni < xfecd THEN
-  	SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(impt_nvta / vsiva),0.00), NVL(SUM((impt_nvta / vsiva * viva)),0.00)
+  	SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
     INTO 	vtotvcil,vstotvcil,vivavcil
     FROM 	urdnota_vta
     WHERE 	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin
@@ -199,7 +199,7 @@ IF paramFecIni < xfecd THEN
 	       	AND edo_nvta = 'A'
 	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S');
 ELSE
-  	SELECT  NVL(SUM(impt_nvta),0.00), NVL(SUM(impt_nvta / vsiva),0.00), NVL(SUM((impt_nvta / vsiva * viva)),0.00)
+  	SELECT  NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
     INTO 	vtotvcil,vstotvcil,vivavcil
     FROM 	nota_vta
     WHERE 	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin
@@ -213,7 +213,7 @@ END IF;
         
 -- VENTA CARBURACION
 IF paramFecIni < xfecd THEN
-  	SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(impt_nvta / vsiva),0.00), NVL(SUM((impt_nvta / vsiva * viva)),0.00)
+  	SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
     INTO 	vtotvcar,vstotvcar,vivavcar
     FROM 	urdnota_vta
     WHERE 	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin
@@ -221,7 +221,7 @@ IF paramFecIni < xfecd THEN
 	       	AND edo_nvta = 'A'
 	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S');
 ELSE
-  	SELECT  NVL(SUM(impt_nvta),0.00), NVL(SUM(impt_nvta / vsiva),0.00), NVL(SUM((impt_nvta / vsiva * viva)),0.00)
+  	SELECT  NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
     INTO 	vtotvcar,vstotvcar,vivavcar
     FROM 	nota_vta
     WHERE 	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin
@@ -323,21 +323,21 @@ LET vcdingstot = vcdingtot - vcdingiva;
 		
 -- VENTAS EN EFECTIVO Y ASISTENCIA
 IF paramFecIni < xfecd THEN
-  	SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(impt_nvta / vsiva),0.00), NVL(SUM((impt_nvta / vsiva * viva)),0.00)
+  	SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
 	INTO	vvtotefe,vvstotefe,vvivaefe
 	FROM    urdnota_vta
 	WHERE	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin AND edo_nvta = 'A' 
 			AND (aju_nvta IS NULL OR aju_nvta <> 'S')
 			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta NOT IN('C','G');
 			
-	SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(impt_nvta / vsiva),0.00), NVL(SUM((impt_nvta / vsiva * viva)),0.00)
+	SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
 	INTO	vcreajutot,vcreajustot,vcreajuiva
 	FROM    urdnota_vta
 	WHERE	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin AND edo_nvta = 'A' 
 			AND aju_nvta='S'
 			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta IN('C','G');
 ELSE
-  	SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(impt_nvta / vsiva),0.00), NVL(SUM((impt_nvta / vsiva * viva)),0.00)
+  	SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
 	INTO	vvtotefe,vvstotefe,vvivaefe
 	FROM    nota_vta
 	WHERE	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin AND edo_nvta = 'A' 
@@ -709,4 +709,16 @@ WHERE	fec_fac >= '2025-01-31' and fec_fac <= '2025-01-31'
      	AND faccer_fac = 'N'
      	AND (feccan_fac IS NULL OR feccan_fac <> fec_fac)
      	AND (frf_fac IS NULL OR frf_fac = 0);	
+
+SELECT  NVL(impt_nvta,0.00), NVL(impt_nvta / 1.16,0.00), NVL((impt_nvta / 1.16 * 0.16),0.00)
+FROM 	nota_vta
+WHERE 	fes_nvta >= '2024-02-01' AND fes_nvta <= '2025-02-15' 
+			and fol_nvta in (817540,817541,817542,825096,842383,842384,842385,846393,846394,846398,846399,846400,846401,
+					846402,846403,846404,846405,846406,846407,846408,846409,846410,846411,846412,846413,846414,
+					846415,846416,846417,846418,846419,846420,846421,846422,846423,846424)
+       		AND tip_nvta IN('B')
+	       	AND edo_nvta = 'A'
+	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S');
+
+
      	

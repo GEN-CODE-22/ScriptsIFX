@@ -166,6 +166,17 @@ IF	paramTipo = 'B' THEN
 	END IF;
 END IF;
 
+--REVISA TIPO SERVICIO ESTACIONARIO EN CILINDRO-----------------------------------------------------------------------
+IF	paramTipo = 'C' THEN
+	IF	EXISTS(SELECT 1 FROM nota_vta 
+		WHERE fliq_nvta = paramFolio AND ruta_nvta = paramRuta AND edo_nvta in('A','S') 
+		AND tip_nvta = 'E') THEN
+		LET vresult = 0;
+		LET vmensaje = 'LIQUIDACION: ' || paramFolio || ' RUTA: ' || paramRuta || ' TIENE NOTAS TIPO ESTACIONARIO';
+		RETURN 	vresult,vmensaje;
+	END IF;
+END IF;
+
 --REVISA SI HAY NOTAS CON IMPORTE DE CONSUMO INTERNO, FUGAS, DONACION Y TRANSFERENCIA---------------------------------------
 IF	paramTipo IN('E','B','C','A') THEN
 	SELECT	NVL(SUM(impt_nvta),0)
