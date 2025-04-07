@@ -1,5 +1,6 @@
 DROP PROCEDURE LiqCob_PagoFac;
-EXECUTE PROCEDURE  LiqCob_PagoFac(48121,499412,'EAA','15','01','58',684.60,'2022-09-03','847867',3,'lucia');
+EXECUTE PROCEDURE  LiqCob_PagoFac(37737,236262,'EAQ','15','15','50',2632.50,'2025-03-10','EFECTIVO',25,'laura');
+
 
 CREATE PROCEDURE LiqCob_PagoFac
 (
@@ -47,14 +48,14 @@ LET vimptot = 0;
 
 IF (NOT EXISTS(	SELECT 	1 
 					FROM 	mov_cxc 
-					WHERE 	cia_mcxc = paramCia AND pla_mcxc = paramPla AND sta_mcxc = 'A' AND ffac_mcxc = paramFolio 
+					WHERE 	sta_mcxc = 'A' AND ffac_mcxc = paramFolio 
 							AND sfac_mcxc = paramSerie AND (tip_mcxc = '01' OR tip_mcxc >= '11' AND tip_mcxc <= '99') 
 							AND fliq_mcxc = paramFolLiq) OR paramTipmov = '52') THEN
-			
+	
 	SELECT  SUM(sal_doc) 
 	INTO	vsalfac
 	FROM 	doctos 
-	WHERE   cia_doc = paramCia AND pla_doc = paramPla AND sta_doc = 'A' AND ffac_doc = paramFolio AND sfac_doc = paramSerie
+	WHERE   sta_doc = 'A' AND ffac_doc = paramFolio AND sfac_doc = paramSerie
 			AND (tip_doc = '01' OR tip_doc >= '11' AND tip_doc <= '99');
 	IF paramImp <= vsalfac	THEN		
 		LET vimpfac = paramImp;
@@ -62,7 +63,7 @@ IF (NOT EXISTS(	SELECT 	1
 			SELECT  fol_doc, cia_doc, pla_doc, tip_doc, sal_doc, vuelta_doc
 			INTO	vfoldoc, vciadoc, vpladoc, vtipdoc, vsaldoc, vvuelta
 			FROM 	doctos 
-			WHERE   cia_doc = paramCia AND pla_doc = paramPla AND sta_doc = 'A' AND ffac_doc = paramFolio AND sfac_doc = paramSerie
+			WHERE   sta_doc = 'A' AND ffac_doc = paramFolio AND sfac_doc = paramSerie
 					AND (tip_doc = '01' OR tip_doc >= '11' AND tip_doc <= '99') AND sal_doc > 0.00
 					
 			IF vproceso = 1 AND vimpfac > 0 THEN
@@ -88,22 +89,20 @@ IF (NOT EXISTS(	SELECT 	1
 			IF paramImp = vsalfac THEN
 				UPDATE	factura
 				SET		edo_fac = 'P'
-				WHERE	fol_fac = paramFolio AND ser_fac = paramSerie AND cia_fac = paramCia AND pla_fac = paramPla;
+				WHERE	fol_fac = paramFolio AND ser_fac = paramSerie; 
 			END IF;
 			-- SE ELIMINA EL REGISTRO DE LA TABLA contrare-----------------------------------------------------------------
 			IF EXISTS(	SELECT 	1 
   						FROM 	contrare 
-						WHERE 	fol_ctra = paramFolio AND ser_ctra = paramSerie AND cia_ctra = paramCia 
-						  		AND pla_ctra = paramPla AND tip_ctra = '00' AND fom_ctra = 'F') THEN
+						WHERE 	fol_ctra = paramFolio AND ser_ctra = paramSerie AND tip_ctra = '00' AND fom_ctra = 'F') THEN
 				DELETE FROM contrare
-				WHERE 	fol_ctra = paramFolio AND ser_ctra = paramSerie AND cia_ctra = paramCia 
-						AND pla_ctra = paramPla AND tip_ctra = '00' AND fom_ctra = 'F';
+				WHERE 	fol_ctra = paramFolio AND ser_ctra = paramSerie AND tip_ctra = '00' AND fom_ctra = 'F';
 			END IF;
 			-- SE ACTUALIZA EL numpag_dlcob EN EL DETALLE DE LA LIQUIDACION-------------------------------------------------
 			SELECT  COUNT(unique fliq_mcxc)
 			INTO    vcountp
 			FROM	mov_cxc
-			WHERE	ffac_mcxc = paramFolio AND sfac_mcxc = paramSerie AND cia_mcxc = paramCia AND pla_mcxc = paramPla
+			WHERE	ffac_mcxc = paramFolio AND sfac_mcxc = paramSerie 
 					AND (tip_mcxc = '01' OR tip_mcxc >= '11' AND tip_mcxc <= '99')
 					AND tpm_mcxc BETWEEN '50' AND '63' AND tpm_mcxc <> '52' and sta_mcxc = 'A';
 			UPDATE  det_lcob
@@ -123,23 +122,52 @@ END PROCEDURE;
 
 SELECT  SUM(sal_doc) 
 FROM 	doctos 
-WHERE   cia_doc = '15' AND pla_doc = '09' AND sta_doc = 'A' AND ffac_doc = 194151   AND sfac_doc = 'EAP'
+WHERE   cia_doc = '15' AND pla_doc = '10' AND sta_doc = 'A' AND ffac_doc  in(235637)   AND sfac_doc = 'EAQ'
 		AND (tip_doc = '01' OR tip_doc >= '11' AND tip_doc <= '99');
-		
+	
+SELECT  fol_doc, cia_doc, pla_doc, tip_doc, sal_doc, vuelta_doc
+FROM 	doctos 
+WHERE   cia_doc = '15' AND pla_doc = '02' AND sta_doc = 'A' AND ffac_doc = 73 AND sfac_doc = 'EAQF'
+		AND (tip_doc = '01' OR tip_doc >= '11' AND tip_doc <= '99') AND sal_doc > 0.01374540
+
 SELECT  *
 FROM 	doctos 
-WHERE   cia_doc = '15' AND pla_doc = '85' AND sta_doc = 'A' AND ffac_doc in(14820)   AND sfac_doc = 'EAPH'
-		AND (tip_doc = '01' OR tip_doc >= '11' AND tip_doc <= '99') AND sal_doc > 0.00
+WHERE   cia_doc = '15' AND sta_doc = 'A' AND ffac_doc in(585519) AND sfac_doc = 'EAI'
+		AND (tip_doc = '01' OR tip_doc >= '11' AND tip_doc <= '99') and femi_doc >= '2023-06-01' 
+
+update	doctos
+set		abo_doc = 4.35, sal_doc = 4002.45, fult_doc = '2023-12-28'
+where	cia_doc = '15' AND pla_doc = '34' AND sta_doc = 'A' AND fol_doc = 26243 and vuelta_doc = 2
+		
+		
+SELECT  rowid,*
+FROM 	mov_cxc 
+WHERE   cia_mcxc = '15' AND sta_mcxc = 'A' AND ffac_mcxc in(239576)   AND sfac_mcxc = 'EAJ'
+		AND (tip_mcxc = '01' OR tip_mcxc >= '11' AND tip_mcxc <= '99') and fec_mcxc >= '2023-06-01'
+		
+update  mov_cxc 
+set		fliq_mcxc = 67917   
+WHERE   rowid = 160105986--cia_mcxc = '15' AND pla_mcxc = '54' AND sta_mcxc = 'A' AND doc_mcxc = 131192 and tpm_mcxc  = '58' and num_mcxc = 2
+		AND (tip_mcxc = '01' OR tip_mcxc >= '11' AND tip_mcxc <= '99') and fec_mcxc >= '2023-06-01'
+		
 		
 SELECT  COUNT(unique fec_mcxc)
 FROM	mov_cxc
-WHERE	ffac_mcxc = 69975 AND sfac_mcxc = 'EAOA' AND cia_mcxc = '15' AND pla_mcxc = '55'
+WHERE	ffac_mcxc = 1078612 AND sfac_mcxc = 'EAB' AND cia_mcxc = '15' AND pla_mcxc = '02'
 		AND (tip_mcxc = '01' OR tip_mcxc >= '11' AND tip_mcxc <= '99')
 		AND tpm_mcxc BETWEEN '50' AND '63' AND tpm_mcxc <> '52';
 		
 select	*
 from	mov_cxc
-where	fliq_mcxc = 65173   
+where	fliq_mcxc = 65173 
+
+select	*
+from	mov_cxc
+where	ffac_mcxc = 30842 and sfac_mcxc = 'EAPH' and tpm_mcxc > '49'
+
+select	*
+from	mov_cxc
+where	fec_mcxc = '2023-01-06' and tpm_mcxc >= '50' 
 
 SELECT  SUM(sal_doc),sum(car_doc), sum(abo_doc) 
 FROM 	doctos 
@@ -164,9 +192,7 @@ where	ffac_doc is not null and tip_doc = '11' and pla_doc = '84'
 		
 update  doctos
 set		ffac_doc = null, sfac_doc = null
-where	rowid in(1344531,1476358,1476360,1539842,1539851,1558545,1595912,1617923,1617924,1632783,1632784,1635595,1635596,1635598,
-			1635600,1644811,1646344,1673223,1675013,1675537,1675538,1676810,1691155,1691156,1699347,1699349,1699350,1699589,1711367,
-		1723146,1724942,1735435)
+where	rowid in()
 
 select	rowid,* 
 from	mov_cxc m
@@ -174,15 +200,59 @@ where	ffac_mcxc is not null and tip_mcxc= '11' and pla_mcxc= '84'
 		and doc_mcxc in(select doc_mcxc from mov_cxc where pla_mcxc = '84' and tip_mcxc = '01' and ffac_mcxc = m.ffac_mcxc )
 
 select	*
+from	doctos
+where	fol_doc in(453747) and vuelta_Doc = 2 and cte_doc = '003076'
+
+update	doctos
+set		car_doc = 698.28, sal_doc = 698.28
+where	fol_doc in(57868) and pla_doc = '03' and vuelta_doc = 3
+
+
+select	car_doc - (select sum(imp_mcxc) 
+						from mov_cxc 
+						where doc_mcxc = fol_doc and cia_mcxc = cia_doc and pla_mcxc = pla_doc and vuelta_mcxc = vuelta_doc
+								and tpm_mcxc > '49')
+from	doctos
+where	fol_doc in(177381) and tip_doc = '01'
+
+select	*
+from	doctos
+where	fol_doc in (select doc_mcxc from mov_cxc 
+					where doc_mcxc = fol_doc and cia_mcxc = cia_doc and pla_mcxc = pla_doc and vuelta_mcxc = vuelta_doc
+							and fec_mcxc = '2023-03-09')
+		and sal_doc <> (car_doc - (select sum(imp_mcxc) 
+						from mov_cxc 
+						where doc_mcxc = fol_doc and cia_mcxc = cia_doc and pla_mcxc = pla_doc and vuelta_mcxc = vuelta_doc
+								and tpm_mcxc > '49'))
+		
+
+update	doctos
+set		fult_doc = '2022-10-31'
+where	fol_doc in(332710) and cte_doc = '174021'
+
+select	rowid,*
 from	mov_cxc
-where 	pla_mcxc = '85' and doc_mcxc = 29800
+where 	doc_mcxc in(453747) and tip_mcxc = '08' and pla_mcxc = '96' and cte_mcxc = '075092'
+
+insert into mov_cxc
+values('128576','58','01',421178,null,'','15','02',1167055,'EAB',2,'A','C','4',1391.20,'2023-11-16','2023-11-17','2023-11-20','AxF1167055EAB10','pueblito',66323,14)
 
 
 update	mov_cxc
-set		ffac_mcxc = null, sfac_mcxc = null
-where	rowid in(3413267,3510804,3734542,3734544,3782420,3887368,3887377,3915029,3938307,3956491,3961611,4024578,4079363,4080905,4080906,
-		4093959,4117266,4117267,4124929,4124930,4124932,4124934,4146194,4148232,4158219,4158220,4158222,4158224,4177420,4177421,4180228,
-		4197897,4215826,4218888,4221703,4221704,4223497,4233740,4261134,4261135,4270084,4270085,4279051,4279053,4279054,4279060,4281098,
-		4288527,4289812,4292366,4297987,4301062,4306196,4307969,4311052,4339713,4343048,4346121,4364560,4407559,4414229,4415492,4458500,
-		4560403,4812556,4812558,4812559,21096210)
+set		imp_mcxc = 698.28 --doc_mcxc = 26243, uso_mcxc = 7, cte_mcxc = '050660', ffac_mcxc = 107480
+where 	rowid = 17793296 --doc_mcxc in(712257,712258,712259) and cte_mcxc = '216701' and num_mcxc = 2
+
+select	*
+from	mov_cxc
+where	rowid = 33555977
+
+select	*
+from	mov_cxc
+where	desc_mcxc like '%PASA A%' and fec_mcxc >= '2022-06-01'
+
+
+
+update	mov_cxc
+set		doc_mcxc = 376794, ffac_mcxc = 172778, desc_mcxc = 'AxF172778EABA1'     
+where	rowid in(132925700)
 				

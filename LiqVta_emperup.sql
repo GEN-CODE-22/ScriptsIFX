@@ -63,7 +63,7 @@ IF vpla = '04' OR vpla = '05' OR vpla = '10'  OR vpla = '34' OR vpla = '15' OR v
 			INTO	vtot,vnnv
 			FROM	nota_vta
 			WHERE	fliq_nvta = paramFolio AND ruta_nvta = vruta AND tip_nvta <> 'I' 
-					AND tip_nvta <> 'P' AND tip_nvta <> 'F' AND (tip_nvta <> 'T' OR (tip_nvta = 'T' AND numcte_nvta IN('000001','000003','000004','000005','000006','000007','000052','012202','012734','019282','027111','028730','050643','053269','055951')));
+					AND tip_nvta <> 'P' AND tip_nvta <> 'F' AND (tip_nvta <> 'T' OR (tip_nvta = 'T' AND numcte_nvta IN('080683','080684','080685','080686','080687','080687','080688','080689','080690','080691','080692','080693','080694','080695','080696')));
 		ELSE
 			SELECT NVL(SUM(tlts_nvta),0), NVL(count(*),0)
 			INTO	vtot,vnnv
@@ -182,7 +182,7 @@ END IF;
 
 RETURN 	vresult,vmensaje;
 END PROCEDURE; 
-
+ 
 select	*
 from	empxrutp
 where	fec_erup = '2024-06-25' and pcs_erup = 'S'

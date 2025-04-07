@@ -1,21 +1,21 @@
 DROP PROCEDURE vol_qryventa;
 --PRECIERRE Y CIERRE -----------------------------------------------------------
-EXECUTE PROCEDURE  vol_qryventa('N','E','2022-01-01','2022-01-02','2022-02-01','2022-02-10',18); 
-EXECUTE PROCEDURE  vol_qryventa('P','E','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
-EXECUTE PROCEDURE  vol_qryventa('C','E','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
-EXECUTE PROCEDURE  vol_qryventa('N','B','2022-01-01','2022-01-02','2022-02-01','2022-02-10',18); 
-EXECUTE PROCEDURE  vol_qryventa('P','B','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
-EXECUTE PROCEDURE  vol_qryventa('C','B','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
-EXECUTE PROCEDURE  vol_qryventa('N','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
-EXECUTE PROCEDURE  vol_qryventa('P','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
-EXECUTE PROCEDURE  vol_qryventa('C','C','2022-02-01','2022-02-28','2022-03-01','2022-03-10',18); 
-EXECUTE PROCEDURE  vol_qryventa('T','T','2022-04-01','2022-04-30','2022-05-01','2022-05-10',18); 
-EXECUTE PROCEDURE  vol_qryventa('A','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
-EXECUTE PROCEDURE  vol_qryventa('D','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
-EXECUTE PROCEDURE  vol_qryventa('F','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
-EXECUTE PROCEDURE  vol_qryventa('I','C','2022-01-01','2022-01-01','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('N','E','2022-01-01','2022-01-31','2022-02-01','2022-02-10',4); 
+EXECUTE PROCEDURE  vol_qryventa('P','E','2022-01-01','2022-01-31','2022-02-01','2022-02-10',4); 
+EXECUTE PROCEDURE  vol_qryventa('C','E','2022-01-01','2022-01-31','2022-02-01','2022-02-10',4); 
+EXECUTE PROCEDURE  vol_qryventa('N','B','2022-01-01','2022-01-31','2022-02-01','2022-02-10',4); 
+EXECUTE PROCEDURE  vol_qryventa('P','B','2022-01-01','2022-01-31','2022-02-01','2022-02-10',4); 
+EXECUTE PROCEDURE  vol_qryventa('C','B','2022-01-01','2022-01-31','2022-02-01','2022-02-10',4); 
+EXECUTE PROCEDURE  vol_qryventa('N','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',4); 
+EXECUTE PROCEDURE  vol_qryventa('P','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',4); 
+EXECUTE PROCEDURE  vol_qryventa('C','C','2022-01-01','2022-01-31','2022-03-01','2022-03-10',4); 
+EXECUTE PROCEDURE  vol_qryventa('T','T','2022-01-01','2022-01-31','2022-05-01','2022-05-10',4); 
+EXECUTE PROCEDURE  vol_qryventa('A','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',4); 
+EXECUTE PROCEDURE  vol_qryventa('D','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',4); 
+EXECUTE PROCEDURE  vol_qryventa('F','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',4); 
+EXECUTE PROCEDURE  vol_qryventa('I','C','2023-01-01','2023-01-31','2022-02-01','2022-02-10',4); 
 --CIERRE -----------------------------------------------------------
-EXECUTE PROCEDURE  vol_qryventa('N','E','2022-01-01','2022-01-02','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('M','E','2023-01-01','2023-01-31','2023-01-01','2023-02-10',4); 
 EXECUTE PROCEDURE  vol_qryventa('M','E','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
 EXECUTE PROCEDURE  vol_qryventa('N','B','2022-01-01','2022-01-02','2022-02-01','2022-02-10',18); 
 EXECUTE PROCEDURE  vol_qryventa('M','B','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
@@ -27,6 +27,17 @@ EXECUTE PROCEDURE  vol_qryventa('D','C','2022-01-01','2022-01-31','2022-02-01','
 EXECUTE PROCEDURE  vol_qryventa('F','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
 EXECUTE PROCEDURE  vol_qryventa('I','C','2022-01-01','2022-01-01','2022-02-01','2022-02-10',18); 
 --CIERRE DIARIO-----------------------------------------------------------
+EXECUTE PROCEDURE  vol_qryventa('S','E','2023-01-01','2023-01-02','2022-02-01','2022-02-10',4); 
+EXECUTE PROCEDURE  vol_qryventa('S','B','2022-01-01','2022-01-02','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('S','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('T','T','2022-04-01','2022-04-30','2022-05-01','2022-05-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('A','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('D','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('F','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('I','C','2022-01-03','2022-01-03','2022-02-01','2022-02-10',4); 
+EXECUTE PROCEDURE  vol_qryventa('L','E','2023-12-08','2023-12-08','2023-12-08','2023-12-08',4); 
+EXECUTE PROCEDURE  vol_qryventa('L','E','2024-01-27','2024-01-27','2024-01-27','2024-01-27',4); 
+--CIERRE MENSUAL-----------------------------------------------------------
 EXECUTE PROCEDURE  vol_qryventa('S','E','2022-01-01','2022-01-02','2022-02-01','2022-02-10',18); 
 EXECUTE PROCEDURE  vol_qryventa('S','B','2022-01-01','2022-01-02','2022-02-01','2022-02-10',18); 
 EXECUTE PROCEDURE  vol_qryventa('S','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
@@ -34,7 +45,28 @@ EXECUTE PROCEDURE  vol_qryventa('T','T','2022-04-01','2022-04-30','2022-05-01','
 EXECUTE PROCEDURE  vol_qryventa('A','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
 EXECUTE PROCEDURE  vol_qryventa('D','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
 EXECUTE PROCEDURE  vol_qryventa('F','C','2022-01-01','2022-01-31','2022-02-01','2022-02-10',18); 
-EXECUTE PROCEDURE  vol_qryventa('I','C','2022-01-01','2022-01-01','2022-02-01','2022-02-10',18); 
+EXECUTE PROCEDURE  vol_qryventa('I','C','2022-01-03','2022-01-03','2022-02-01','2022-02-10',4); 
+
+execute procedure vol_qryventa('M','C','2022-11-01','2022-11-30','2022-11-01','2022-11-30',27)
+
+execute procedure vol_qryventa('M','C','2022-12-01','2022-12-31','2022-12-01','2022-12-31',27)
+
+execute procedure vol_qryventa('M','C','2023-01-01','2023-01-31','2023-01-01','2023-01-31',27)
+
+SELECT  MIN(fol_fac), MIN(ser_fac),MAX(TRIM(uuid_fac)),MIN(fyh_fac),SUM(impt_fac)
+	FROM 	factura, det_fac
+	WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
+			and tid_dfac matches '[CD234]' and faccer_fac = 'S' and fec_fac between '2022-12-01' and '2022-12-31'
+			and impasi_dfac = 0 and tlts_dfac > 0 and edo_fac <> 'C' and tfac_fac = 'M'
+			and fol_fac = (select MIN(fol_fac) from factura, det_fac where fol_fac = fol_dfac and ser_fac = ser_dfac
+			and tid_dfac matches '[CD234]' and faccer_fac = 'S' and fec_fac between '2022-12-01' and '2022-12-31'
+			and impasi_dfac = 0 and tlts_dfac > 0 and edo_fac <> 'C' and tfac_fac = 'M');
+			
+	SELECT  NVL(SUM(tlts_dfac),0)
+	FROM 	factura, det_fac
+	WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
+			and tid_dfac MATCHES '[CD234]' and faccer_fac = 'S' and fec_fac between '2022-12-01' and '2022-12-31'
+			and impasi_dfac = 0 and tlts_dfac > 0 and edo_fac <> 'C' and tfac_fac = 'M'
 
 
 CREATE PROCEDURE vol_qryventa
@@ -139,7 +171,7 @@ IF	paramTipo = 'N' THEN
 		SELECT 	tip_nvta,tpa_nvta,tlts_nvta,impt_nvta,pru_nvta,ruta_nvta,ruta_nvta[1],fac_nvta,ser_nvta,pcre_rut,fes_nvta,fol_nvta,NVL(uso_nvta,''),numcte_nvta,
 				cia_nvta,pla_nvta,vuelta_nvta
 		INTO    vtipo,vtpa,vtlts,vimpt,vpru,vruta,vtiprut,vfolfac,vserfac,vpcre,vfecsur,vfolio,vuso,vnocte,vcia,vpla,vvuelta
-		FROM 	znota_vta,ruta 
+		FROM 	rdnota_vta,ruta 
 		WHERE 	fes_nvta >= paramFecIni
 				and fes_nvta <= paramFecFin
 				and tip_nvta MATCHES vtipsvr 
@@ -233,7 +265,7 @@ IF	paramTipo = 'P' THEN
 		SELECT 	tip_nvta,tpa_nvta,tlts_nvta,impt_nvta,pru_nvta,ruta_nvta,ruta_nvta[1],pcre_rut,fes_nvta,fol_nvta,NVL(uso_nvta,''),
 				cia_nvta,pla_nvta,vuelta_nvta
 		INTO    vtipo,vtpa,vtlts,vimpt,vpru,vruta,vtiprut,vpcre,vfecsur,vfolio,vuso,vcia,vpla,vvuelta
-		FROM 	znota_vta,ruta 
+		FROM 	rdnota_vta,ruta 
 		WHERE 	fes_nvta >= paramFecIni
 				and fes_nvta < paramFecFin				
 				and tip_nvta MATCHES vtipsvr 
@@ -293,7 +325,7 @@ IF	paramTipo = 'C' THEN
 		SELECT 	tip_nvta,tpa_nvta,tlts_nvta,impt_nvta,pru_nvta,ruta_nvta,ruta_nvta[1],pcre_rut,fes_nvta,fol_nvta,NVL(uso_nvta,''),
 				cia_nvta,pla_nvta,vuelta_nvta
 		INTO    vtipo,vtpa,vtlts,vimpt,vpru,vruta,vtiprut,vpcre,vfecsur,vfolio,vuso,vcia,vpla,vvuelta
-		FROM 	znota_vta,ruta 
+		FROM 	rdnota_vta,ruta 
 		WHERE 	fes_nvta = paramFecFin				
 				and tip_nvta MATCHES vtipsvr 
 				and ruta_nvta = cve_rut
@@ -330,7 +362,7 @@ IF	paramTipo = 'M' THEN
 	LET vtipfac = 'G';
 	LET vtipcfd = 'I';
 	
-	SELECT  fol_fac, ser_fac,TRIM(uuid_fac),fyh_fac,impt_fac
+	SELECT  MIN(fol_fac), MIN(ser_fac),MAX(TRIM(uuid_fac)),MIN(fyh_fac),SUM(impt_fac)
 	INTO	vfolfac,vserfac,vuuid,vfyh,vimptfac
 	FROM 	factura, det_fac
 	WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
@@ -352,7 +384,7 @@ IF	paramTipo = 'M' THEN
 		SELECT 	tip_nvta,tpa_nvta,tlts_nvta,impt_nvta,pru_nvta,ruta_nvta,ruta_nvta[1],pcre_rut,fes_nvta,fol_nvta,NVL(uso_nvta,''),
 				cia_nvta,pla_nvta,vuelta_nvta
 		INTO    vtipo,vtpa,vtlts,vimpt,vpru,vruta,vtiprut,vpcre,vfecsur,vfolio,vuso,vcia,vpla,vvuelta
-		FROM 	znota_vta,ruta 
+		FROM 	rdnota_vta,ruta 
 		WHERE 	fes_nvta >= paramFecIni
 				and fes_nvta <= paramFecFin
 				and tip_nvta MATCHES vtipsvr 
@@ -383,14 +415,14 @@ IF	paramTipo = 'M' THEN
 	END FOREACH;
 END IF;
 
---NOTAS DEL MES(SE EJECUTA SOLO PARA CIERRE DIARIO) -----------------------------------------------------------
+--NOTAS DEL MES(SE EJECUTA SOLO PARA CIERRE DIARIO y CIERRE MENSUAL) -----------------------------------------------------------
 IF	paramTipo = 'S' THEN 
 	
 	FOREACH cNotasS FOR	
 		SELECT 	tip_nvta,tpa_nvta,tlts_nvta,impt_nvta,pru_nvta,ruta_nvta,ruta_nvta[1],fac_nvta,ser_nvta,pcre_rut,fes_nvta,fol_nvta,NVL(uso_nvta,''),numcte_nvta,
 				cia_nvta,pla_nvta,vuelta_nvta
 		INTO    vtipo,vtpa,vtlts,vimpt,vpru,vruta,vtiprut,vfolfac,vserfac,vpcre,vfecsur,vfolio,vuso,vnocte,vcia,vpla,vvuelta
-		FROM 	znota_vta,ruta 
+		FROM 	rdnota_vta,ruta 
 		WHERE 	fes_nvta >= paramFecIni
 				and fes_nvta <= paramFecFin
 				and tip_nvta MATCHES vtipsvr 
@@ -482,7 +514,7 @@ IF	paramTipo = 'T' THEN
 		SELECT	n.tip_nvta,n.tpa_nvta,n.tlts_nvta,n.impt_nvta,n.pru_nvta,n.ruta_nvta,ruta_nvta[1], NVL(ep.ffac_erup,0), NVL(ep.sfac_erup,''), r.pcre_rut, 
 				n.fes_nvta, n.fol_nvta, n.uso_nvta, ep.tot_erup,a.permiso_alm,cia_nvta,pla_nvta,vuelta_nvta
 		INTO	vtipo,vtpa,vtlts,vimpt,vpru,vruta,vtiprut,vfolfac,vserfac,vpcre,vfecsur,vfolio,vuso,vtltsfac,vpcred,vcia,vpla,vvuelta
-		FROM	znota_vta n,
+		FROM	rdnota_vta n,
 				empxrutp ep,
 				ruta r,
 				fuente.almacen a
@@ -566,7 +598,7 @@ IF	paramTipo = 'A' THEN
 
 		SELECT	NVL(SUM(tlts_nvta),0), NVL(SUM(impt_nvta),0)
 		INTO    vnkgvand,vnvtvand
-		FROM	znota_vta, ruta
+		FROM	rdnota_vta, ruta
 		WHERE	ruta_nvta = cve_rut AND pcre_rut = vpcre
 				AND ruta_nvta[1] = 'A'
 				AND fes_nvta = vfecvta AND edo_nvta = 'A' 				
@@ -633,7 +665,7 @@ IF	paramTipo = 'D' THEN
 		SELECT  tip_nvta,tpa_nvta,tlts_nvta,impt_nvta,pru_nvta,ruta_nvta,ruta_nvta[1],fac_nvta,ser_nvta,pcre_rut,fes_nvta,fol_nvta,NVL(uso_nvta,''),numcte_nvta,
 				cia_nvta,pla_nvta,vuelta_nvta
 		INTO    vtipo,vtpa,vtlts,vimpt,vpru,vruta,vtiprut,vfolfac,vserfac,vpcre,vfecsur,vfolio,vuso,vnocte,vcia,vpla,vvuelta
-		FROM	znota_vta,ruta 
+		FROM	rdnota_vta,ruta 
 		WHERE   fes_nvta >= paramFecIni
 				AND  fes_nvta <= paramFecFin	
 				AND  (tip_nvta = 'P' or tip_nvta = 'F') 
@@ -669,7 +701,7 @@ IF	paramTipo = 'F' THEN
 		SELECT  tip_nvta,tpa_nvta,tlts_nvta,impt_nvta,pru_nvta,ruta_nvta,ruta_nvta[1],fac_nvta,ser_nvta,pcre_rut,fes_nvta,fol_nvta,NVL(uso_nvta,''),numcte_nvta,
 				cia_nvta,pla_nvta,vuelta_nvta
 		INTO    vtipo,vtpa,vtlts,vimpt,vpru,vruta,vtiprut,vfolfac,vserfac,vpcre,vfecsur,vfolio,vuso,vnocte,vcia,vpla,vvuelta
-		FROM	znota_vta,ruta 
+		FROM	rdnota_vta,ruta 
 		WHERE   fes_nvta >= paramFecIni
 				AND  fes_nvta <= paramFecFin	
 				AND  (tip_nvta = 'K' or tip_nvta = 'Q') 
@@ -730,7 +762,7 @@ IF	paramTipo = 'I' THEN
 	
 	IF vtkgspre > 0 THEN
 		IF	paramTipSvr = 'C' THEN
-			LET vtlts = vtkgspre * 0.95 / vconkl;
+			LET vtlts = vtkgspre * 0.90 / vconkl;
 		END IF;
 		
 		SELECT	MIN(pcre_rut)
@@ -749,7 +781,133 @@ IF	paramTipo = 'I' THEN
 	END IF;	
 END IF;
 
+-- NOTAS RUTA M099 SIN FOLIO FACTURA (SE EJECUTA CIERRE DIARIO)-----------------------------------------------------------
+IF	paramTipo = 'L' THEN 
+	LET vrfc = 'XAXX010101000';
+	LET vcliente = 'PUBLICO EN GENERAL';
+	LET vtipfac = 'G';
+	LET vtipcfd = 'I';
+	
+	SELECT  MAX(fol_fac), MAX(ser_fac),MAX(TRIM(uuid_fac)),MAX(fyh_fac), MAX(impt_fac)
+	INTO	vfolfac,vserfac,vuuid,vfyh,vimptfac
+	FROM 	factura, det_fac
+	WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
+			and tid_dfac MATCHES vtipsvr and faccer_fac = 'S' and fec_fac = paramFecFin
+			and impasi_dfac = 0 and tlts_dfac > 0 and edo_fac <> 'C' and tfac_fac = 'S';
+			
+	SELECT  NVL(SUM(tlts_dfac),0)
+	INTO	vtltsfac
+	FROM 	factura, det_fac
+	WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
+			and tid_dfac MATCHES vtipsvr and faccer_fac = 'S' and fec_fac = paramFecFin
+			and impasi_dfac = 0 and tlts_dfac > 0 and edo_fac <> 'C' and tfac_fac = 'S';
+			
+
+	
+	FOREACH cNotasC FOR	
+		SELECT 	tip_nvta,tpa_nvta,tlts_nvta,impt_nvta,pru_nvta,ruta_nvta,ruta_nvta[1],pcre_rut,fes_nvta,fol_nvta,NVL(uso_nvta,''),
+				cia_nvta,pla_nvta,vuelta_nvta
+		INTO    vtipo,vtpa,vtlts,vimpt,vpru,vruta,vtiprut,vpcre,vfecsur,vfolio,vuso,vcia,vpla,vvuelta
+		FROM 	rdnota_vta,ruta 
+		WHERE 	fes_nvta = paramFecFin				
+				and tip_nvta MATCHES vtipsvr 
+				and ruta_nvta = cve_rut
+				and (aju_nvta is null or aju_nvta = "")
+				AND fac_nvta is null
+				AND edo_nvta = 'A'
+				AND tlts_nvta > 0
+				AND ruta_nvta = 'M099'
+		
+		LET vtkgs = vtlts;
+		IF	paramTipSvr = 'C' THEN
+			LET vtlts = vtkgs / vconkl;
+		END IF;
+		
+		SELECT	MAX(fhs_mnvta)
+		INTO	vfyhn
+		FROM	hmovxnvta
+		WHERE	cia_mnvta = vcia
+			    AND  pla_mnvta = vpla
+			    AND  fol_mnvta = vfolio
+			    AND  vuelta_mnvta = vvuelta;
+		
+		LET vidpcre = vol_getpcre(vidsvr,vpcre);	
+		
+		--RETURN 	vtipo,vtpa,vtlts,vimpt,vpru,vruta,vtiprut,vfolfac,vserfac,vpcre,vfecsur,vfolio,vuso,vfyhn,vuuid,vfyh,vrfc,vcliente,vtipfac,vtipcfd,vtltsfac,vimptfac,vidpcre,vidsvr,vidpcred
+		RETURN 	vtipo,vtpa,vtlts,vimpt,vpru,vruta,vtiprut,vfolfac,vserfac,vfecsur,vfolio,vuso,vfyhn,vuuid,vfyh,vrfc,vcliente,vtipfac,vtipcfd,vtltsfac,vimptfac,vidpcre,vidsvr,vidpcred,vtkgs
+		WITH RESUME;
+	END FOREACH;
+END IF;
+
+-- NOTAS RUTA M099 SIN FOLIO FACTURA (SE EJECUTA CIERRE MENSUAL)-----------------------------------------------------------
+IF	paramTipo = 'Z' THEN 
+	LET vrfc = 'XAXX010101000';
+	LET vcliente = 'PUBLICO EN GENERAL';
+	LET vtipfac = 'G';
+	LET vtipcfd = 'I';
+	
+	SELECT  MAX(fol_fac), MAX(ser_fac),MAX(TRIM(uuid_fac)),MAX(fyh_fac), MAX(impt_fac)
+	INTO	vfolfac,vserfac,vuuid,vfyh,vimptfac
+	FROM 	factura, det_fac
+	WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
+			and tid_dfac MATCHES vtipsvr and faccer_fac = 'S' and fec_fac between paramFecIniC and paramFecFinC
+			and impasi_dfac = 0 and tlts_dfac > 0 and edo_fac <> 'C' and tfac_fac = 'Y';
+			
+	SELECT  NVL(SUM(tlts_dfac),0)
+	INTO	vtltsfac
+	FROM 	factura, det_fac
+	WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
+			and tid_dfac MATCHES vtipsvr and faccer_fac = 'S' and fec_fac between paramFecIniC and paramFecFinC
+			and impasi_dfac = 0 and tlts_dfac > 0 and edo_fac <> 'C' and tfac_fac = 'Y';
+			
+
+	
+	FOREACH cNotasC FOR	
+		SELECT 	tip_nvta,tpa_nvta,tlts_nvta,impt_nvta,pru_nvta,ruta_nvta,ruta_nvta[1],pcre_rut,fes_nvta,fol_nvta,NVL(uso_nvta,''),
+				cia_nvta,pla_nvta,vuelta_nvta
+		INTO    vtipo,vtpa,vtlts,vimpt,vpru,vruta,vtiprut,vpcre,vfecsur,vfolio,vuso,vcia,vpla,vvuelta
+		FROM 	rdnota_vta,ruta 
+		WHERE 	fes_nvta = paramFecFin				
+				and tip_nvta MATCHES vtipsvr 
+				and ruta_nvta = cve_rut
+				and (aju_nvta is null or aju_nvta = "")
+				AND fac_nvta is null
+				AND edo_nvta = 'A'
+				AND tlts_nvta > 0
+				AND ruta_nvta = 'M099'
+		
+		LET vtkgs = vtlts;
+		IF	paramTipSvr = 'C' THEN
+			LET vtlts = vtkgs / vconkl;
+		END IF;
+		
+		SELECT	MAX(fhs_mnvta)
+		INTO	vfyhn
+		FROM	hmovxnvta
+		WHERE	cia_mnvta = vcia
+			    AND  pla_mnvta = vpla
+			    AND  fol_mnvta = vfolio
+			    AND  vuelta_mnvta = vvuelta;
+		
+		LET vidpcre = vol_getpcre(vidsvr,vpcre);	
+		
+		--RETURN 	vtipo,vtpa,vtlts,vimpt,vpru,vruta,vtiprut,vfolfac,vserfac,vpcre,vfecsur,vfolio,vuso,vfyhn,vuuid,vfyh,vrfc,vcliente,vtipfac,vtipcfd,vtltsfac,vimptfac,vidpcre,vidsvr,vidpcred
+		RETURN 	vtipo,vtpa,vtlts,vimpt,vpru,vruta,vtiprut,vfolfac,vserfac,vfecsur,vfolio,vuso,vfyhn,vuuid,vfyh,vrfc,vcliente,vtipfac,vtipcfd,vtltsfac,vimptfac,vidpcre,vidsvr,vidpcred,vtkgs
+		WITH RESUME;
+	END FOREACH;
+END IF;
+
 END PROCEDURE; 
+
+select *
+from	factura
+where	fec_fac between '2022-12-01' and '2023-01-31' and faccer_fac = 'S'
+
+SELECT  fol_fac, ser_fac,TRIM(uuid_fac),fyh_fac,impt_fac
+	FROM 	factura, det_fac
+	WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
+			and tid_dfac MATCHES vtipsvr and faccer_fac = 'S' and fec_fac between '2023-02-01' and 'paramFecFinC'
+			and impasi_dfac = 0 and tlts_dfac > 0 and edo_fac <> 'C' and tfac_fac = 'M';
 
 SELECT  pcre_rut, fec_vand, SUM(impt_vand),SUM(tkgs_vand)
 FROM    venxand, ruta
@@ -758,14 +916,14 @@ GROUP   BY pcre_rut, fec_vand
 ORDER   BY fec_vand
 
 select 	*
-from 	znota_vta
+from 	rdnota_vta
 where	ruta_nvta[1] = 'A'
 		and fes_nvta between '2022-01-01' and '2022-01-31' AND edo_nvta = 'A' 				
 		AND tip_nvta in('E','B','C','D','2','3','4')
 		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
 
 SELECT	NVL(SUM(tlts_nvta),0), NVL(SUM(impt_nvta),0)
-FROM	znota_vta, ruta
+FROM	rdnota_vta, ruta
 WHERE	ruta_nvta = cve_rut AND pcre_rut = 'LP/14462/DIST/PLA/2016   '
 		AND ruta_nvta[1] = 'A'
 		AND fes_nvta = '2022-01-03' AND edo_nvta = 'A' 				
@@ -773,10 +931,10 @@ WHERE	ruta_nvta = cve_rut AND pcre_rut = 'LP/14462/DIST/PLA/2016   '
 		AND (aju_nvta IS NULL OR aju_nvta <> 'S');
 
 select max(fes_nvta)
-from   znota_vta
+from   rdnota_vta
 
 SELECT 	tip_nvta,tpa_nvta,tlts_nvta,impt_nvta,pru_nvta,ruta_nvta,fac_nvta,ser_nvta,pcre_rut,fes_nvta,fol_nvta,numcte_nvta
-FROM 	znota_vta,ruta 
+FROM 	rdnota_vta,ruta 
 WHERE 	fes_nvta >= '2022-04-01'
 		and fes_nvta <= '2022-04-30'
 		and tip_nvta MATCHES 'E' 
@@ -787,21 +945,21 @@ WHERE 	fes_nvta >= '2022-04-01'
 ORDER BY fac_nvta, ser_nvta
 
 SELECT	count(*)
-FROM 	znota_vta n
+FROM 	rdnota_vta n
 WHERE	fes_nvta between '2022-01-01' and '2022-04-30' AND edo_nvta = 'A' 				
 		AND tip_nvta IN('E','B','C','D','2','3','4')
 		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
 		AND fac_nvta is not null
 
 SELECT	*--count(*)
-FROM 	znota_vta n
+FROM 	rdnota_vta n
 WHERE	fes_nvta between  '2022-01-01' and '2022-01-31' AND edo_nvta = 'A' 				
 		AND tip_nvta IN('T') and numcte_nvta not in(select num_cte from almacen)
 		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
 		AND fac_nvta is null	
 		
 SELECT	count(*)
-FROM	znota_vta n,
+FROM	rdnota_vta n,
 				empxrutp ep,
 				ruta r,
 				fuente.almacen a
@@ -822,7 +980,7 @@ select 	*
 from 	empxrutp
 
 SELECT 	count(*)
-FROM 	znota_vta  z ,ruta 
+FROM 	rdnota_vta  z ,ruta 
 		leFt JOIN  hmovxnvta h on z.cia_nvta = h.cia_mnvta
 	    AND  z.pla_nvta = h.pla_mnvta
 	    AND  z.fol_nvta = h.fol_mnvta
@@ -837,7 +995,7 @@ WHERE 	fes_nvta >= '2022-01-01'
 		
 select  cia_mnvta, pla_mnvta, fol_mnvta, vuelta_mnvta, count(*)
 from 	hmovxnvta
-where 	fol_mnvta in(select fol_nvta znota_vta from znota_vta where cia_nvta = cia_mnvta and pla_nvta = pla_mnvta 
+where 	fol_mnvta in(select fol_nvta rdnota_vta from rdnota_vta where cia_nvta = cia_mnvta and pla_nvta = pla_mnvta 
 								and fol_nvta = fol_mnvta and vuelta_nvta = vuelta_mnvta and fes_nvta >= '2022-01-01'
 		and fes_nvta < '2022-01-31'		
 		and tip_nvta MATCHES 'B' AND fac_nvta is null
@@ -867,14 +1025,14 @@ from    venxand
 where 	fec_vand between '2022-01-01' and '2022-01-31' and edo_vand = 'C'
 
 select 	*
-from 	znota_vta
+from 	rdnota_vta
 where	ruta_nvta[1] = 'A'
 		and fes_nvta between '2022-01-01' and '2022-01-31' AND edo_nvta = 'A' 				
 		AND tip_nvta in('E','B','C','D','2','3','4')
 		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
 
 select  *
-from 	znota_vta
+from 	rdnota_vta
 where 	fes_nvta between '2022-01-01' and '2022-01-31' AND edo_nvta = 'A' 				
 		AND tip_nvta in('E','B','C','D','2','3','4')
 		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
@@ -886,7 +1044,7 @@ from    vol_ventas_n
 where 	folnvta_vta = 321902
 
 select  *
-from 	znota_vta
+from 	rdnota_vta
 where 	fol_nvta = 327927
 
 select *
@@ -934,7 +1092,7 @@ where   fes_nvta between  '2024-06-01' and '2024-06-30' AND edo_nvta = 'A'
 		AND fac_nvta is null	
 		
 SELECT	pcre_rut,sum(tlts_nvta)
-FROM	znota_vta n,
+FROM	rdnota_vta n,
 		empxrutp ep,
 		ruta r,
 		fuente.almacen a
@@ -957,20 +1115,46 @@ from	vol_ventas_n
 where 	tip_vta <> 'T'
 
 SELECT	count(*)
-FROM 	znota_vta n
+FROM 	rdnota_vta n
 WHERE	fes_nvta between '2022-01-01' and '2022-04-30' AND edo_nvta = 'A' AND tlts_nvta > 0		
 		AND tip_nvta in('E','B','C','D','2','3','4')
 		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
 		
 SELECT	count(*)
-FROM 	znota_vta n
+FROM 	rdnota_vta n
 WHERE	fes_nvta between '2022-01-31' and '2022-01-31' AND edo_nvta = 'A' 				
 		AND tip_nvta in('C','D','2','3','4')
 		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
 		and fac_nvta is null
+		
+SELECT	sum(tlts_nvta)
+FROM 	rdnota_vta n
+WHERE	fes_nvta = '2024-01-27' AND edo_nvta = 'A' 				
+		AND tip_nvta in('E')
+		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
+		
+SELECT	fol_nvta 
+FROM 	rdnota_vta n
+WHERE	fes_nvta = '2024-01-27' AND edo_nvta = 'A' 				
+		AND tip_nvta in('E')
+order by  1
+
+select	folnvta_vta
+from	vol_ventas
+where	fecha_vta = '2024-01-27' and tip_vta = 'E'
+order by folnvta_vta
+
+select	*
+from	rdnota_vta
+where	fol_nvta = 890064
+
+select	*
+from	rdnota_vta
+where	fes_nvta between '2024-04-01' and '2024-04-27'
+		AND edo_nvta = 'A' 	AND tip_nvta in('E')	and ruta_nvta = 'M099'
 
 SELECT	count(*)
-FROM	znota_vta n,
+FROM	rdnota_vta n,
 		empxrutp ep,
 		ruta r,
 		fuente.almacen a
@@ -988,15 +1172,15 @@ WHERE
 	   AND tlts_nvta > 0
 	   
 
-select *
-from   znota_vta n,ruta
+select max(fes_nvta)
+from   rdnota_vta n,ruta
 where  fes_nvta >= '2022-01-01'
 	   AND  n.fes_nvta <= '2022-01-31'
 	   AND  (tip_nvta = 'P' or tip_nvta = 'F') 
 		AND  ruta_nvta = cve_rut AND (aju_nvta is null or aju_nvta = '') 	
 		
 select tip_nvta,tpa_nvta,(tlts_nvta),impt_nvta,ruta_nvta,fac_nvta,ser_nvta,pcre_rut,fes_nvta,fol_nvta 
-from znota_vta,ruta 
+from rdnota_vta,ruta 
 Where month(fes_nvta) =  1 and year(fes_nvta) = 2022 and  (tip_nvta = 'P' or tip_nvta = 'F') 
      and ruta_nvta = cve_rut --and (aju_nvta is null or aju_nvta = '') 
      order by pcre_rut
@@ -1008,3 +1192,15 @@ where 	epr_fec >= '2022-01-01' AND epr_fec <= '2022-01-31';
 select 	sum(epo_coni)
 from 	e_posaj
 where 	epo_fec >= '2022-01-01' AND epo_fec <= '2022-01-31';
+
+SELECT  fol_fac, ser_fac,TRIM(uuid_fac),fyh_fac, impt_fac
+FROM 	factura, det_fac
+WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
+			and tid_dfac MATCHES 'E' and faccer_fac = 'S' and fec_fac between '2022-02-01' and '2022-02-10'
+			and impasi_dfac = 0 and tlts_dfac > 0 and edo_fac <> 'C' and tfac_fac = 'M';
+			
+SELECT  NVL(SUM(tlts_dfac),0)
+FROM 	factura, det_fac
+WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
+			and tid_dfac MATCHES 'E' and faccer_fac = 'S' and fec_fac between '2022-02-01' and '2022-02-10'
+			and impasi_dfac = 0 and tlts_dfac > 0 and edo_fac <> 'C' and tfac_fac = 'M';
