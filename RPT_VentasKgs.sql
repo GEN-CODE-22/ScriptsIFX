@@ -1,4 +1,4 @@
-EXECUTE PROCEDURE RPT_VentasKgs('2025-01-01','2025-01-31');
+EXECUTE PROCEDURE RPT_VentasKgs('2024-04-01','2024-04-30');
 
 DROP PROCEDURE RPT_VentasKgs;
 
@@ -581,4 +581,4 @@ where	fes_nvta >= '2024-01-01'
 		AND (aju_nvta IS NULL OR aju_nvta <> 'S')
 		and impt_nvta > 0
 		and ruta_nvta in(select cve_rut from ruta where tip_rut = 'E' and cat_rut = '.')
-		
+

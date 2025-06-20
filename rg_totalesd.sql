@@ -1,11 +1,13 @@
-DROP PROCEDURE rg_totalesp;
+DROP PROCEDURE rg_totalesd;
 
-EXECUTE PROCEDURE rg_totalesp('2025-05-06','2025-05-06');
+EXECUTE PROCEDURE rg_totalesd('2025-04-22','2025-04-22','15','33');
 
-CREATE PROCEDURE rg_totalesp
+CREATE PROCEDURE rg_totalesd
 (
 	paramFecIni DATE,
-	paramFecFin DATE
+	paramFecFin DATE,
+	paramCia	CHAR(2),
+	paramPla    CHAR(18)
 )
 RETURNING 
 	DECIMAL(16,2), -- TOTAL VENTA ESTACIONARIO
@@ -131,6 +133,16 @@ DEFINE vcreajutot  	DECIMAL(16,2); -- TOTAL VTA CREDITO AJU
 DEFINE vcreajustot 	DECIMAL(16,2); -- TOTAL VTA CREDITO AJU
 DEFINE vcreajuiva 	DECIMAL(16,2); -- IVA VTA CREDITO AJU
 
+DEFINE vpla1 	CHAR(2);
+DEFINE vpla2 	CHAR(2);
+DEFINE vpla3 	CHAR(2);
+DEFINE vpla4 	CHAR(2);
+DEFINE vpla5 	CHAR(2);
+DEFINE vpla6 	CHAR(2);
+DEFINE vpla7 	CHAR(2);
+DEFINE vpla8 	CHAR(2);
+DEFINE vpla9 	CHAR(2);
+
 DEFINE xfecd      DATE;
 DEFINE xdia       SMALLINT;
 DEFINE xdia2      SMALLINT;
@@ -140,7 +152,7 @@ DEFINE xanio1     SMALLINT;
 DEFINE viva  	  DECIMAL(16,2); -- IVA 
 DEFINE vsiva  	  DECIMAL(16,2); -- SUBTOTAL IVA 
 
-
+LET vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9 = get_plantas(paramPla);
 
 LET viva = 0.16;
 LET vsiva = 1.16;
@@ -175,7 +187,9 @@ IF paramFecIni < xfecd THEN
     WHERE 	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin
 			AND tip_nvta = 'E'
 	       	AND edo_nvta = 'A'
-	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S');
+	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S')
+			AND cia_nvta = paramCia
+			AND pla_nvta IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 ELSE
   	SELECT  NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
     INTO 	vtotvest,vstotvest,vivavest
@@ -183,7 +197,9 @@ ELSE
     WHERE 	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin
        		AND tip_nvta = 'E'
 	       	AND edo_nvta = 'A'
-	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S');
+	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S')
+			AND cia_nvta = paramCia
+			AND pla_nvta IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 END IF;
 
 --LET vivavest = NVL((vtotvest / vsiva * viva),0.00);
@@ -197,7 +213,9 @@ IF paramFecIni < xfecd THEN
     WHERE 	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin
 			AND tip_nvta IN('C','D','2','3','4')
 	       	AND edo_nvta = 'A'
-	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S');
+	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S')
+			AND cia_nvta = paramCia
+			AND pla_nvta IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 ELSE
   	SELECT  NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
     INTO 	vtotvcil,vstotvcil,vivavcil
@@ -205,7 +223,9 @@ ELSE
     WHERE 	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin
        		AND tip_nvta IN('C','D','2','3','4')
 	       	AND edo_nvta = 'A'
-	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S');
+	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S')
+			AND cia_nvta = paramCia
+			AND pla_nvta IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 END IF;
 
 --LET vivavcil = NVL((vtotvcil / vsiva * viva),0.00);
@@ -219,7 +239,9 @@ IF paramFecIni < xfecd THEN
     WHERE 	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin
 			AND tip_nvta IN('B')
 	       	AND edo_nvta = 'A'
-	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S');
+	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S')
+			AND cia_nvta = paramCia
+			AND pla_nvta IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 ELSE
   	SELECT  NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
     INTO 	vtotvcar,vstotvcar,vivavcar
@@ -227,17 +249,22 @@ ELSE
     WHERE 	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin
        		AND tip_nvta IN('B')
 	       	AND edo_nvta = 'A'
-	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S');
+	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S')
+			AND cia_nvta = paramCia
+			AND pla_nvta IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 END IF;
 
 --LET vivavcar = NVL((vtotvcar / vsiva * viva),0.00);
 --LET vstotvcar = vtotvcar - vivavcar;
 
 -- TOTAL FACTURACION
-SELECT	NVL(SUM(impt_fac),0), NVL(SUM(simp_fac),0), NVL(SUM(iva_fac),0)
+SELECT	NVL(SUM(pru_dfac * tlts_dfac),0), NVL(SUM(simp_dfac),0), NVL(SUM(pru_dfac * tlts_dfac - simp_dfac),0)
 INTO    vtotfac,vstotfac,vivafac
-FROM	factura
-WHERE	fec_fac >= paramFecIni and fec_fac <= paramFecFin
+FROM	factura, det_fac
+WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
+		AND fec_fac >= paramFecIni and fec_fac <= paramFecFin
+		AND cia_dfac = paramCia
+		AND pla_dfac IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9)
 		AND impr_fac = 'E'
      	AND tdoc_fac IN('I','V')
      	AND faccer_fac = 'N'
@@ -255,7 +282,9 @@ WHERE 	fec_ncrd >= paramFecIni AND fec_ncrd <= paramFecFin
 		AND tdoc_ncrd = 'E'
 		AND (tpa_ncrd = 'E' OR tpa_ncrd = 'X')
 		AND impr_ncrd = 'E'
-		AND (frnc_ncrd = 0 OR frnc_ncrd IS NULL);
+		AND (frnc_ncrd = 0 OR frnc_ncrd IS NULL)
+		AND cia_ncrd = paramCia
+		AND pla_ncrd IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 
 -- NOTAS CREDITO A CREDITO
 SELECT 	NVL(SUM(imp_mcxc),0.00)
@@ -263,7 +292,9 @@ INTO 	vcnctotcre
 FROM 	mov_cxc
 WHERE 	fec_mcxc >= paramFecIni AND fec_mcxc <= paramFecFin
         AND (tpm_mcxc = '52' OR tpm_mcxc = '98')
-        AND sta_mcxc <> 'C';
+        AND sta_mcxc <> 'C'
+		AND cia_mcxc = paramCia
+		AND pla_mcxc IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
         
 LET vcncivacre = NVL((vcnctotcre / vsiva * viva),0.00);
 LET vcncstotcre = vcnctotcre - vcncivacre;
@@ -275,18 +306,21 @@ FROM 	mov_cxc
 WHERE 	fec_mcxc >= paramFecIni AND fec_mcxc <= paramFecFin
 		AND sta_mcxc = 'A'
 		AND tpm_mcxc >= '50';
+		--AND cia_mcxc = paramCia
+		--AND pla_mcxc IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 
 --  COBRANZA(PAGO BANCOS, CHEQUE , EFECTIVO, ANTICIPOS, CHEQUE POSFECHADO, COMPENSACIONES)
 SELECT 	NVL(SUM(imp_mcxc),0.00)
 INTO	vcobrtot
 FROM 	mov_cxc
 WHERE 	fec_mcxc >= paramFecIni AND fec_mcxc <= paramFecFin
-		AND sta_mcxc = 'A'		
+		AND sta_mcxc = 'A'
 		AND (((tip_mcxc = '01' OR (tip_mcxc >= '11' AND tip_mcxc <= '99'))
 		AND (tpm_mcxc IN('50','51','55','56','58','60','61','62','63')))
 		OR (tip_mcxc = '08' OR tpm_mcxc = '99'));
---AND (tip_mcxc = '01' OR (tip_mcxc >= '11' AND tip_mcxc <= '99'))
---AND tpm_mcxc IN('50','51','55','56','58','60','61','62','63','99');
+		--AND cia_mcxc = paramCia
+		--AND pla_mcxc IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
+		
 LET vcobriva = NVL((vcobrtot / vsiva * viva),0.00);
 LET vcobrstot = vcobrtot - vcobriva;
 
@@ -298,6 +332,8 @@ WHERE 	fec_mcxc >= paramFecIni AND fec_mcxc <= paramFecFin
 		AND tip_mcxc = '03'
 		AND tpm_mcxc >= '50'
 		AND sta_mcxc <> 'C';
+		--AND cia_mcxc = paramCia
+		--AND pla_mcxc IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 
 LET vcdcobriva = NVL((vcdcobrtot / vsiva * viva),0.00);
 LET vcdcobrstot = vcdcobrtot - vcdcobriva;
@@ -310,6 +346,8 @@ WHERE 	fec_mcxc >= paramFecIni  AND fec_mcxc <= paramFecFin
 		AND sta_mcxc = 'A'
 		AND tip_mcxc = '01'
 		AND tpm_mcxc < '50';
+		--AND cia_mcxc = paramCia
+		--AND pla_mcxc IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 		
 -- CHEQUE DEVUELTO INGRESADO		
 SELECT  NVL(SUM(imp_mcxc),0.00)
@@ -319,6 +357,8 @@ WHERE 	fec_mcxc >= paramFecIni  AND fec_mcxc <= paramFecFin
 		AND tip_mcxc = '03'
 		AND tpm_mcxc = '03'
 		AND sta_mcxc <> 'C';
+		--AND cia_mcxc = paramCia
+		--AND pla_mcxc IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 		
 LET vcdingiva = NVL((vcdingtot / vsiva * viva),0.00);
 LET vcdingstot = vcdingtot - vcdingiva;
@@ -330,28 +370,36 @@ IF paramFecIni < xfecd THEN
 	FROM    urdnota_vta
 	WHERE	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin AND edo_nvta = 'A' 
 			AND (aju_nvta IS NULL OR aju_nvta <> 'S')
-			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta NOT IN('C','G');
+			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta NOT IN('C','G')
+			AND cia_nvta = paramCia
+			AND pla_nvta IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 			
 	SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
 	INTO	vcreajutot,vcreajustot,vcreajuiva
 	FROM    urdnota_vta
 	WHERE	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin AND edo_nvta = 'A' 
 			AND aju_nvta='S'
-			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta IN('C','G');
+			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta IN('C','G')
+			AND cia_nvta = paramCia
+			AND pla_nvta IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 ELSE
   	SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
 	INTO	vvtotefe,vvstotefe,vvivaefe
 	FROM    nota_vta
 	WHERE	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin AND edo_nvta = 'A' 
 			AND (aju_nvta IS NULL OR aju_nvta <> 'S')
-			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta NOT IN('C','G');
+			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta NOT IN('C','G')
+			AND cia_nvta = paramCia
+			AND pla_nvta IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 			
 	SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
 	INTO	vcreajutot,vcreajustot,vcreajuiva
 	FROM    nota_vta
 	WHERE	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin AND edo_nvta = 'A' 
 			AND aju_nvta='S'
-			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta IN('C','G');
+			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta IN('C','G')
+			AND cia_nvta = paramCia
+			AND pla_nvta IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 END IF;
 LET vvtotefe = vvtotefe - vcreajutot;
 LET vvstotefe = vvstotefe - vcreajustot;
@@ -366,6 +414,25 @@ INTO	vdatot,vdctot
 FROM	e_posaj
 WHERE   epo_fec >= paramFecIni and epo_fec <= paramFecFin;
 
+-- DEUDORES ABONO 
+/*SELECT NVL(SUM(imp_mdd),0.00) 
+INTO 	vdatot
+FROM 	dd_mov
+WHERE   fec_mdd >= paramFecIni and fec_mdd <= paramFecFin
+		AND tpm_mdd >= 50
+		AND sta_mdd = 'P'
+		AND cia_mdd = paramCia
+		AND pla_mdd IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);*/
+
+-- DEUDORES CREDITO
+/*SELECT NVL(SUM(imp_mdd),0.00) 
+INTO 	vdctot
+FROM 	dd_mov
+where 	fec_mdd   >= paramFecIni and fec_mdd <= paramFecFin
+		AND tpm_mdd <= 49
+		AND cia_mdd = paramCia
+		AND pla_mdd IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);*/
+
 LET vdaiva = NVL((vdatot / vsiva * viva),0.00);
 LET vdastot = vdatot - vdaiva;
 
@@ -379,6 +446,8 @@ FROM 	mov_cxc
 WHERE 	fec_mcxc >= paramFecIni AND fec_mcxc <= paramFecFin
 		AND sta_mcxc = 'A'
 		AND tpm_mcxc = '60';
+		--AND cia_mcxc = paramCia
+		--AND pla_mcxc IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 
 LET vcompiva = NVL((vcomptot / vsiva * viva),0.00);
 LET vcompstot = vcomptot - vcompiva;
@@ -390,6 +459,8 @@ FROM 	mov_cxc
 WHERE 	fec_mcxc >= paramFecIni AND fec_mcxc <= paramFecFin
 		AND sta_mcxc = 'A'
 		AND tpm_mcxc = '61';
+		--AND cia_mcxc = paramCia
+		--AND pla_mcxc IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 		
 LET vintpiva = NVL((vintptot / vsiva * viva),0.00);
 LET vintpstot = vintptot - vintpiva;
@@ -401,6 +472,8 @@ FROM 	mov_cxc
 WHERE 	fec_mcxc >= paramFecIni AND fec_mcxc <= paramFecFin
 		AND sta_mcxc = 'A'
 		AND tpm_mcxc = '62';
+		--AND cia_mcxc = paramCia
+		--AND pla_mcxc IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 		
 LET vpagbiva = NVL((vpagbtot / vsiva * viva),0.00);
 LET vpagbstot = vpagbtot - vpagbiva;
@@ -412,6 +485,8 @@ FROM 	mov_ant
 WHERE 	fec_mant >= paramFecIni AND fec_mant <= paramFecFin
 		AND sta_mant = 'A'
 		AND tpm_mant = '53';
+		--AND cia_mant = paramCia
+		--AND pla_mant IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 		
 LET vantriva = NVL((vantrtot / vsiva * viva),0.00);
 LET vantrsstot = vantrtot - vantriva;
@@ -423,29 +498,37 @@ FROM 	mov_ant
 WHERE 	fec_mant >= paramFecIni AND fec_mant <= paramFecFin
 		AND sta_mant = 'A'
 		AND tpm_mant = '99';
+		--AND cia_mant = paramCia
+		--AND pla_mant IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 		
 LET vantaiva = NVL((vantatot / vsiva * viva),0.00);
 LET vantastot = vantatot - vantaiva;
 
 -- DONATIVOS
-SELECT  NVL(SUM(imp_mcxc),0.00),NVL(SUM(NVL(imp_mcxc,0.00) / vsiva),0.00),NVL(SUM(NVL(imp_mcxc,0.00) / vsiva) * viva,0.00)
-INTO 	vdonatot,vdonastot,vdonaiva
+SELECT  NVL(SUM(imp_mcxc),0.00)
+INTO 	vdonatot
 FROM 	mov_cxc
 WHERE 	fec_mcxc >= paramFecIni AND fec_mcxc <= paramFecFin
 		AND sta_mcxc = 'A'
-		AND tpm_mcxc = '63';	
+		AND tpm_mcxc = '63';
+		--AND cia_mcxc = paramCia
+		--AND pla_mcxc IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 		
 LET vdonaiva = NVL((vdonatot / vsiva * viva),0.00);
 LET vdonastot = vdonatot - vdonaiva;
 
 -- FACTURAS CANCELADAS
-SELECT 	NVL(SUM(impt_fac),0), NVL(SUM(simp_fac),0), NVL(SUM(iva_fac),0)
+		
+SELECT	NVL(SUM(pru_dfac * tlts_dfac),0), NVL(SUM(simp_dfac),0), NVL(SUM(pru_dfac * tlts_dfac - simp_dfac),0)
 INTO    vtotfacc,vstotfacc,vivafacc
-FROM 	factura
-WHERE 	feccan_fac >= paramFecIni AND feccan_fac <= paramFecFin
-     	AND impr_fac = 'E'
+FROM	factura, det_fac
+WHERE	fol_fac = fol_dfac and ser_fac = ser_dfac
+		AND feccan_fac >= paramFecIni AND feccan_fac <= paramFecFin
+		AND cia_dfac = paramCia
+		AND pla_dfac IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9)
+		AND impr_fac = 'E'
      	AND tdoc_fac IN('I','V')
-     	AND edo_fac  = 'C'
+		AND edo_fac  = 'C'
      	AND faccer_fac = 'N'
      	AND fec_fac <> feccan_fac
      	AND (frf_fac IS NULL OR frf_fac = 0);
@@ -723,17 +806,4 @@ WHERE 	fes_nvta >= '2024-02-01' AND fes_nvta <= '2025-02-15'
 	       	AND (aju_nvta IS NULL OR aju_nvta <> 'S');
 
 
-SELECT 	NVL(SUM(imp_mcxc),0.00)
-FROM 	mov_cxc
-WHERE 	fec_mcxc >= '2025-05-06' AND fec_mcxc <= '2025-05-06' 
-		AND sta_mcxc = 'A'
-		AND tpm_mcxc >= '50';
-
---  COBRANZA(PAGO BANCOS, CHEQUE , EFECTIVO, ANTICIPOS, CHEQUE POSFECHADO, COMPENSACIONES)
-SELECT 	NVL(SUM(imp_mcxc),0.00)
-FROM 	mov_cxc
-WHERE 	fec_mcxc >= '2025-05-06'  AND fec_mcxc <= '2025-05-06' 
-		AND sta_mcxc = 'A'		
-		AND (((tip_mcxc = '01' OR (tip_mcxc >= '11' AND tip_mcxc <= '99'))
-		AND (tpm_mcxc IN('50','51','55','56','58','60','61','62','63')))
-		OR (tip_mcxc = '08' OR tpm_mcxc = '99'));     
+  

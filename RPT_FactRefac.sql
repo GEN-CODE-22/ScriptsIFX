@@ -55,7 +55,7 @@ IF paramTipo = 'F' THEN
 		INTO    vrfc,vserie,vfolfac,vfecfac,vimporte,viva,vtdoc,vuuid,vsrffac,vfrffac
 		FROM 	factura f
 		WHERE 	fec_fac BETWEEN paramFecIni AND paramFecFin
-				AND tdoc_fac = 'I' AND edo_fac <> 'C'
+				AND tdoc_fac IN('I','V') AND edo_fac <> 'C'
 				AND frf_fac in(select fol_fac from factura where faccer_fac = 'S' and fol_fac = f.frf_fac and ser_fac = f.srf_fac)
 		
 		SELECT	uuid_fac, '04'
@@ -68,7 +68,9 @@ IF paramTipo = 'F' THEN
 		END IF;
 		
 		RETURN 	vedosat,vtiprel,vdescrel,vuuidrel,vrfc,vserie,vfolfac,vfecfac,vimporte,viva,vie,vtdoc,vuuid,vobserv
-		WITH RESUME;	
+		WITH RESUME;
+
+		
 		
 	END FOREACH;
 ELSE
