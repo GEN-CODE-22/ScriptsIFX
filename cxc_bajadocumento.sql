@@ -1,5 +1,27 @@
 DROP PROCEDURE cxc_bajadocumento;
-EXECUTE PROCEDURE  cxc_bajadocumento(491646,'15','86',1,'01','','fuente');
+EXECUTE PROCEDURE  cxc_bajadocumento(768,'15','15',3);
+
+=CONCATENAR("EXECUTE PROCEDURE  cxc_bajadocumento(",B103,",'",C103,"','",TEXTO(D103,"00"),"',",E103,");")
+
+select fol_doc, cia_doc, pla_doc, vuelta_doc
+from   doctos
+where  femi_doc = '2024-05-29'
+
+select *
+from   doctos where fol_doc in(71098,71099) and femi_doc = '2024-05-29'
+where  femi_doc = '2024-05-29'
+
+select *
+from   mov_cxc 
+where  fec_mcxc = '2024-05-29' 
+
+select *
+from   nota_vta
+where  fes_nvta = '2024-05-29' and edo_nvta = 'A'  and napl_nvta = 'C'
+
+update  nota_vta
+set 	edo_nvta = 'S'--, napl_nvta = 'N'
+where  fes_nvta = '2024-05-29' and edo_nvta = 'A' and napl_nvta = 'C'
 
 CREATE PROCEDURE cxc_bajadocumento
 (
@@ -46,11 +68,20 @@ IF EXISTS(SELECT 	1
 	  					AND tpm_mcxc > '49' AND sta_mcxc = 'A') THEN
 	  		
 	  			--ELIMINA DOCUMENTO----------------------------------------------------------------------------
+				IF NOT EXISTS(SELECT 1 FROM doctosbaj WHERE fol_doc = paramFol AND cia_doc = paramCia AND pla_doc = paramPla AND vuelta_doc = paramVuelta) THEN
+					INSERT INTO doctosbaj
+					SELECT	* FROM doctos WHERE fol_doc = paramFol AND cia_doc = paramCia AND pla_doc = paramPla AND vuelta_doc = paramVuelta;
+				END IF;
 		  		DELETE
 		  		FROM	doctos
 		  		WHERE 	fol_doc = paramFol AND cia_doc = paramCia AND pla_doc = paramPla AND vuelta_doc = paramVuelta;
 	
 			  	--ELIMINA EN LA TABLA mov_cxc---------------------------------------------------------------
+				IF NOT EXISTS(SELECT 1 FROM mov_cxcbaj WHERE doc_mcxc = paramFol AND cia_mcxc = paramCia AND pla_mcxc = paramPla AND vuelta_mcxc = paramVuelta) THEN
+					INSERT INTO mov_cxcbaj
+					SELECT	* FROM mov_cxc WHERE doc_mcxc = paramFol AND cia_mcxc = paramCia AND pla_mcxc = paramPla AND vuelta_mcxc = paramVuelta;
+				END IF;
+				
 				DELETE
 				FROM	mov_cxc
 				WHERE	doc_mcxc = paramFol AND cia_mcxc = paramCia AND pla_mcxc = paramPla AND vuelta_mcxc = paramVuelta;
@@ -96,7 +127,7 @@ END PROCEDURE;
 
 select	*
 from	doctos 
-where	fol_doc in(240454) and vuelta_doc = 1
+where	fol_doc in(597604) and vuelta_doc = 5
 
 delete
 from	doctos
@@ -104,7 +135,7 @@ where	fol_doc in(491644) and  vuelta_doc = 1
 
 select	*
 from	mov_cxc
-where	doc_mcxc in(240454) and vuelta_mcxc = 1 and cte_mcxc = '087996' and tpm_mcxc = '50'
+where	doc_mcxc in(383996) and vuelta_mcxc = 5 and cte_mcxc = '087996' and tpm_mcxc = '50'
 
 delete
 from	mov_cxc
@@ -224,3 +255,9 @@ where	epo_fec = '2021-02-17'
 delete
 from	e_posaj
 where 	epo_fec = '2020-10-02'
+
+select	*
+from	doctosbaj
+
+select	*
+from	mov_cxcbaj

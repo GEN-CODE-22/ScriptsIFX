@@ -370,36 +370,36 @@ IF paramFecIni < xfecd THEN
 	FROM    urdnota_vta
 	WHERE	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin AND edo_nvta = 'A' 
 			AND (aju_nvta IS NULL OR aju_nvta <> 'S')
-			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta NOT IN('C','G')
-			AND cia_nvta = paramCia
-			AND pla_nvta IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
+			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta NOT IN('C','G');
+			--AND cia_nvta = paramCia
+			--AND pla_nvta IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 			
 	SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
 	INTO	vcreajutot,vcreajustot,vcreajuiva
 	FROM    urdnota_vta
 	WHERE	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin AND edo_nvta = 'A' 
 			AND aju_nvta='S'
-			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta IN('C','G')
-			AND cia_nvta = paramCia
-			AND pla_nvta IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
+			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta IN('C','G');
+			--AND cia_nvta = paramCia
+			--AND pla_nvta IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 ELSE
   	SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
 	INTO	vvtotefe,vvstotefe,vvivaefe
 	FROM    nota_vta
 	WHERE	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin AND edo_nvta = 'A' 
 			AND (aju_nvta IS NULL OR aju_nvta <> 'S')
-			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta NOT IN('C','G')
-			AND cia_nvta = paramCia
-			AND pla_nvta IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
+			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta NOT IN('C','G');
+			--AND cia_nvta = paramCia
+			--AND pla_nvta IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 			
 	SELECT	NVL(SUM(impt_nvta),0.00), NVL(SUM(simp_nvta),0.00), NVL(SUM(iva_nvta),0.00)
 	INTO	vcreajutot,vcreajustot,vcreajuiva
 	FROM    nota_vta
 	WHERE	fes_nvta >= paramFecIni AND fes_nvta <= paramFecFin AND edo_nvta = 'A' 
 			AND aju_nvta='S'
-			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta IN('C','G')
-			AND cia_nvta = paramCia
-			AND pla_nvta IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
+			AND tip_nvta IN('B','C','D','E','2','3','4') AND tpa_nvta IN('C','G');
+			--AND cia_nvta = paramCia
+			--AND pla_nvta IN(vpla1,vpla2,vpla3,vpla4,vpla5,vpla6,vpla7,vpla8,vpla9);
 END IF;
 LET vvtotefe = vvtotefe - vcreajutot;
 LET vvstotefe = vvstotefe - vcreajustot;
