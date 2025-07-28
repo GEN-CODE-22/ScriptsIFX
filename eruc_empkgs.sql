@@ -240,7 +240,7 @@ FOREACH cRutas FOR
 			AND fec_vemp BETWEEN paramFecIni AND paramFecFin;
 
 	IF vtotal > 0 THEN		
-		INSERT INTO vtaxemp VALUES(vemp,paramFecFin,vcoa,vruta,vtotal,0,'K',0);
+		INSERT INTO vtaxemp VALUES(vemp,paramFecFin,vcoa,vruta,vtotal,0,'K',0,0);
 	END IF;
 	
 	LET vresult = vresult + 1;

@@ -10,7 +10,7 @@ CREATE PROCEDURE erup_empreg
 	paramNcant	INT,
 	paramVta	DECIMAL,
 	paramTipo	CHAR(2),
-	paramApy	CHAR(1)
+	paramApy	CHAR(1)	
 )
 
 RETURNING  
@@ -34,7 +34,7 @@ IF paramApy = 'N' THEN
 		LET vresult = 2;
 		LET vmensaje = 'ACTUALIZO VENTA';
 	ELSE
-		INSERT INTO vtaxemp VALUES(paramEmp,paramFecha,paramTipo,paramRuta,paramNcant,paramVta,'L',0);
+		INSERT INTO vtaxemp VALUES(paramEmp,paramFecha,paramTipo,paramRuta,paramNcant,paramVta,'L',0,0);
 		LET vresult = 1;
 		LET vmensaje = 'INSERTO VENTA';
 	END IF;
@@ -42,7 +42,7 @@ ELSE
 	IF	NOT EXISTS(SELECT 1 
 				FROM vtaxemp 
 				WHERE emp_vemp = paramEmp AND fec_vemp = paramFecha AND  ruta_vemp = paramRuta AND coa_vemp = paramTipo) THEN
-		INSERT INTO vtaxemp VALUES(paramEmp,paramFecha,paramTipo,paramRuta,0,0.00,'L',0);
+		INSERT INTO vtaxemp VALUES(paramEmp,paramFecha,paramTipo,paramRuta,0,0.00,'L',0,0);
 		LET vresult = 3;
 		LET vmensaje = 'INSERTO VENTA APOYO';
 	END IF;

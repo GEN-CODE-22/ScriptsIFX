@@ -17,7 +17,7 @@ CREATE PROCEDURE eruc_empreg
 	paramc45b	DECIMAL,
 	paramtkgs	DECIMAL,
 	paramnanf	DECIMAL,
-	paramPcs	CHAR(1)
+	paramPcs	CHAR(1)	
 )
 
 RETURNING  
@@ -82,7 +82,7 @@ IF paramApy = 'N' THEN
 		LET vncone = paramc20b + paramc30b + paramc45b - vncon;
 		LET vtaemp = paramtkgs;
 		LET vnanfe = paramnanf;
-		INSERT INTO vtaxemp VALUES(paramEmp,paramFecha,paramTipo,paramRuta,vncone,vtaemp,'K',vnanfe);
+		INSERT INTO vtaxemp VALUES(paramEmp,paramFecha,paramTipo,paramRuta,vncone,vtaemp,'K',vnanfe,0);
 		LET vresult = 1;
 		LET vmensaje = 'INSERTO VENTA';
 	END IF;
@@ -109,7 +109,7 @@ IF paramApy = 'N' THEN
 			LET vncone = paramc20b + paramc30b + paramc45b - vncon;
 			LET vtaemp = paramtkgs;
 			LET vnanfe = paramnanf;
-			INSERT INTO vtaxemp VALUES(paramEmp,paramFecha,paramTipoa,paramRuta,vncone,vtaemp,'K',vnanfe);
+			INSERT INTO vtaxemp VALUES(paramEmp,paramFecha,paramTipoa,paramRuta,vncone,vtaemp,'K',vnanfe,0);
 			LET vresult = 4;
 		LET vmensaje = 'INSERTO VENTA G';
 		END IF;
@@ -119,7 +119,7 @@ ELSE
 				FROM vtaxemp 
 				WHERE emp_vemp = paramEmp AND fec_vemp = paramFecha AND  ruta_vemp = paramRuta AND coa_vemp = paramTipo) THEN
 		LET vnanfe = paramnanf;
-		INSERT INTO vtaxemp VALUES(paramEmp,paramFecha,paramTipo,paramRuta,0,0.00,'K',vnanfe);
+		INSERT INTO vtaxemp VALUES(paramEmp,paramFecha,paramTipo,paramRuta,0,0.00,'K',vnanfe,0);
 		LET vresult = 3;
 		LET vmensaje = 'INSERTO VENTA APOYO';
 	END IF;
@@ -142,7 +142,7 @@ from	vtaxemp
 where	fec_vemp = '2022-01-12' and ruta_vemp = 'C005'
 
 select	*
-from	empxrutc
+from	empxrutc where rut_eruc = 'CS02' and fec_eruc = '2023-07-30'
 where	pcs_eruc = 'G'rut_eruc = 'CP12'
 order by fec_eruc desc
 
@@ -153,8 +153,19 @@ order by fec_vemp desc
 
 select	*	
 from	vtaxemp
-where	emp_vemp = '365' and fec_vemp = '2022-01-12' and ruta_vemp = 'C005' and coa_vemp = '01'
+where	emp_vemp = 'SA18' and fec_vemp = '2023-07-30' and ruta_vemp = 'CS02' and coa_vemp = '01'
 
 delete	
 from	vtaxemp
 where	emp_vemp = '365' and fec_vemp = '2022-01-12' and ruta_vemp = 'C005' and coa_vemp = '01' and ncon_vemp = 0
+
+select	*
+from	empleado where cve_emp = 'SA18'
+where   gpa_emp in('G33','G34')
+
+select	*
+from	vtaxemp
+where	emp_vemp in(select	cve_emp
+					from	empleado					
+					where   gpa_emp in('G33','G34'))
+order by fec_vemp desc

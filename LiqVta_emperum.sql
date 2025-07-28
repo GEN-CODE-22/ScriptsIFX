@@ -1,5 +1,5 @@
 DROP PROCEDURE LiqVta_emperum;
-EXECUTE PROCEDURE  LiqVta_emperum(5308, 'B002');
+EXECUTE PROCEDURE  LiqVta_emperum(9104, 'B004');
 
 CREATE PROCEDURE LiqVta_emperum
 (
@@ -28,6 +28,7 @@ DEFINE vtot		DECIMAL;
 DEFINE vnnv     INT;
 DEFINE vnnve    INT;
 DEFINE vnnveo   INT;
+DEFINE vhrex	DECIMAL;
 
 LET vresult = 1;
 LET vmensaje = '';
@@ -35,6 +36,7 @@ LET vproceso = 1;
 LET vmsg = '';
 LET vdesp = '';
 LET vay1 = '';
+LET vhrex = 1.5;
 
 SELECT	cia_vmed, pla_vmed, rut_vmed, pcs_vmed, NVL(desp_vmed,''), NVL(ayu1_vmed,''), fec_vmed, 
 		NVL(tlts_vmed,0)
@@ -44,20 +46,22 @@ WHERE	fliq_vmed = paramFolio AND rut_vmed = paramRuta;
 
 IF vdesp <> '' THEN
 	IF vpcs = 'S' THEN
-		LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfecha,vdesp,0.00,0.00,'27');
+		LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfecha,vdesp,0.00,0.00,'27',0);
 	ELSE
 	 IF vpcs = 'O' THEN
-	    LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfecha,vdesp,0.00,0.00,'17');
+	    LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfecha,vdesp,0.00,0.00,'17',0);
 	 ELSE
 	    IF vpcs = 'P' THEN
-	       LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfecha,vdesp,0.00,0.00,'05');
-	    ELSE
-	       LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfecha,vdesp,0.00,0.00,'06');
-	       IF	vpla = '01' or vpla = '93' THEN
+	       LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfecha,vdesp,0.00,0.00,'05',0);
+	    ELSE	       
+	       IF vpla = '01' or vpla = '93' THEN
+			   LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfecha,vdesp,0.00,0.00,'06',vhrex);
 		       LET vfechav =  vfecha + 1;
-		       LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfechav,vdesp,0.00,0.00,'06');
+		       LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfechav,vdesp,0.00,0.00,'06',0);
 		       LET vfechav =  vfecha + 2;
-		       LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfechav,vdesp,0.00,0.00,'06');
+		       LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfechav,vdesp,0.00,0.00,'06',0);
+		   ELSE
+			   LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfecha,vdesp,0.00,0.00,'06',0);
 	       END IF;
 	    END IF;
 	 END IF;
@@ -66,20 +70,22 @@ END IF;
 
 IF vay1 <> '' THEN
 	IF vpcs = 'S' THEN
-		LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfecha,vay1,0.00,0.00,'27');
+		LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfecha,vay1,0.00,0.00,'27',0);
 	ELSE
 	 IF vpcs = 'O' THEN
-	    LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfecha,vay1,0.00,0.00,'17');
+	    LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfecha,vay1,0.00,0.00,'17',0);
 	 ELSE
 	    IF vpcs = 'P' THEN
-	       LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfecha,vay1,0.00,0.00,'05');
-	    ELSE
-	       LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfecha,vay1,0.00,0.00,'06');
+	       LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfecha,vay1,0.00,0.00,'05',0);
+	    ELSE	       
 	       IF	vpla = '01' or vpla = '93' THEN
+			   LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfecha,vay1,0.00,0.00,'06',vhrex);
 		       LET vfechav =  vfecha + 1;
-		       LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfechav,vay1,0.00,0.00,'06');
+		       LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfechav,vay1,0.00,0.00,'06',0);
 		       LET vfechav =  vfecha + 2;
-		       LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfechav,vay1,0.00,0.00,'06');
+		       LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfechav,vay1,0.00,0.00,'06',0);
+		   ELSE
+			   LET vproceso,vmsg = erum_empreg(paramFolio,vruta,vfecha,vay1,0.00,0.00,'06',0);
 		   END IF;
 	    END IF;
 	 END IF;
@@ -91,7 +97,7 @@ END PROCEDURE;
 
 select	*
 from	venxmed
-where	fec_vmed >= '2018-01-01' and pcs_vmed = 'S'
+where	fec_vmed = '2025-07-22' and pcs_vmed = 'T'
 
 select	*
 from	empxrutp
@@ -105,3 +111,8 @@ where	fliq_nvta = 425 and ruta_nvta = 'M032'
 SELECT 	NVL(SUM(tlts_nvta),0), NVL(count(*),0)
 FROM	nota_vta
 where 	fes_nvta = '2023-03-29'
+
+
+select	*
+from	vtaxemp
+where	hrex_vemp > 0
